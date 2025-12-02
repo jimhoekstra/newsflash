@@ -1,6 +1,6 @@
 from typing import Any
 
-from pytest import raises, fixture
+from pytest import raises
 
 from newsflash.endpoints.parsers import RequestValues
 from newsflash.widgets.widgets import Widget, widget_factory, get_widget_callback_fn
@@ -71,7 +71,10 @@ def test_widget_set_value_wrong_type():
     with raises(AssertionError) as e:
         dummy_widget._set_value_from_request("test_value_a", request_data)
 
-    assert str(e.value) == "Expected type <class 'str'> for key 'test_value_a', got <class 'int'>"
+    assert (
+        str(e.value)
+        == "Expected type <class 'str'> for key 'test_value_a', got <class 'int'>"
+    )
 
 
 def test_widget_set_values_from_request():
@@ -105,7 +108,7 @@ def test_widget_factory():
         url_path="/dummy",
         widget_attributes=request_data,
     )
-    
+
     result = widget_factory(DummyWidget, request_values)
     assert isinstance(result, DummyWidget)
     assert result.test_value_a == "Hello, World!"

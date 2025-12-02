@@ -19,7 +19,7 @@ def test_render_content_calls_super():
 def test_render_container():
     class DummyChart(Chart):
         id: str = "dummy-chart"
-    
+
     chart = DummyChart()
 
     def new_render(self) -> str:

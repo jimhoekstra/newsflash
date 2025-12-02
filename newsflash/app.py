@@ -61,8 +61,12 @@ class App(FastAPI):
         raise ValueError(f"Widget not found: {type} with id {id} on page {path}")
 
     def _build_page_endpoints(self):
-        newsflash_static_dir = Path(__file__).resolve().parent / "assets" / "staticfiles"
-        self.mount("/static", StaticFiles(directory=newsflash_static_dir), name="static")
+        newsflash_static_dir = (
+            Path(__file__).resolve().parent / "assets" / "staticfiles"
+        )
+        self.mount(
+            "/static", StaticFiles(directory=newsflash_static_dir), name="static"
+        )
         templates = Jinja2Templates(directory=self.template_dir)
 
         for page_path, page in self.pages.items():

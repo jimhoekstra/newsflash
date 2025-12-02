@@ -34,7 +34,7 @@ class Select(Widget):
     def on_select(self, *args, **kwargs) -> list[Widget]:
         """Event handler for select events."""
         return []
-    
+
 
 class Button(Widget):
     template: Template = widget_templates.get_template("button.html")

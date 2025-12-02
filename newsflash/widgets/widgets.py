@@ -37,6 +37,7 @@ class Widget(Element):
         for key in self._values_from_request:
             self._set_value_from_request(key, inputs.widget_attributes)
 
+
 W = TypeVar("W", bound=Widget)
 
 
