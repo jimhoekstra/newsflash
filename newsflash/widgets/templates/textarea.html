@@ -1,0 +1,12 @@
+<textarea 
+    id="{{ id }}"
+    name="{{ id }}-value"
+    class="newsflash-input newsflash-textarea" 
+    rows="{{ rows }}"
+    spellcheck="{{ 'true' if spellcheck else 'false' }}"
+    hx-post="/_newsflash/{{ id }}"
+    hx-trigger="input"
+    hx-swap="none"
+    hx-include="{{ hx_include|join(', ') }}"
+    {% if hx_swap_oob %}hx-swap-oob="true"{% endif %}
+>{{ value }}</textarea>

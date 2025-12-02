@@ -1,0 +1,87 @@
+from typing import Any
+
+from jinja2 import Template
+
+from newsflash.svg.element import ElementGroup
+from newsflash.svg.charts.barchart import build_barchart
+from newsflash.svg.charts.linechart import build_linechart
+from newsflash.svg.templates.templates import svg_templates
+
+from .widgets import Widget, WidgetContainer
+
+
+class Chart(Widget):
+    template: Template = svg_templates.get_template("svg.svg")
+    width: float = 0.0
+    height: float = 0.0
+    title: str = ""
+    title_font_size: int = 32
+    label_font_size: int = 16
+
+    elements: ElementGroup = ElementGroup()
+    styles: dict[str, str] = {
+        "position": "absolute",
+    }
+
+    _values_from_request: list[str] = ["width", "height"]
+    _callback_fn_name: str = "on_load"
+
+    def on_load(self, *args, **kwargs) -> list[Widget]:
+        """Event handler for chart load events."""
+        return []
+
+    def render_content(self) -> str:
+        return super().render()
+
+    def render_container(self) -> str:
+        container = WidgetContainer(
+            widget_id=self.id,
+        )
+        container.hx_include.extend(self.hx_include)
+        return container.render()
+
+    def render(self) -> str:
+        return self.render_content()
+
+    def get_additional_context(self) -> dict[str, Any]:
+        return {
+            "content": "\n    ".join(
+                element.render() for element in self.elements.elements
+            ),
+        }
+
+
+class BarChart(Chart):
+    def set_values(
+        self,
+        values: list[float] | list[int],
+        labels: list[str],
+        max_y_axis_value: float | None = None,
+    ) -> None:
+        self.elements = build_barchart(
+            values=values,
+            labels=labels,
+            width=self.width,
+            height=self.height,
+            title=self.title,
+            max_y_axis_value=max_y_axis_value,
+            title_font_size=self.title_font_size,
+            label_font_size=self.label_font_size,
+        )
+
+
+class LineChart(Chart):
+    def set_values(
+        self,
+        xs: list[float] | list[int],
+        ys: list[float] | list[int],
+    ) -> None:
+        self.elements = build_linechart(
+            xs=xs,
+            ys=ys,
+            width=self.width,
+            height=self.height,
+            title=self.title,
+            title_font_size=self.title_font_size,
+            label_font_size=self.label_font_size,
+        )

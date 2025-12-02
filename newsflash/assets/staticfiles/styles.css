@@ -1,0 +1,137 @@
+body {
+    background-color: #181825;
+    color: #cdd6f4;
+    font-family: 'Lora', serif;
+    font-size: 18px;
+}
+
+.text {
+    fill: #cdd6f4;   
+}
+
+.grid-line {
+    stroke: #313244;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.newsflash-input {
+    font-family: 'Lora', serif;
+    font-size: 18px;
+    color: #cdd6f4;
+    background-color: #1e1e2e;
+    outline: none;
+    border-radius: 0.25em;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #1e1e2e;
+    padding: 0.75em 1.1em;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.newsflash-input:focus {
+    border-color: hsl(232, 27%, 35%);
+}
+
+.newsflash-textarea {
+    resize: none;
+}
+
+.newsflash-button {
+    font-family: 'Lora', serif;
+    font-size: 18px;
+    color: #cdd6f4;
+    background-color: hsl(232, 37%, 35%);
+    border-radius: 0.25em;
+    padding: 0.75em 1.1em;
+    width: 100%;
+    box-sizing: border-box;
+    border-style: solid;
+    outline: none;
+    border-width: 2px;
+    border-color: hsl(232, 37%, 35%);
+    box-shadow: 0 0 10px #181825;
+}
+
+.newsflash-button:hover, .newsflash-button:focus {
+    border-color: rgba(180, 190, 254, 0.4);
+    cursor: pointer;
+}
+
+.newsflash-button:active {
+    border-color: rgba(180, 190, 254, 0.8);
+}
+
+.newsflash-widget-container {
+    position: relative;
+    height: 100%;
+    width: 100%;
+}
+
+.bar {
+    opacity: 0;
+    fill: hsl(353, 71%, 55%);
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transform-box: fill-box;
+    animation: drawBar 400ms forwards;
+}
+
+
+@keyframes drawBar {
+    to {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
+.line-path {
+    fill: transparent;
+    stroke: hsl(217, 90%, 75%);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-dasharray: 100 200;
+    stroke-dashoffset: 100;
+    animation: drawLine 400ms forwards;
+}
+
+@keyframes drawLine {
+    to {
+        stroke-dasharray: 100 200;
+        stroke-dashoffset: 0;
+    }
+}
+
+.newsflash-dropdown-container {
+    position: relative;
+}
+
+.newsflash-dropdown-input {
+    cursor: pointer;
+}
+
+.newsflash-dropdown-list {
+    position: absolute;
+    width: 100%;
+    list-style-type: none;
+    margin: 0.5em 0 0 0;
+    padding: 0;
+    max-height: 40vh;
+    background-color: hsl(232, 24%, 22%);
+    overflow-y: scroll;
+    box-sizing: border-box;
+    box-shadow: 0 14px 30px #181825;
+    border-radius: 0.25em;
+    z-index: 10;
+}
+
+.newsflash-dropdown-option {
+    padding: 0.75em 1.1em;
+    cursor: pointer;
+}
+
+.newsflash-dropdown-option:hover {
+    background-color: hsl(232, 28%, 32%);
+}

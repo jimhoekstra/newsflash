@@ -1,0 +1,11 @@
+<input 
+    id="{{ id }}"
+    name="{{ id }}-value"
+    class="newsflash-input" 
+    value="{{ value }}"
+    hx-post="/_newsflash/{{ id }}"
+    hx-trigger="input"
+    hx-swap="none"
+    hx-include="{{ hx_include|join(', ') }}"
+    {% if hx_swap_oob %}hx-swap-oob="true"{% endif %}
+>

@@ -1,0 +1,11 @@
+<button
+    id="{{ id }}"
+    class="newsflash-button"
+    hx-post="/_newsflash/{{ id }}"
+    hx-trigger="click"
+    hx-swap="none"
+    hx-include="{{ hx_include|join(', ') }}"
+    {% if hx_swap_oob %}hx-swap-oob="true"{% endif %}
+>
+    {{ label }}
+</button>

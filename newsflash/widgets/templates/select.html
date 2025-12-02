@@ -1,0 +1,56 @@
+<div
+    id="{{ id }}"
+    x-data="{ 
+        isOpen: false, 
+        options: {{ options }}, 
+        currentValue: '{{ selected }}',
+        filteredOptions: {{ options }}
+    }"
+>
+    <div
+        x-data="{ 
+            selectValue(value) {
+                currentValue = value;
+                $refs.selectInput.value = value;
+                $refs.selectInput.dispatchEvent(new Event('selectedByClick', { bubbles: true }));
+                isOpen = false;
+                $refs.selectInput.blur();
+            }
+        }"
+        @click.outside="isOpen = false"
+    > 
+
+        <input 
+            id="{{ id }}-input"
+            x-ref="selectInput"
+            @focus="filteredOptions = options; isOpen = true; $refs.selectInput.select();"
+            @input="filteredOptions = $refs.selectInput.value == '' ? options : options.filter((option) => option.toLowerCase().includes($refs.selectInput.value.toLowerCase()));"
+            name="{{ id }}-selected"
+            class="newsflash-input newsflash-dropdown-input" 
+            value="{{ selected }}"
+            hx-trigger="selectedByClick"
+            hx-post="/_newsflash/{{ id }}"
+            hx-swap="none"
+            hx-include="{{ hx_include|join(', ') }}"
+            {% if hx_swap_oob %}hx-swap-oob="true"{% endif %}
+        >
+
+        <div class="newsflash-dropdown-container">
+            <ul
+                class="newsflash-dropdown-list"
+                x-show="isOpen"
+                x-collapse
+            >
+                <template x-for="option in filteredOptions">
+                    <li 
+                        class="newsflash-dropdown-option"
+                        x-text="option"
+                        @click="selectValue(option);"
+                    >
+                    </li>
+                </template>
+            </ul>
+        </div>
+
+    </div>
+</div>

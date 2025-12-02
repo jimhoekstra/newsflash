@@ -1,0 +1,10 @@
+<line 
+    class="{{ classes|join(' ') }}" 
+    x1="{{ from_pos.x }}" 
+    y1="{{ from_pos.y }}" 
+    x2="{{ to_pos.x }}" 
+    y2="{{ to_pos.y }}" 
+    pathLength="{{ path_length }}" 
+    style="{{ styles|join(' ') }}"{% for attr, value in attributes.items() %}
+    {{ attr }}="{{ value }}"{% endfor %}
+/>

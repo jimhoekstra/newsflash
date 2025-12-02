@@ -1,0 +1,13 @@
+<svg
+    xmlns="http://www.w3.org/2000/svg" 
+    id="{{ id }}"
+    class="{{ classes|join(' ') }}" 
+    width="{{ width }}"
+    height="{{ height }}"
+    viewBox="0 0 {{ width }} {{ height }}"
+    style="{{ styles|join(' ') }}"{% for attr, value in attributes.items() %}
+    {{ attr }}="{{ value }}"{% endfor %}{% if hx_swap_oob %}
+    hx-swap-oob="true"{% endif %}
+>
+    {{ content | safe }}
+</svg>
