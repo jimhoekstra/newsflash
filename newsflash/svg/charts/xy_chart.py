@@ -1,10 +1,10 @@
 from fontTools.ttLib import TTFont
 
 from newsflash.svg.box import Box
-from newsflash.svg.utils import Point
 from newsflash.svg.utils.fonts import lora, get_text_width
 from newsflash.svg.element import ElementGroup
-from newsflash.svg.elements import build_rectangle_from_bottom_center
+
+from .axes import AxesConfig
 
 from .components import (
     build_title_box,
@@ -18,37 +18,11 @@ from .components import (
 )
 
 
-def _build_bars(
-    bars: list[float],
-    chart_box: Box,
-) -> ElementGroup:
-    elements = ElementGroup()
-
-    for idx, bar in enumerate(bars):
-        rect = build_rectangle_from_bottom_center(
-            bottom_center=Point(x=idx / (len(bars) - 1), y=0.0),
-            width=0.9 / (len(bars) - 1),
-            height=bar,
-            rounded=0.05,
-            classes=["bar"],
-            box=chart_box,
-        )
-        elements.append(rect)
-
-    return elements
-
-
 def build_xy_chart(
-    labels: list[str],
-    x_label_positions: list[float] | list[int],
-    y_label_positions: list[float] | list[int],
+    axes: AxesConfig,
     width: float,
     height: float,
     title: str,
-    max_x_axis_value: float,
-    max_y_axis_value: float,
-    min_x_axis_value: float = 0.0,
-    min_y_axis_value: float = 0.0,
     x_padding: float = 0.0,
     font: TTFont = lora,
     title_font_size: int = 32,
@@ -65,19 +39,21 @@ def build_xy_chart(
     max_label_width = max(
         [
             get_text_width(font=font, text=str(label), font_size=label_font_size)
-            for label in y_label_positions
+            for label in axes.y.label_positions
         ]
     )
     y_axis_box = build_y_axis_box(
-        min_value=min_y_axis_value,
-        max_value=max_y_axis_value,
+        min_value=axes.y.min_value,
+        max_value=axes.y.max_value,
         title_box=title_box,
         max_label_width=max_label_width,
         svg_height=height,
         label_font_size=label_font_size,
     )
     y_axis = build_y_axis(
-        y_axis_box=y_axis_box, font_size=label_font_size, y_labels=y_label_positions
+        y_axis_box=y_axis_box,
+        font_size=label_font_size,
+        y_labels=axes.y.label_positions,
     )
     xy_chart_elements.extend(y_axis)
 
@@ -87,14 +63,14 @@ def build_xy_chart(
         svg_width=width,
         font_size=label_font_size,
         y_axis_box=y_axis_box,
-        min_x_axis_value=min_x_axis_value,
-        max_x_axis_value=max_x_axis_value,
+        min_x_axis_value=axes.x.min_value,
+        max_x_axis_value=axes.x.max_value,
         padding_left=x_padding,
         padding_right=x_padding,
     )
     x_axis = build_x_axis(
-        labels=labels,
-        label_positions=x_label_positions,
+        labels=axes.x.labels_as_str,
+        label_positions=axes.x.label_positions,
         font_size=label_font_size,
         x_axis_box=x_axis_box,
     )
@@ -103,10 +79,10 @@ def build_xy_chart(
     # Chart
     chart_box = build_chart_box(
         svg_width=width,
-        min_x_axis_value=min_x_axis_value,
-        max_x_axis_value=max_x_axis_value,
-        min_y_axis_value=min_y_axis_value,
-        max_y_axis_value=max_y_axis_value,
+        min_x_axis_value=axes.x.min_value,
+        max_x_axis_value=axes.x.max_value,
+        min_y_axis_value=axes.y.min_value,
+        max_y_axis_value=axes.y.max_value,
         title_box=title_box,
         x_axis_box=x_axis_box,
         y_axis_box=y_axis_box,
@@ -114,7 +90,7 @@ def build_xy_chart(
         padding_right=x_padding,
     )
     horizontal_grid_lines = build_horizontal_grid_lines(
-        y_labels=y_label_positions,
+        y_labels=axes.y.label_positions,
         chart_box=chart_box,
         padding_left=x_padding,
         padding_right=x_padding,

@@ -56,7 +56,6 @@ class BarChart(Chart):
         self,
         values: list[float] | list[int],
         labels: list[str],
-        max_y_axis_value: float | None = None,
     ) -> None:
         self.elements = build_barchart(
             values=values,
@@ -64,13 +63,14 @@ class BarChart(Chart):
             width=self.width,
             height=self.height,
             title=self.title,
-            max_y_axis_value=max_y_axis_value,
             title_font_size=self.title_font_size,
             label_font_size=self.label_font_size,
         )
 
 
 class LineChart(Chart):
+    classes: list[str] = ["line-chart"]
+
     def set_values(
         self,
         xs: list[float] | list[int],
@@ -85,3 +85,12 @@ class LineChart(Chart):
             title_font_size=self.title_font_size,
             label_font_size=self.label_font_size,
         )
+
+
+class Histogram(Chart):
+    def set_values(
+        self,
+        values: list[float] | list[int],
+        num_bins: int,
+    ) -> None:
+        pass

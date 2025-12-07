@@ -1,4 +1,3 @@
-from math import ceil, floor
 
 from fontTools.ttLib import TTFont
 
@@ -9,6 +8,7 @@ from newsflash.svg.element import ElementGroup
 from newsflash.svg.elements import build_path
 
 from .xy_chart import build_xy_chart
+from .axes import AxesConfig, build_x_axis_config, build_y_axis_config
 
 
 def _build_line(
@@ -48,32 +48,18 @@ def build_linechart(
 ) -> ElementGroup:
     linechart_elements = ElementGroup()
 
-    # TODO: into separate function
-    y_step = ceil((max(ys) - min(ys)) / 3)
-    min_y_axis_value = floor(min(ys) / y_step) * y_step
-    max_y_axis_value = ceil(max(ys) / y_step) * y_step
-    num_y_labels = round((max_y_axis_value - min_y_axis_value) / y_step) + 1
-    y_label_positions = [min_y_axis_value + y_step * i for i in range(num_y_labels)]
-
-    x_step = ceil((max(xs) - min(xs)) / 8)
-    x_label_positions = xs[::x_step]
-    x_labels = [str(x) for x in x_label_positions]
-
     x_padding = len(xs) / 50
-    min_x_axis_value = min(xs)
-    max_x_axis_value = max(xs)
+
+    axes = AxesConfig(
+        x=build_x_axis_config(values=xs),
+        y=build_y_axis_config(values=ys),
+    )
 
     linechart_elements, chart_box = build_xy_chart(
-        labels=x_labels,
-        x_label_positions=x_label_positions,
-        y_label_positions=y_label_positions,
+        axes=axes,
         width=width,
         height=height,
         title=title,
-        min_x_axis_value=min_x_axis_value,
-        max_x_axis_value=max_x_axis_value,
-        min_y_axis_value=min_y_axis_value,
-        max_y_axis_value=max_y_axis_value,
         x_padding=x_padding,
         font=font,
         title_font_size=title_font_size,
