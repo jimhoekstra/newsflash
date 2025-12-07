@@ -2,7 +2,7 @@ from typing import Type
 
 from pytest import raises
 
-from newsflash.endpoints.page import _build_hx_include, _build_rendered_widgets
+from newsflash.endpoints.page import build_hx_include, _build_rendered_widgets
 from newsflash.widgets.widgets import Widget
 from newsflash.widgets.charts import Chart
 
@@ -33,7 +33,7 @@ class DummyWidgetC(Widget):
 def test_build_hx_include():
     callback_fn = DummyWidgetC.dummy_callback
 
-    result = _build_hx_include(callback_fn)
+    result = build_hx_include(callback_fn)
 
     assert isinstance(result, list)
     assert len(result) == 2
@@ -52,7 +52,7 @@ class DummyWidgetD(Widget):
 def test_build_hx_include_no_inputs():
     callback_fn = DummyWidgetD.dummy_callback_no_inputs
 
-    result = _build_hx_include(callback_fn)
+    result = build_hx_include(callback_fn)
 
     assert isinstance(result, list)
     assert len(result) == 0
@@ -73,7 +73,7 @@ def test_build_hx_include_illegal_inputs():
     callback_fn = DummyWidgetE.dummy_callback_illegal_inputs
 
     with raises(AssertionError):
-        _build_hx_include(callback_fn)
+        build_hx_include(callback_fn)
 
 
 class DummyWidgetF(Widget):

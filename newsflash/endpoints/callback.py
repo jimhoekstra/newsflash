@@ -5,6 +5,7 @@ from fastapi import Request
 
 from newsflash.widgets.widgets import Widget, widget_factory, get_widget_callback_fn
 from .parsers import parse_request_values, RequestValues
+from .page import build_hx_include
 
 if TYPE_CHECKING:
     # Only import for type checking to avoid circular imports
@@ -40,6 +41,11 @@ def build_callback_endpoint(app: "App") -> Callable[..., Awaitable[str]]:
         for widget in widgets_to_render:
             assert isinstance(widget, Widget), "Callback must return a list of widgets"
             widget.hx_swap_oob = True
+
+            if (callback_fn := get_widget_callback_fn(widget_instance)) is not None:
+                hx_include = build_hx_include(callback_fn)
+                widget_instance.hx_include.extend(hx_include)
+
             rendered_widgets.append(widget.render())
 
         return "\n".join(rendered_widgets)

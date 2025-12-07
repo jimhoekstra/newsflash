@@ -35,7 +35,7 @@ def build_page_endpoint(
     return read_page
 
 
-def _build_hx_include(callback_fn: Callable) -> list[str]:
+def build_hx_include(callback_fn: Callable) -> list[str]:
     sig = signature(callback_fn)
     parameters = sig.parameters
 
@@ -59,10 +59,9 @@ def _build_rendered_widgets(widgets: list[Type[Widget]]) -> dict[str, str]:
 
     for widget_cls in widgets:
         widget_instance = widget_cls()
-        callback_fn = get_widget_callback_fn(widget_instance)
 
-        if callback_fn is not None:
-            hx_include = _build_hx_include(callback_fn)
+        if (callback_fn := get_widget_callback_fn(widget_instance)) is not None:
+            hx_include = build_hx_include(callback_fn)
             widget_instance.hx_include.extend(hx_include)
 
         if isinstance(widget_instance, Chart):
