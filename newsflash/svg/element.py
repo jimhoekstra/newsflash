@@ -15,12 +15,8 @@ class Element(BaseModel):
 
     def get_additional_context(self) -> dict[str, str]:
         return {}
-    
-    def pre_render(self) -> None:
-        pass
 
     def render(self) -> str:
-        self.pre_render()
         context = self.model_dump()
         context.update(self.get_additional_context())
         assert self.template is not None, "Template is not set."

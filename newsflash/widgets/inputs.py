@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Any, Callable
 
 from jinja2 import Template
 
@@ -34,17 +34,14 @@ class Select(Widget):
     _callback_fn_name: str = "on_select"
     _values_from_request: list[str] = ["selected"]
 
-    def pre_render(self) -> None:
+    def model_post_init(self, context: Any) -> None:
         if self.selected is not None:
-            super().pre_render()
             return
         if self.default is not None:
             self.selected = self.default()
-            super().pre_render()
             return
         if len(self.options) > 0:
             self.selected = self.options[0]
-            super().pre_render()
             return
 
         raise ValueError("Select widget has no options to select from.")
