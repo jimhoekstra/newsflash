@@ -1,3 +1,5 @@
+from typing import Callable
+
 from jinja2 import Template
 
 from newsflash.widgets.templates import widget_templates
@@ -26,10 +28,26 @@ class TextArea(Input):
 class Select(Widget):
     template: Template = widget_templates.get_template("select.html")
     options: list[str] = ["-"]
-    selected: str = "-"
+    selected: str | None = None
+    default: Callable[[], str] | None = None
 
     _callback_fn_name: str = "on_select"
     _values_from_request: list[str] = ["selected"]
+
+    def pre_render(self) -> None:
+        if self.selected is not None:
+            super().pre_render()
+            return
+        if self.default is not None:
+            self.selected = self.default()
+            super().pre_render()
+            return
+        if len(self.options) > 0:
+            self.selected = self.options[0]
+            super().pre_render()
+            return
+
+        raise ValueError("Select widget has no options to select from.")
 
     def on_select(self, *args, **kwargs) -> list[Widget]:
         """Event handler for select events."""
