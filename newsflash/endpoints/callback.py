@@ -42,9 +42,9 @@ def build_callback_endpoint(app: "App") -> Callable[..., Awaitable[str]]:
             assert isinstance(widget, Widget), "Callback must return a list of widgets"
             widget.hx_swap_oob = True
 
-            if (callback_fn := get_widget_callback_fn(widget_instance)) is not None:
+            if (callback_fn := get_widget_callback_fn(widget)) is not None:
                 hx_include = build_hx_include(callback_fn)
-                widget_instance.hx_include.extend(hx_include)
+                widget.hx_include.extend(hx_include)
 
             rendered_widgets.append(widget.render())
 
