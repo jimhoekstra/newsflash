@@ -1,8 +1,16 @@
-from math import ceil
+from math import ceil, log10
 
 from pydantic import BaseModel
 
 from .utils import get_y_label_positions
+
+
+def smart_round(numbers: list[float]) -> list[str]:
+    differences = [numbers[i + 1] - numbers[i] for i in range(len(numbers) - 1)]
+    min_difference = min(differences)
+
+    decimal_places = max(0, ceil(-log10(min_difference)) + 1)
+    return [f"{num:.{decimal_places}f}" for num in numbers]
 
 
 class AxisConfig(BaseModel):
@@ -13,12 +21,12 @@ class AxisConfig(BaseModel):
 
     @property
     def labels_as_str(self) -> list[str]:
-        if all(isinstance(label, str) for label in self.label_values):
-            return self.label_values  # type: ignore
+        if all(isinstance(label, float) for label in self.label_values):
+            return smart_round(self.label_values)  # type: ignore
         elif all(isinstance(label, int) for label in self.label_values):
-            return [format(label, "d") for label in self.label_values]
+            return [str(label) for label in self.label_values]
         else:
-            return [format(label, "f") for label in self.label_values]
+            return self.label_values  # type: ignore
 
 
 class AxesConfig(BaseModel):
