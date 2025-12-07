@@ -28,6 +28,7 @@
             name="{{ id }}-selected"
             class="newsflash-input newsflash-dropdown-input" 
             value="{{ selected }}"
+            autocomplete="off"
             hx-trigger="selectedByClick"
             hx-post="/_newsflash/{{ id }}"
             hx-swap="none"
