@@ -27,10 +27,15 @@ class AxesConfig(BaseModel):
 
 
 def build_y_axis_config(
-    values: list[int] | list[float], num_labels: int = 5
+    values: list[int] | list[float],
+    num_labels: int = 5,
+    min_value: float | int | None = None,
 ) -> AxisConfig:
-    label_positions = get_y_label_positions(values, divide_by=(num_labels - 1))
-    min_value = min(label_positions)
+    label_positions = get_y_label_positions(
+        values, divide_by=(num_labels - 1), min_y=min_value
+    )
+    if min_value is None:
+        min_value = min(label_positions)
     max_value = max(label_positions)
 
     return AxisConfig(
@@ -44,7 +49,7 @@ def build_y_axis_config(
 def build_x_axis_config(
     values: list[int] | list[float], num_labels: int = 8
 ) -> AxisConfig:
-    x_step = ceil((max(values) - min(values)) / num_labels)
+    x_step = ceil(len(values) / num_labels)
     label_positions = values[::x_step]
 
     min_value = min(values)

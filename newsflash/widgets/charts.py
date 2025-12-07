@@ -5,6 +5,7 @@ from jinja2 import Template
 from newsflash.svg.element import ElementGroup
 from newsflash.svg.charts.barchart import build_barchart
 from newsflash.svg.charts.linechart import build_linechart
+from newsflash.svg.charts.histogram import build_histogram
 from newsflash.svg.templates.templates import svg_templates
 
 from .widgets import Widget, WidgetContainer
@@ -93,4 +94,12 @@ class Histogram(Chart):
         values: list[float] | list[int],
         num_bins: int,
     ) -> None:
-        pass
+        self.elements = build_histogram(
+            values=values,
+            num_bins=num_bins,
+            width=self.width,
+            height=self.height,
+            title=self.title,
+            title_font_size=self.title_font_size,
+            label_font_size=self.label_font_size,
+        )

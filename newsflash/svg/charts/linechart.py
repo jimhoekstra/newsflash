@@ -1,4 +1,3 @@
-
 from fontTools.ttLib import TTFont
 
 from newsflash.svg.box import Box

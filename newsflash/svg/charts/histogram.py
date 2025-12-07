@@ -1,3 +1,5 @@
+import polars as pl
+
 from fontTools.ttLib import TTFont
 
 from newsflash.svg.box import Box
@@ -10,21 +12,28 @@ from .xy_chart import build_xy_chart
 from .axes import (
     AxesConfig,
     build_y_axis_config,
-    build_x_axis_config_barchart,
+    build_x_axis_config,
 )
 
 
 def _build_bars(
     bars: list[float] | list[int],
     chart_box: Box,
+    xs: list[float] | list[int] | None = None,
 ) -> ElementGroup:
+    assert xs is None or len(xs) == len(bars)
     elements = ElementGroup()
 
-    for idx, bar in enumerate(bars):
+    if xs is None:
+        xs = list(range(len(bars)))
+
+    x_width = (max(xs) - min(xs)) / len(xs)
+
+    for x, y in zip(xs, bars):
         rect = build_rectangle_from_bottom_center(
-            bottom_center=Point(x=idx, y=0.0),
-            width=0.9,
-            height=bar,
+            bottom_center=Point(x=x, y=0.0),
+            width=0.9 * x_width,
+            height=y,
             rounded=0.05,
             classes=["bar"],
             box=chart_box,
@@ -34,9 +43,9 @@ def _build_bars(
     return elements
 
 
-def build_barchart(
+def build_histogram(
     values: list[float] | list[int],
-    labels: list[str],
+    num_bins: int,
     width: float,
     height: float,
     title: str,
@@ -44,12 +53,18 @@ def build_barchart(
     title_font_size: int = 32,
     label_font_size: int = 16,
 ) -> ElementGroup:
+    values_hist = pl.Series(values).hist(bin_count=num_bins)
     barchart_elements = ElementGroup()
 
-    x_padding = 0.5
+    xs = values_hist.get_column("breakpoint").to_list()
+    ys = values_hist.get_column("count").to_list()
+
+    x_width = (max(xs) - min(xs)) / len(xs)
+    x_padding = x_width / 2
+
     axes = AxesConfig(
-        x=build_x_axis_config_barchart(labels=labels),
-        y=build_y_axis_config(values=values),
+        x=build_x_axis_config(values=xs),
+        y=build_y_axis_config(values=ys, min_value=0),
     )
 
     barchart_elements, chart_box = build_xy_chart(
@@ -63,7 +78,7 @@ def build_barchart(
         label_font_size=label_font_size,
     )
 
-    bars = _build_bars(bars=values, chart_box=chart_box)
+    bars = _build_bars(bars=ys, chart_box=chart_box, xs=xs)
     barchart_elements.extend(bars)
 
     return barchart_elements
