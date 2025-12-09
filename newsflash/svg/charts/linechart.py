@@ -47,7 +47,7 @@ def build_linechart(
 ) -> ElementGroup:
     linechart_elements = ElementGroup()
 
-    x_padding = len(xs) / 50
+    x_padding = (max(xs) - min(xs)) / 50
 
     axes = AxesConfig(
         x=build_x_axis_config(values=xs),

@@ -9,6 +9,7 @@ from .axes import AxesConfig
 from .components import (
     build_title_box,
     build_title_text,
+    build_multipler_text,
     build_y_axis_box,
     build_y_axis,
     build_x_axis_box,
@@ -35,11 +36,19 @@ def build_xy_chart(
     title_text = build_title_text(box=title_box, title=title, font_size=title_font_size)
     xy_chart_elements.append(title_text)
 
+    if axes.y.multiplier != 1:
+        multiplier_text = build_multipler_text(
+            multiplier=axes.y.multiplier,
+            font_size=label_font_size,
+            box=title_box,
+        )
+        xy_chart_elements.append(multiplier_text)
+
     # Y-Axis
     max_label_width = max(
         [
             get_text_width(font=font, text=str(label), font_size=label_font_size)
-            for label in axes.y.label_positions
+            for label in axes.y.label_values
         ]
     )
     y_axis_box = build_y_axis_box(
@@ -51,9 +60,10 @@ def build_xy_chart(
         label_font_size=label_font_size,
     )
     y_axis = build_y_axis(
-        y_axis_box=y_axis_box,
+        y_labels=[str(label) for label in axes.y.label_values],
+        y_label_positions=axes.y.label_positions,
         font_size=label_font_size,
-        y_labels=axes.y.label_positions,
+        y_axis_box=y_axis_box,
     )
     xy_chart_elements.extend(y_axis)
 

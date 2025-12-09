@@ -24,6 +24,19 @@ def build_title_text(box: Box, title: str, font_size: int) -> Text:
     )
 
 
+def build_multipler_text(multiplier: int, font_size: int, box: Box) -> Text:
+    return build_text(
+        pos=Point(x=0.0, y=0.5),
+        text=f"× {multiplier:,}",
+        font=lora,
+        font_size=font_size,
+        horizontal_align="left",
+        vertical_align="bottom",
+        box=box,
+        classes=["text"]
+    )
+
+
 def _compute_x_axis_height(font_size: int) -> float:
     return font_size_to_height(font_size) * 1.75
 
@@ -49,15 +62,16 @@ def build_y_axis_box(
 
 
 def build_y_axis(
-    y_axis_box: Box,
+    y_labels: list[str],
+    y_label_positions: list[float] | list[int],
     font_size: int,
-    y_labels: list[float] | list[int],
+    y_axis_box: Box,
 ) -> ElementGroup:
     elements = ElementGroup()
 
-    for y_label in y_labels:
+    for y_label, y_label_position in zip(y_labels, y_label_positions):
         label = build_text(
-            pos=Point(x=0, y=y_label),
+            pos=Point(x=0, y=y_label_position),
             text=str(y_label),
             font=lora,
             font_size=font_size,
