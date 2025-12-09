@@ -33,7 +33,7 @@ def build_multipler_text(multiplier: int, font_size: int, box: Box) -> Text:
         horizontal_align="left",
         vertical_align="bottom",
         box=box,
-        classes=["text"]
+        classes=["text"],
     )
 
 
