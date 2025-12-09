@@ -148,3 +148,19 @@ body {
 .newsflash-dropdown-option:hover {
     background-color: hsl(232, 28%, 32%);
 }
+
+.newsflash-value-display {
+    border-left: 2px solid rgba(180, 190, 254, 0.4);
+    padding: 0 0 0 0.5em;
+}
+
+.newsflash-value-display-label {
+    font-size: 16px;
+    color: rgba(180, 190, 254, 0.6);
+    margin: 0;
+}
+
+.newsflash-value-display-value {
+    font-size: 28px;
+    margin: 0.15em 0;
+}

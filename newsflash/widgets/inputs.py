@@ -2,8 +2,7 @@ from typing import Any, Callable
 
 from jinja2 import Template
 
-from newsflash.widgets.templates import widget_templates
-
+from .templates import widget_templates
 from .widgets import Widget
 
 
