@@ -1,4 +1,8 @@
-<div class="newsflash-value-display">
+<div
+    id="{{ id }}"
+    class="newsflash-value-display"
+    {% if hx_swap_oob %}hx-swap-oob="true"{% endif %}
+>
     <p class="newsflash-value-display-label">{{ label }}</p>
     <p class="newsflash-value-display-value">{{ value }}</p>
 </div>
