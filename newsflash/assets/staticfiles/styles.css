@@ -164,3 +164,33 @@ body {
     font-size: 28px;
     margin: 0.15em 0;
 }
+
+#newsflash-notifications-container {
+    position: fixed;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 1000;
+    width: 500px;
+}
+
+.newsflash-notification {
+    background-color: hsl(232, 24%, 22%);
+    padding: 0.75rem 1.5rem;
+    list-style-type: none;
+    margin-top: 1rem;
+    border-radius: 0.25rem;
+    box-shadow: 0 14px 30px #181825;
+    border-width: 2px;
+    border-style: solid;
+    border-color: hsl(115, 34%, 56%);
+}
+
+.notification-out {
+    animation: notificationOut 500ms forwards;
+}
+
+@keyframes notificationOut {
+    to {
+        transform: translateX(150%);
+    }
+}

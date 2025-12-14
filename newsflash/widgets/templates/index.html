@@ -18,6 +18,12 @@
 <body>
     {{ content | safe }}
 
+    <div
+        id="newsflash-notifications-container"
+    >
+        
+    </div>
+
     <script>
         function getChartDimensions() {
             const dimensionsList = [...document.getElementsByClassName("newsflash-widget-container")].map((chart) => {

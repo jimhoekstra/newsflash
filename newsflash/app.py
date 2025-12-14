@@ -8,6 +8,7 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
 from newsflash.widgets.widgets import Widget
+from newsflash.widgets import Notifications
 from newsflash.endpoints.page import build_page_endpoint
 from newsflash.endpoints.callback import build_callback_endpoint
 
@@ -70,6 +71,8 @@ class App(FastAPI):
         templates = Jinja2Templates(directory=self.template_dir)
 
         for page_path, page in self.pages.items():
+            page.widgets.append(Notifications)  # Automatically add Notification widget
+
             page_endpoint = build_page_endpoint(
                 page_title=page.title,
                 page_template_name=page.template,
