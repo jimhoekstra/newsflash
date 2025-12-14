@@ -86,7 +86,7 @@ body {
     }
 }
 
-.text {
+.text, .newsflash-value-display {
     opacity: 0;
     animation: fadeIn 400ms ease forwards;
 }
