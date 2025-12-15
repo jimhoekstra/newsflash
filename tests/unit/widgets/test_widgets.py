@@ -14,8 +14,7 @@ class DummyWidget(Widget):
     _values_from_request: list[str] = ["test_value_a", "test_value_b"]
     _callback_fn_name: str = "dummy_callback"
 
-    def dummy_callback(self) -> list[Widget]:
-        return []
+    def dummy_callback(self) -> list[Widget]: ...
 
 
 def test_widget_set_value_from_request():

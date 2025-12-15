@@ -42,29 +42,26 @@ def build_y_axis_config(
     label_positions = get_y_label_positions(
         values, divide_by=(num_labels - 1), min_y=min_value
     )
-    if min_value is None:
-        min_value = min(label_positions)
-    max_value = max(label_positions)
-
-    if all([isinstance(x, float) for x in values]):
-        label_positions, decimal_places = smart_round(label_positions)  # type: ignore
-    else:
-        decimal_places = 0
 
     oom = order_of_magnitude(label_positions[1])
     multiplier = pow(10, floor(oom / 3) * 3)
 
     if multiplier > 1:
-        label_position_values = [int(pos / multiplier) for pos in label_positions]
+        label_position_values = [pos / multiplier for pos in label_positions]
     else:
         label_position_values = label_positions
+    
+    if all([isinstance(x, float) for x in values]):
+        label_positions, decimal_places = smart_round(label_positions)  # type: ignore
+    else:
+        decimal_places = 0
 
     return AxisConfig(
         label_positions=label_positions,
         label_values=label_position_values,
         decimal_places=decimal_places,
-        min_value=min_value,
-        max_value=max_value,
+        min_value=min_value if min_value is not None else min(label_positions),
+        max_value=max(label_positions),
         multiplier=multiplier,
     )
 
