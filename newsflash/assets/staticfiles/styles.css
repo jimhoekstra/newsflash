@@ -179,10 +179,10 @@ body {
     list-style-type: none;
     margin-top: 1rem;
     border-radius: 0.25rem;
-    box-shadow: 0 14px 30px #181825;
-    border-width: 2px;
+    box-shadow: 0 0 40px hsl(240, 21%, 3%);
+    border-width: 3px;
     border-style: solid;
-    border-color: hsl(115, 34%, 56%);
+    border-color: hsl(115, 24%, 46%);
 }
 
 .notification-out {
