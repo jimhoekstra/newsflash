@@ -11,7 +11,6 @@ class List(Widget):
 
     def get_additional_context(self) -> dict[str, Any]:
         rendered_elements = [element.render() for element in self.elements.elements]
-        print("list additional context:", rendered_elements)
         return {
             "items": rendered_elements,
         }
