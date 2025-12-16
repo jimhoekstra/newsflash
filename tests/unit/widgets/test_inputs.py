@@ -5,8 +5,7 @@ from newsflash.widgets import Select, Input, TextArea, Button
 
 def test_select_init_with_selected():
     select_widget = Select(
-        options=["Option 1", "Option 2", "Option 3"],
-        selected="Option 2"
+        options=["Option 1", "Option 2", "Option 3"], selected="Option 2"
     )
 
     assert select_widget.selected == "Option 2"
@@ -18,8 +17,7 @@ def test_select_init_default():
         return "Option 2"
 
     select_widget = Select(
-        options=["Option 1", "Option 2", "Option 3"],
-        default=default_option
+        options=["Option 1", "Option 2", "Option 3"], default=default_option
     )
 
     assert select_widget.selected == "Option 2"
@@ -29,7 +27,9 @@ def test_select_init_no_default():
     # Test without default function
     select_widget = Select(options=["Option 1", "Option 2", "Option 3"])
 
-    assert select_widget.selected == "Option 1"  # First option should be selected by default
+    assert (
+        select_widget.selected == "Option 1"
+    )  # First option should be selected by default
 
 
 def test_select_no_options():

@@ -1,6 +1,6 @@
 from unittest.mock import patch
 
-from newsflash.widgets.widgets import Widget, WidgetContainer
+from newsflash.widgets.widgets import WidgetContainer
 from newsflash.widgets.charts import Chart
 
 

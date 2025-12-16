@@ -1,6 +1,5 @@
 from typing import Any
 
-from jinja2 import Template
 
 from newsflash.svg.element import Element
 from newsflash.svg.utils import Point, XCoor, YCoor

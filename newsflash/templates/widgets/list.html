@@ -1,3 +1,10 @@
-<ul>
-    {{ content | safe }}
+<ul
+    id="{{ widget_id }}-container"
+    class="newsflash-list"
+>
+    {% for item in items %}
+        <li
+            class="newsflash-list-item"
+        >{{ item | safe }}</li>
+    {% endfor %}
 </ul>

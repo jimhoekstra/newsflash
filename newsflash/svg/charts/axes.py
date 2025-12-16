@@ -50,7 +50,7 @@ def build_y_axis_config(
         label_position_values = [pos / multiplier for pos in label_positions]
     else:
         label_position_values = label_positions
-    
+
     if all([isinstance(x, float) for x in values]):
         label_positions, decimal_places = smart_round(label_positions)  # type: ignore
     else:

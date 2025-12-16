@@ -1,6 +1,5 @@
 from typing import Any, Type, Callable, TypeVar
 
-from jinja2 import Template
 
 from newsflash.svg.element import Element
 from newsflash.endpoints.parsers import RequestValues

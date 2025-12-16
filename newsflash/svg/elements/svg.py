@@ -1,5 +1,3 @@
-from jinja2 import Template
-
 from newsflash.svg.element import ElementGroup
 
 

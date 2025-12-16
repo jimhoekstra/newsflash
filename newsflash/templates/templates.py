@@ -11,6 +11,7 @@ _template_registry: dict[str, Jinja2Templates] = {
     "svg": Jinja2Templates(directory=ROOT_TEMPLATE_DIR / "svg"),
 }
 
+
 def get_template(template_folder: str, template_name: str) -> Template:
     templates = _template_registry[template_folder]
     return templates.get_template(template_name)

@@ -1,6 +1,5 @@
 from typing import Any, Callable
 
-from jinja2 import Template
 
 from .widgets import Widget
 

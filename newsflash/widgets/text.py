@@ -1,4 +1,3 @@
-from jinja2 import Template
 from pydantic import BaseModel
 
 from .widgets import Widget

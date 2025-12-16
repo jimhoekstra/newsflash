@@ -1,5 +1,3 @@
-from jinja2 import Template
-
 from newsflash.svg.utils import Point
 from newsflash.svg.box import Box, scale_point_to_box
 from newsflash.svg.element import Element

@@ -1,7 +1,6 @@
 from typing import Literal
 
 from fontTools.ttLib import TTFont
-from jinja2 import Template
 
 from newsflash.svg.element import Element
 from newsflash.svg.utils import Point, XCoor, YCoor

@@ -22,7 +22,9 @@ class Element(BaseModel):
         context.update(self.get_additional_context())
         assert self.template is not None, "Template is not set."
 
-        template = get_template(template_folder=self.template[0], template_name=self.template[1])
+        template = get_template(
+            template_folder=self.template[0], template_name=self.template[1]
+        )
         return template.render(context)
 
 
@@ -32,7 +34,10 @@ class ElementGroup(Element):
     def append(self, element: Element) -> None:
         self.elements.append(element)
 
-    def extend(self, other: "ElementGroup") -> None:
+    def extend(self, elements: list[Element]) -> None:
+        self.elements.extend(elements)
+
+    def combine(self, other: "ElementGroup") -> None:
         self.elements.extend(other.elements)
 
     def get_additional_context(self) -> dict[str, Any]:
