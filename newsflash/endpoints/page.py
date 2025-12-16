@@ -7,7 +7,7 @@ from jinja2 import Template
 
 from newsflash.widgets.charts import Chart
 from newsflash.widgets.widgets import Widget, get_widget_callback_fn
-from newsflash.widgets.templates import widget_templates
+from newsflash.templates.templates import get_template
 
 
 def build_page_endpoint(
@@ -25,7 +25,7 @@ def build_page_endpoint(
             **rendered_widgets,
         )
 
-        page_template: Template = widget_templates.get_template("index.html")
+        page_template = get_template("widgets", "index.html")
         return page_template.render(
             request=request,
             title=page_title,

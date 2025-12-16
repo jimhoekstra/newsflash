@@ -10,11 +10,10 @@ from newsflash.svg.box import (
     scale_height_to_box,
     scale_point_to_box,
 )
-from newsflash.svg.templates import svg_templates
 
 
 class Rectangle(Element):
-    template: Template = svg_templates.get_template("rect.svg")
+    template: tuple[str, str] = ("svg", "rect.svg")
     top_left: Point
     width: float
     height: float

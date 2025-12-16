@@ -3,11 +3,10 @@ from jinja2 import Template
 from newsflash.svg.utils import Point
 from newsflash.svg.box import Box, scale_point_to_box
 from newsflash.svg.element import Element
-from newsflash.svg.templates import svg_templates
 
 
 class Path(Element):
-    template: Template = svg_templates.get_template("path.svg")
+    template: tuple[str, str] = ("svg", "path.svg")
     points: list[Point]
     path_length: float = 100.0
 

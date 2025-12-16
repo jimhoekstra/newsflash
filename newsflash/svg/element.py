@@ -1,11 +1,12 @@
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict
-from jinja2 import Template
+
+from newsflash.templates.templates import get_template
 
 
 class Element(BaseModel):
-    template: Template | None = None
+    template: tuple[str, str] | None = None
     id: str = ""
     classes: list[str] = []
     styles: list[str] = []
@@ -20,7 +21,9 @@ class Element(BaseModel):
         context = self.model_dump()
         context.update(self.get_additional_context())
         assert self.template is not None, "Template is not set."
-        return self.template.render(context)
+
+        template = get_template(template_folder=self.template[0], template_name=self.template[1])
+        return template.render(context)
 
 
 class ElementGroup(Element):

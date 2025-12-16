@@ -9,13 +9,6 @@ def test_default_on_load():
     assert chart.on_load() == []
 
 
-def test_render_content_calls_super():
-    chart = Chart()
-    with patch.object(Widget, "render") as mock_render:
-        chart.render_content()
-        mock_render.assert_called_once()
-
-
 def test_render_container():
     class DummyChart(Chart):
         id: str = "dummy-chart"

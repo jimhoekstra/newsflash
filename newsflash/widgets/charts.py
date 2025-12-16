@@ -6,13 +6,12 @@ from newsflash.svg.element import ElementGroup
 from newsflash.svg.charts.barchart import build_barchart
 from newsflash.svg.charts.linechart import build_linechart
 from newsflash.svg.charts.histogram import build_histogram
-from newsflash.svg.templates.templates import svg_templates
 
 from .widgets import Widget, WidgetContainer
 
 
 class Chart(Widget):
-    template: Template = svg_templates.get_template("svg.svg")
+    template: tuple[str, str] = ("svg", "svg.svg")
     width: float = 0.0
     height: float = 0.0
     title: str = ""
@@ -31,18 +30,12 @@ class Chart(Widget):
         """Event handler for chart load events."""
         return []
 
-    def render_content(self) -> str:
-        return super().render()
-
     def render_container(self) -> str:
         container = WidgetContainer(
             widget_id=self.id,
         )
         container.hx_include.extend(self.hx_include)
         return container.render()
-
-    def render(self) -> str:
-        return self.render_content()
 
     def get_additional_context(self) -> dict[str, Any]:
         return {

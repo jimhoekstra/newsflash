@@ -2,12 +2,11 @@ from typing import Any, Callable
 
 from jinja2 import Template
 
-from .templates import widget_templates
 from .widgets import Widget
 
 
 class Input(Widget):
-    template: Template = widget_templates.get_template("input.html")
+    template: tuple[str, str] = ("widgets", "input.html")
     value: str = ""
 
     _values_from_request: list[str] = ["value"]
@@ -19,13 +18,13 @@ class Input(Widget):
 
 
 class TextArea(Input):
-    template: Template = widget_templates.get_template("textarea.html")
+    template: tuple[str, str] = ("widgets", "textarea.html")
     rows: int = 7
     spellcheck: bool = False
 
 
 class Select(Widget):
-    template: Template = widget_templates.get_template("select.html")
+    template: tuple[str, str] = ("widgets", "select.html")
     options: list[str] = ["-"]
     selected: str | None = None
     default: Callable[[], str] | None = None
@@ -51,7 +50,7 @@ class Select(Widget):
 
 
 class Button(Widget):
-    template: Template = widget_templates.get_template("button.html")
+    template: tuple[str, str] = ("widgets", "button.html")
     label: str = "Click Me"
     hx_include: list[str] = []
 

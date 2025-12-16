@@ -3,14 +3,13 @@ from typing import Any, Type, Callable, TypeVar
 from jinja2 import Template
 
 from newsflash.svg.element import Element
-from newsflash.widgets.templates import widget_templates
 from newsflash.endpoints.parsers import RequestValues
 
 
 class WidgetContainer(Element):
     widget_id: str
     hx_include: list[str] = []
-    template: Template = widget_templates.get_template("container.html")
+    template: tuple[str, str] = ("widgets", "container.html")
 
 
 class Widget(Element):

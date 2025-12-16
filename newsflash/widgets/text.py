@@ -1,14 +1,18 @@
 from jinja2 import Template
 from pydantic import BaseModel
 
-from .templates import widget_templates
 from .widgets import Widget
 
 
 class ValueDisplay(Widget):
-    template: Template = widget_templates.get_template("value_display.html")
+    template: tuple[str, str] = ("widgets", "value_display.html")
     label: str = ""
     value: str = ""
+
+
+class Paragraph(Widget):
+    template: tuple[str, str] = ("widgets", "paragraph.html")
+    text: str = ""
 
 
 class Notification(BaseModel):
@@ -19,7 +23,7 @@ class Notification(BaseModel):
 
 class Notifications(Widget):
     id: str = "newsflash-notifications-container"
-    template: Template = widget_templates.get_template("notifications.html")
+    template: tuple[str, str] = ("widgets", "notifications.html")
     notifications: list[Notification] = []  # List of notifications to display
 
     def push(self, message: str, level: str = "info", duration: int = 5000) -> None:

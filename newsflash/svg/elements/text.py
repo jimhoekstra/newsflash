@@ -7,7 +7,6 @@ from newsflash.svg.element import Element
 from newsflash.svg.utils import Point, XCoor, YCoor
 from newsflash.svg.box import Box, scale_point_to_box
 from newsflash.svg.utils.fonts import get_text_width
-from newsflash.svg.templates import svg_templates
 
 
 type HorizontalAlign = Literal["left", "center", "right"]
@@ -15,7 +14,7 @@ type VerticalAlign = Literal["top", "middle", "default", "bottom"]
 
 
 class Text(Element):
-    template: Template = svg_templates.get_template("text.svg")
+    template: tuple[str, str] = ("svg", "text.svg")
     pos: Point
     text: str
     width: float

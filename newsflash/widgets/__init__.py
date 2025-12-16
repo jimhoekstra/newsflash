@@ -1,6 +1,7 @@
 from .charts import BarChart, LineChart, Histogram
 from .inputs import Input, TextArea, Button, Select
-from .text import ValueDisplay, Notifications
+from .text import ValueDisplay, Notifications, Paragraph
+from .list import List
 
 __all__ = [
     "BarChart",
@@ -12,4 +13,6 @@ __all__ = [
     "Select",
     "ValueDisplay",
     "Notifications",
+    "Paragraph",
+    "List",
 ]
