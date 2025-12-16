@@ -34,10 +34,7 @@ class ElementGroup(Element):
     def append(self, element: Element) -> None:
         self.elements.append(element)
 
-    def extend(self, elements: list[Element]) -> None:
-        self.elements.extend(elements)
-
-    def combine(self, other: "ElementGroup") -> None:
+    def extend(self, other: "ElementGroup") -> None:
         self.elements.extend(other.elements)
 
     def get_additional_context(self) -> dict[str, Any]:
