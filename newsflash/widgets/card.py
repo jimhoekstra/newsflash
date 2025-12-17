@@ -1,64 +1,64 @@
-from typing import Any, Type
+# from typing import Any, Type
 
-from pydantic import create_model
+# from pydantic import create_model
 
-from .widgets import Widget
-from .inputs import Button
-from .text import Paragraph
-
-
-class CardContent(Paragraph):
-    _parent: "Card | None" = None
+# from .widgets import Widget
+# from .inputs import Button
+# from .text import Paragraph
 
 
-class CardButton(Button):
-    _parent: "Card | None" = None
-
-    _callback_fn_name: str = "on_button_click"
-    _callback_fn_on_parent: bool = True
+# class CardContent(Paragraph):
+#     _parent: "Card | None" = None
 
 
-class Card(Widget):
-    template: tuple[str, str] = ("widgets", "card.html")
-    content: str = ""
-    buttons: list[tuple[str, str]] = []
+# class CardButton(Button):
+#     _parent: "Card | None" = None
 
-    _callback_fn_name: str = "on_button_click"
+#     _callback_fn_name: str = "on_button_click"
+#     _callback_fn_on_parent: bool = True
 
-    def model_post_init(self, context) -> None:
-        card_content = create_model(
-            "CardContent",
-            __base__=CardContent,
-            text=(str, self.content),
-            id=(str, f"{self.id}-content"),
-            _parent=(Type["Card"], self),
-        )
 
-        buttons: list[Type[Widget]] = []
-        for button in self.buttons:
-            card_button = create_model(
-                "CardButton",
-                __base__=CardButton,
-                id=(str, f"{self.id}-button-{button[0]}"),
-                label=(str, button[1]),
-                _parent=(Type["Card"], self),
-            )
-            buttons.append(card_button)
+# class Card(Widget):
+#     template: tuple[str, str] = ("widgets", "card.html")
+#     content: str = ""
+#     buttons: list[tuple[str, str]] = []
 
-        self.components = [
-            card_content,
-        ]
-        self.components.extend(buttons)
+#     _callback_fn_name: str = "on_button_click"
 
-    def modify_context(self, context: dict[str, Any]) -> dict[str, Any]:
-        button_widgets: dict[str, str] = {}
+#     def model_post_init(self, context) -> None:
+#         card_content = create_model(
+#             "CardContent",
+#             __base__=CardContent,
+#             text=(str, self.content),
+#             id=(str, f"{self.id}-content"),
+#             _parent=(Type["Card"], self),
+#         )
 
-        for widget_id, rendered_widget in context.get("widgets", {}).items():
-            if widget_id.startswith(self.id + "-button"):
-                button_widgets[widget_id] = rendered_widget
+#         buttons: list[Type[Widget]] = []
+#         for button in self.buttons:
+#             card_button = create_model(
+#                 "CardButton",
+#                 __base__=CardButton,
+#                 id=(str, f"{self.id}-button-{button[0]}"),
+#                 label=(str, button[1]),
+#                 _parent=(Type["Card"], self),
+#             )
+#             buttons.append(card_button)
 
-        context["button_widgets"] = button_widgets
-        return context
+#         self.components = [
+#             card_content,
+#         ]
+#         self.components.extend(buttons)
 
-    def on_button_click(self, *args, **kwargs) -> list[Widget]:
-        return []
+#     def modify_context(self, context: dict[str, Any]) -> dict[str, Any]:
+#         button_widgets: dict[str, str] = {}
+
+#         for widget_id, rendered_widget in context.get("widgets", {}).items():
+#             if widget_id.startswith(self.id + "-button"):
+#                 button_widgets[widget_id] = rendered_widget
+
+#         context["button_widgets"] = button_widgets
+#         return context
+
+#     def on_button_click(self, *args, **kwargs) -> list[Widget]:
+#         return []

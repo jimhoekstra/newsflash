@@ -29,19 +29,26 @@ class Chart(Widget):
         """Event handler for chart load events."""
         return []
 
-    def render_container(self) -> str:
+    def render(self) -> str:
         container = WidgetContainer(
             widget_id=self.id,
         )
         container.hx_include.extend(self.hx_include)
         return container.render()
 
+    def _render_update(self) -> str:
+        return super().render()
+
     def get_additional_context(self) -> dict[str, Any]:
-        return {
-            "content": "\n    ".join(
-                element.render() for element in self.elements.elements
-            ),
-        }
+        additional_context = super().get_additional_context()
+        additional_context.update(
+            {
+                "content": "\n    ".join(
+                    element.render() for element in self.elements.elements
+                ),
+            }
+        )
+        return additional_context
 
 
 class BarChart(Chart):

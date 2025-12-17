@@ -4,11 +4,11 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
-from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
 from newsflash.widgets.widgets import Widget
 from newsflash.widgets import Notifications
+from newsflash.templates.templates import template_registry
 from newsflash.endpoints.page import build_page_endpoint
 from newsflash.endpoints.callback import build_callback_endpoint
 
@@ -16,49 +16,33 @@ from newsflash.endpoints.callback import build_callback_endpoint
 W = TypeVar("W", bound=Widget)
 
 
-class Page(BaseModel):
+class Page(Widget):
     path: str
     title: str
-    template: str
-    widgets: list[Type[Widget]]
 
 
 class App(FastAPI):
     pages: dict[str, Page]
-    template_dir: Path
 
     def __init__(
         self,
         pages: list[Page],
-        template_dir: Path = Path.cwd() / "templates",
+        template_folders: list[tuple[str, Path]],
     ) -> None:
         super().__init__()
 
         self.pages = {page.path: page for page in pages}
-        self.template_dir = template_dir
 
-        self._add_child_widgets()
+        for folder in template_folders:
+            template_registry.register_template_folder(folder[0], folder[1])
+
         self._build_page_endpoints()
         self._build_callback_endpoints()
-
-    def _add_child_widgets(self):
-        for page in self.pages.values():
-            all_widgets: list[Type[Widget]] = []
-
-            for widget in page.widgets:
-                all_widgets.append(widget)
-
-                # TODO: replace by implementing query_one on Widgets and searching recursively
-                widget_instance = widget()
-                child_widgets = widget_instance.get_components()
-                all_widgets.extend(child_widgets)
-
-            page.widgets = all_widgets
 
     def query_one(self, path: str, type: Type[W], id: str | None = None) -> Type[W]:
         page = self.pages[path]
         widgets_of_type = [
-            widget for widget in page.widgets if issubclass(widget, type)
+            widget for widget in page.children if issubclass(widget, type)
         ]
 
         if id is None:
@@ -83,16 +67,15 @@ class App(FastAPI):
         self.mount(
             "/static", StaticFiles(directory=newsflash_static_dir), name="static"
         )
-        templates = Jinja2Templates(directory=self.template_dir)
 
         for page_path, page in self.pages.items():
-            page.widgets.append(Notifications)  # Automatically add Notification widget
+            assert page.template is not None, "Page template is not set."
+
+            page.children.append(Notifications)  # Automatically add Notification widget
 
             page_endpoint = build_page_endpoint(
-                page_title=page.title,
-                page_template_name=page.template,
-                widgets=page.widgets,
-                templates=templates,
+                page=page,
+                title=page.title,
             )
             self.add_api_route(
                 page_path, page_endpoint, methods=["GET"], response_class=HTMLResponse

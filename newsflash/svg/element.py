@@ -1,8 +1,9 @@
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict
+from fastapi import Request
 
-from newsflash.templates.templates import get_template
+from newsflash.templates.templates import template_registry
 
 
 class Element(BaseModel):
@@ -14,21 +15,21 @@ class Element(BaseModel):
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    def get_additional_context(self) -> dict[str, str]:
+    def get_additional_context(self) -> dict[str, Any]:
         return {}
 
     def modify_context(self, context: dict[str, Any]) -> dict[str, Any]:
         return context
 
-    def render(self, additional_context: dict[str, str] | None = None) -> str:
+    def render(self, request: Request | None = None) -> str:
         context = self.model_dump()
-
+        if request is not None:
+            context["request"] = request
         context.update(self.get_additional_context())
-        if additional_context is not None:
-            context["widgets"] = additional_context
+
         assert self.template is not None, "Template is not set."
 
-        template = get_template(
+        template = template_registry.get_template(
             template_folder=self.template[0], template_name=self.template[1]
         )
 

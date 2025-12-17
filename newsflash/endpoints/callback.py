@@ -1,12 +1,9 @@
-from typing import Callable, get_type_hints, Awaitable, TYPE_CHECKING
-from inspect import signature
+from typing import Callable, Awaitable, TYPE_CHECKING
 
 from fastapi import Request
 
-from newsflash.widgets.widgets import Widget, widget_factory, get_widget_callback_fn
-from newsflash.widgets.list import List
-from .parsers import parse_request_values, RequestValues
-from .page import build_hx_include
+from newsflash.widgets.widgets import Widget
+from .parsers import parse_request_values
 
 if TYPE_CHECKING:
     # Only import for type checking to avoid circular imports
@@ -19,37 +16,11 @@ def build_callback_endpoint(app: "App") -> Callable[..., Awaitable[str]]:
         headers = request.headers
         request_values = parse_request_values(body, headers)
 
-        if request_values.list_element_id is not None:
-            list_element = app.query_one(
-                path=request_values.url_path,
-                type=List,
-                id=request_values.list_type_id,
-            )
-            element = list_element().element_type
-            assert element is not None, "List has no element_type"
-        else:
-            element = app.query_one(
-                path=request_values.url_path, type=Widget, id=widget_id
-            )
+        element = app.query_one(path=request_values.url_path, type=Widget, id=widget_id)
 
-        if request_values.list_element_id is not None:
-            widget_instance = element(id=request_values.list_element_id)
-        else:
-            widget_instance = element()
-        widget_instance._set_values_from_request(request_values)
-
-        if widget_instance._parent is not None:
-            assert widget_instance._parent is not None, "CompositeWidget has no parent"
-            widget_instance._parent._set_values_from_request(request_values)
-
-        callback_fn = get_widget_callback_fn(widget_instance)
-        assert callback_fn is not None, "Widget has no callback function"
-        callback_inputs = _get_callback_inputs(
-            callback_fn=callback_fn,
-            request_values=request_values,
-        )
-
-        widgets_to_render = callback_fn(**callback_inputs)
+        widget_instance = element(request_values=request_values)
+        widget_instance._post_init()
+        widgets_to_render = widget_instance._call_callback()
 
         rendered_widgets = []
         assert isinstance(widgets_to_render, list), (
@@ -58,35 +29,8 @@ def build_callback_endpoint(app: "App") -> Callable[..., Awaitable[str]]:
         for widget in widgets_to_render:
             assert isinstance(widget, Widget), "Callback must return a list of widgets"
             widget.hx_swap_oob = True
-
-            if (callback_fn := get_widget_callback_fn(widget)) is not None:
-                hx_include = build_hx_include(callback_fn)
-                widget.hx_include.extend(hx_include)
-
-            rendered_widgets.append(widget.render())
+            rendered_widgets.append(widget._render_update())
 
         return "\n".join(rendered_widgets)
 
     return callback_endpoint
-
-
-def _get_callback_inputs(
-    callback_fn: Callable,
-    request_values: RequestValues,
-) -> dict[str, Widget]:
-    sig = signature(callback_fn)
-    parameters = sig.parameters
-
-    type_hints = get_type_hints(callback_fn)
-
-    input_dict = {}
-    for param in parameters:
-        if param == "self":
-            continue
-        widget_class = type_hints.get(param, "Unknown")
-        assert issubclass(widget_class, Widget)
-
-        widget_instance = widget_factory(widget_class, request_values=request_values)
-        input_dict[param] = widget_instance
-
-    return input_dict
