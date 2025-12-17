@@ -8,7 +8,6 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
 from newsflash.widgets.widgets import Widget
-from newsflash.widgets.card import CompositeWidget
 from newsflash.widgets import Notifications
 from newsflash.endpoints.page import build_page_endpoint
 from newsflash.endpoints.callback import build_callback_endpoint
@@ -49,10 +48,10 @@ class App(FastAPI):
             for widget in page.widgets:
                 all_widgets.append(widget)
 
-                if issubclass(widget, CompositeWidget):
-                    composite_instance = widget()
-                    child_widgets = composite_instance.get_components()
-                    all_widgets.extend(child_widgets)
+                # TODO: replace by implementing query_one on Widgets and searching recursively
+                widget_instance = widget()
+                child_widgets = widget_instance.get_components()
+                all_widgets.extend(child_widgets)
 
             page.widgets = all_widgets
 

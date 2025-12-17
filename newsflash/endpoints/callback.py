@@ -4,6 +4,7 @@ from inspect import signature
 from fastapi import Request
 
 from newsflash.widgets.widgets import Widget, widget_factory, get_widget_callback_fn
+from newsflash.widgets.list import List
 from .parsers import parse_request_values, RequestValues
 from .page import build_hx_include
 
@@ -18,11 +19,23 @@ def build_callback_endpoint(app: "App") -> Callable[..., Awaitable[str]]:
         headers = request.headers
         request_values = parse_request_values(body, headers)
 
-        chart_element = app.query_one(
-            path=request_values.url_path, type=Widget, id=widget_id
-        )
+        if request_values.list_element_id is not None:
+            list_element = app.query_one(
+                path=request_values.url_path,
+                type=List,
+                id=request_values.list_type_id,
+            )
+            element = list_element().element_type
+            assert element is not None, "List has no element_type"
+        else:
+            element = app.query_one(
+                path=request_values.url_path, type=Widget, id=widget_id
+            )
 
-        widget_instance = chart_element()
+        if request_values.list_element_id is not None:
+            widget_instance = element(id=request_values.list_element_id)
+        else:
+            widget_instance = element()
         widget_instance._set_values_from_request(request_values)
 
         if widget_instance._parent is not None:

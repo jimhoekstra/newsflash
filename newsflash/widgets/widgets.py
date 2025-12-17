@@ -1,5 +1,5 @@
-from typing import Any, Type, Callable, TypeVar
-
+from typing import Any, Type, Callable, TypeVar, get_type_hints
+from inspect import signature
 
 from newsflash.svg.element import Element
 from newsflash.endpoints.parsers import RequestValues
@@ -15,6 +15,7 @@ class Widget(Element):
     hx_include: list[str] = []
     hx_swap_oob: bool = False
 
+    components: list[Type["Widget"]] = []
     request_values: RequestValues | None = None
 
     _values_from_request: list[str] = []
@@ -41,6 +42,15 @@ class Widget(Element):
             self._set_value_from_request(key, inputs.widget_attributes)
 
         self.request_values = inputs
+
+    def get_components(self) -> list[Type["Widget"]]:
+        return self.components
+
+    def render(self, additional_context: dict[str, str] | None = None) -> str:
+        child_widgets = self.get_components()
+        rendered_child_widgets = _build_rendered_widgets(child_widgets)
+
+        return super().render(additional_context=rendered_child_widgets)
 
 
 W = TypeVar("W", bound=Widget)
@@ -73,3 +83,40 @@ def get_widget_callback_fn(
     )
 
     return callback_fn
+
+
+def build_hx_include(callback_fn: Callable) -> list[str]:
+    sig = signature(callback_fn)
+    parameters = sig.parameters
+
+    type_hints = get_type_hints(callback_fn)
+
+    include_list: list[str] = []
+    for param in parameters:
+        if param == "self":
+            continue
+        type_hint = type_hints[param]
+
+        assert issubclass(type_hint, Widget)
+        widget_instance = type_hint()
+        include_list.append(f"#{widget_instance.id}")
+
+    include_list.append("closest .newsflash-list-item")
+    return include_list
+
+
+def _build_rendered_widgets(widgets: list[Type[Widget]]) -> dict[str, str]:
+    rendered_widgets: dict[str, str] = {}
+
+    for widget_cls in widgets:
+        widget_instance = widget_cls()
+
+        if (callback_fn := get_widget_callback_fn(widget_instance)) is not None:
+            hx_include = build_hx_include(callback_fn)
+            widget_instance.hx_include.extend(hx_include)
+
+        rendered_widget = widget_instance.render()
+
+        rendered_widgets[widget_instance.id] = rendered_widget
+
+    return rendered_widgets

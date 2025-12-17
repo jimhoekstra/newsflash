@@ -6,7 +6,6 @@ from fastapi.templating import Jinja2Templates
 from jinja2 import Template
 
 from newsflash.widgets.charts import Chart
-from newsflash.widgets.card import CompositeWidget
 from newsflash.widgets.widgets import Widget, get_widget_callback_fn
 from newsflash.templates.templates import get_template
 
@@ -52,6 +51,7 @@ def build_hx_include(callback_fn: Callable) -> list[str]:
         widget_instance = type_hint()
         include_list.append(f"#{widget_instance.id}")
 
+    include_list.append("closest .newsflash-list-item")
     return include_list
 
 
@@ -67,12 +67,6 @@ def _build_rendered_widgets(widgets: list[Type[Widget]]) -> dict[str, str]:
 
         if isinstance(widget_instance, Chart):
             rendered_widget = widget_instance.render_container()
-        elif isinstance(widget_instance, CompositeWidget):
-            child_widgets = widget_instance.get_components()
-            rendered_child_widgets = _build_rendered_widgets(child_widgets)
-            rendered_widget = widget_instance.render(
-                additional_context=rendered_child_widgets
-            )
         else:
             rendered_widget = widget_instance.render()
 

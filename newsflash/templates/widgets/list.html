@@ -1,11 +1,15 @@
 <ul
-    id="{{ widget_id }}-container"
+    id="{{ id }}"
     class="newsflash-list"
     {% if hx_swap_oob %}hx-swap-oob="true"{% endif %}
 >
     {% for item in items %}
         <li
             class="newsflash-list-item"
-        >{{ item | safe }}</li>
+        >
+            <input type="hidden" name="list_type_id" value="{{ id }}">
+            <input type="hidden" name="list_element_id" value="{{ item.id }}">
+            {{ item.content | safe }}
+        </li>
     {% endfor %}
 </ul>

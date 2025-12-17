@@ -7,14 +7,6 @@ from .inputs import Button
 from .text import Paragraph
 
 
-
-class CompositeWidget(Widget):
-    components: list[Type[Widget]] = []
-
-    def get_components(self) -> list[Type[Widget]]:
-        return self.components
-
-
 class CardContent(Paragraph):
     _parent: "Card | None" = None
 
@@ -26,10 +18,12 @@ class CardButton(Button):
     _callback_fn_on_parent: bool = True
 
 
-class Card(CompositeWidget):
+class Card(Widget):
     template: tuple[str, str] = ("widgets", "card.html")
     content: str = ""
     buttons: list[tuple[str, str]] = []
+
+    _callback_fn_name: str = "on_button_click"
 
     def model_post_init(self, context) -> None:
         card_content = create_model(
