@@ -4,7 +4,6 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
-from pydantic import BaseModel
 
 from newsflash.widgets.widgets import Widget
 from newsflash.widgets import Notifications
@@ -28,6 +27,7 @@ class App(FastAPI):
         self,
         pages: list[Page],
         template_folders: list[tuple[str, Path]],
+        static_folders: list[tuple[str, Path]] = [],
     ) -> None:
         super().__init__()
 
@@ -36,38 +36,26 @@ class App(FastAPI):
         for folder in template_folders:
             template_registry.register_template_folder(folder[0], folder[1])
 
+        static_folders.append(
+            ("/_newsflash/static", Path(__file__).parent / "assets" / "staticfiles")
+        )
+        self._mount_static_folders(static_folders)
+
         self._build_page_endpoints()
         self._build_callback_endpoints()
 
     def query_one(self, path: str, type: Type[W], id: str | None = None) -> Type[W]:
         page = self.pages[path]
-        widgets_of_type = [
-            widget for widget in page.children if issubclass(widget, type)
-        ]
-
-        if id is None:
-            if len(widgets_of_type) == 1:
-                return widgets_of_type[0]
-            elif len(widgets_of_type) > 1:
-                raise ValueError(
-                    f"Multiple widgets of type {type} found on page {path}, "
-                    f"please specify an id"
-                )
-        else:
-            for widget in widgets_of_type:
-                if widget().id == id:
-                    return widget
-
-        raise ValueError(f"Widget not found: {type} with id {id} on page {path}")
+        return page.query_one(type=type, id=id)
+    
+    def _mount_static_folders(self, static_folders: list[tuple[str, Path]]) -> None:
+        for mount_path, directory in static_folders:
+            self.mount(
+                mount_path,
+                StaticFiles(directory=directory),
+            )
 
     def _build_page_endpoints(self):
-        newsflash_static_dir = (
-            Path(__file__).resolve().parent / "assets" / "staticfiles"
-        )
-        self.mount(
-            "/static", StaticFiles(directory=newsflash_static_dir), name="static"
-        )
-
         for page_path, page in self.pages.items():
             assert page.template is not None, "Page template is not set."
 
