@@ -47,7 +47,7 @@ class App(FastAPI):
     def query_one(self, path: str, type: Type[W], id: str | None = None) -> Type[W]:
         page = self.pages[path]
         return page.query_one(type=type, id=id)
-    
+
     def _mount_static_folders(self, static_folders: list[tuple[str, Path]]) -> None:
         for mount_path, directory in static_folders:
             self.mount(

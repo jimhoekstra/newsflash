@@ -43,11 +43,11 @@ class Widget(Element):
             The type of the widget to query.
         id
             The optional id of the widget to query.
-        
+
         Returns
         -------
         The widget class matching the specified type and id.
-        
+
         Raises
         ------
         ValueError
@@ -62,8 +62,7 @@ class Widget(Element):
                 return widgets_of_type[0]
             elif len(widgets_of_type) > 1:
                 raise ValueError(
-                    f"Multiple widgets of type {type} found, "
-                    f"please specify an id"
+                    f"Multiple widgets of type {type} found, please specify an id"
                 )
         else:
             for widget in widgets_of_type:
@@ -140,7 +139,7 @@ class Widget(Element):
 
     def _set_values_from_request(self, inputs: RequestValues) -> None:
         """Sets the widget's attributes from the request values.
-        
+
         Parameters
         ----------
         inputs
@@ -153,7 +152,7 @@ class Widget(Element):
 
     def _get_callback_fn(self) -> Callable | None:
         """Returns the callback function of the current widget if defined, else None.
-        
+
         Returns
         -------
         The callback function or None.
@@ -172,7 +171,7 @@ class Widget(Element):
 
     def _get_callback_inputs(self) -> dict[str, "Widget"]:
         """Returns a dictionary of widget instances to be used as inputs for the callback function.
-        
+
         Returns
         -------
         A dictionary mapping parameter names to widget instances.
@@ -201,7 +200,7 @@ class Widget(Element):
 
     def _call_callback(self) -> list["Widget"]:
         """Calls the callback function of the widget and returns the list of widgets to render.
-        
+
         Returns
         -------
         A list of widgets to render as a result of the callback.
@@ -214,7 +213,7 @@ class Widget(Element):
 
     def _render_update(self) -> str:
         """Renders the widget for an update after a callback.
-        
+
         Returns
         -------
         The rendered HTML string of the widget.
