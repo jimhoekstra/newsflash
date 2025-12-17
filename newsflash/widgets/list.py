@@ -1,6 +1,6 @@
 from typing import Any
 
-from newsflash.svg.element import Element, ElementGroup
+from newsflash.svg.element import ElementGroup
 
 from .widgets import Widget
 

@@ -25,6 +25,10 @@ def build_callback_endpoint(app: "App") -> Callable[..., Awaitable[str]]:
         widget_instance = chart_element()
         widget_instance._set_values_from_request(request_values)
 
+        if widget_instance._parent is not None:
+            assert widget_instance._parent is not None, "CompositeWidget has no parent"
+            widget_instance._parent._set_values_from_request(request_values)
+
         callback_fn = get_widget_callback_fn(widget_instance)
         assert callback_fn is not None, "Widget has no callback function"
         callback_inputs = _get_callback_inputs(

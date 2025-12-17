@@ -17,15 +17,24 @@ class Element(BaseModel):
     def get_additional_context(self) -> dict[str, str]:
         return {}
 
-    def render(self) -> str:
+    def modify_context(self, context: dict[str, Any]) -> dict[str, Any]:
+        return context
+
+    def render(self, additional_context: dict[str, str] | None = None) -> str:
         context = self.model_dump()
+
         context.update(self.get_additional_context())
+        if additional_context is not None:
+            context["widgets"] = additional_context
         assert self.template is not None, "Template is not set."
 
         template = get_template(
             template_folder=self.template[0], template_name=self.template[1]
         )
-        return template.render(context)
+
+        context = self.modify_context(context)
+        rendered = template.render(context)
+        return rendered
 
 
 class ElementGroup(Element):

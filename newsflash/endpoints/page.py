@@ -6,7 +6,7 @@ from fastapi.templating import Jinja2Templates
 from jinja2 import Template
 
 from newsflash.widgets.charts import Chart
-from newsflash.widgets.list import List
+from newsflash.widgets.card import CompositeWidget
 from newsflash.widgets.widgets import Widget, get_widget_callback_fn
 from newsflash.templates.templates import get_template
 
@@ -23,7 +23,7 @@ def build_page_endpoint(
         template: Template = templates.get_template(page_template_name)
         rendered_content = template.render(
             request=request,
-            **rendered_widgets,
+            widgets=rendered_widgets,
         )
 
         page_template = get_template("widgets", "index.html")
@@ -67,8 +67,15 @@ def _build_rendered_widgets(widgets: list[Type[Widget]]) -> dict[str, str]:
 
         if isinstance(widget_instance, Chart):
             rendered_widget = widget_instance.render_container()
+        elif isinstance(widget_instance, CompositeWidget):
+            child_widgets = widget_instance.get_components()
+            rendered_child_widgets = _build_rendered_widgets(child_widgets)
+            rendered_widget = widget_instance.render(
+                additional_context=rendered_child_widgets
+            )
         else:
             rendered_widget = widget_instance.render()
-        rendered_widgets[widget_cls.__name__] = rendered_widget
+
+        rendered_widgets[widget_instance.id] = rendered_widget
 
     return rendered_widgets

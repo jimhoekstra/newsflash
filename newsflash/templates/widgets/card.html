@@ -1,0 +1,12 @@
+<div
+    id="{{ id }}"
+    class="newsflash-card"
+    {% if hx_swap_oob %}hx-swap-oob="true"{% endif %}
+>
+    {{ widgets[id + "-content"] | safe }}
+    <div style="display: flex; gap: 1rem;">
+        {% for button_widget in button_widgets.values() %}
+            {{ button_widget | safe }}
+        {% endfor %}
+    </div>
+</div>

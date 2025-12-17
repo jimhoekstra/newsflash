@@ -8,6 +8,7 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
 from newsflash.widgets.widgets import Widget
+from newsflash.widgets.card import CompositeWidget
 from newsflash.widgets import Notifications
 from newsflash.endpoints.page import build_page_endpoint
 from newsflash.endpoints.callback import build_callback_endpoint
@@ -37,8 +38,23 @@ class App(FastAPI):
         self.pages = {page.path: page for page in pages}
         self.template_dir = template_dir
 
+        self._add_child_widgets()
         self._build_page_endpoints()
         self._build_callback_endpoints()
+
+    def _add_child_widgets(self):
+        for page in self.pages.values():
+            all_widgets: list[Type[Widget]] = []
+
+            for widget in page.widgets:
+                all_widgets.append(widget)
+
+                if issubclass(widget, CompositeWidget):
+                    composite_instance = widget()
+                    child_widgets = composite_instance.get_components()
+                    all_widgets.extend(child_widgets)
+
+            page.widgets = all_widgets
 
     def query_one(self, path: str, type: Type[W], id: str | None = None) -> Type[W]:
         page = self.pages[path]

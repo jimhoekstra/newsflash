@@ -1,6 +1,7 @@
 <ul
     id="{{ widget_id }}-container"
     class="newsflash-list"
+    {% if hx_swap_oob %}hx-swap-oob="true"{% endif %}
 >
     {% for item in items %}
         <li

@@ -15,8 +15,13 @@ class Widget(Element):
     hx_include: list[str] = []
     hx_swap_oob: bool = False
 
+    request_values: RequestValues | None = None
+
     _values_from_request: list[str] = []
     _callback_fn_name: str | None = None
+    _callback_fn_on_parent: bool = False
+
+    _parent: "Widget | None" = None
 
     def _set_value_from_request(self, key: str, inputs: dict[str, Any]) -> None:
         current_value = getattr(self, key, None)
@@ -35,6 +40,8 @@ class Widget(Element):
         for key in self._values_from_request:
             self._set_value_from_request(key, inputs.widget_attributes)
 
+        self.request_values = inputs
+
 
 W = TypeVar("W", bound=Widget)
 
@@ -52,7 +59,15 @@ def get_widget_callback_fn(
     if callback_fn_name is None:
         return None
 
-    callback_fn = getattr(widget, callback_fn_name, None)
+    if widget._callback_fn_on_parent:
+        assert widget._parent is not None, (
+            "Widget has no parent to get callback function from"
+        )
+        parent_widget = widget._parent
+        callback_fn = getattr(parent_widget, callback_fn_name, None)
+    else:
+        callback_fn = getattr(widget, callback_fn_name, None)
+
     assert callback_fn is not None, (
         f"Widget has no callback function '{callback_fn_name}'"
     )
