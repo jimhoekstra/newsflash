@@ -10,6 +10,7 @@ from newsflash.widgets import Notifications
 from newsflash.templates.templates import template_registry
 from newsflash.endpoints.page import build_page_endpoint
 from newsflash.endpoints.callback import build_callback_endpoint
+from newsflash.endpoints.parsers import RequestValues
 
 
 W = TypeVar("W", bound=Widget)
@@ -44,9 +45,16 @@ class App(FastAPI):
         self._build_page_endpoints()
         self._build_callback_endpoints()
 
-    def query_one(self, path: str, type: Type[W], id: str | None = None) -> Type[W]:
+    def query_one(
+        self,
+        path: str,
+        type: Type[W],
+        id: str,
+        request_values: RequestValues | None = None,
+    ) -> W:
         page = self.pages[path]
-        return page.query_one(type=type, id=id)
+        id = id.removeprefix(f"{page.id}/")
+        return page.get_child_widget(type=type, id=id, request_values=request_values)
 
     def _mount_static_folders(self, static_folders: list[tuple[str, Path]]) -> None:
         for mount_path, directory in static_folders:
@@ -73,7 +81,7 @@ class App(FastAPI):
         callback_endpoint = build_callback_endpoint(self)
 
         self.add_api_route(
-            "/_newsflash/{widget_id}",
+            "/{widget_id:path}",
             callback_endpoint,
             methods=["POST"],
             response_class=HTMLResponse,

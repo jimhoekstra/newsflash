@@ -30,7 +30,7 @@
             value="{{ selected }}"
             autocomplete="off"
             hx-trigger="selectedByClick"
-            hx-post="/_newsflash/{{ id }}"
+            hx-post="{{ full_path }}"
             hx-swap="none"
             hx-include="{{ hx_include|join(', ') }}"
             {% if hx_swap_oob %}hx-swap-oob="true"{% endif %}

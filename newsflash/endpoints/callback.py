@@ -16,10 +16,13 @@ def build_callback_endpoint(app: "App") -> Callable[..., Awaitable[str]]:
         headers = request.headers
         request_values = parse_request_values(body, headers)
 
-        element = app.query_one(path=request_values.url_path, type=Widget, id=widget_id)
+        widget_instance = app.query_one(
+            path=request_values.url_path,
+            type=Widget,
+            id=widget_id,
+            request_values=request_values,
+        )
 
-        widget_instance = element(request_values=request_values)
-        widget_instance._post_init()
         widgets_to_render = widget_instance._call_callback()
 
         rendered_widgets = []

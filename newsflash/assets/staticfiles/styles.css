@@ -190,11 +190,11 @@ li {
 }
 
 .notification-out {
-    animation: notificationOut 500ms forwards;
+    animation: notificationOut 1000ms forwards;
 }
 
 @keyframes notificationOut {
     to {
-        transform: translateX(150%);
+        transform: translateX(120%);
     }
 }

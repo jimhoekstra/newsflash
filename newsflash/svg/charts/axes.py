@@ -26,7 +26,7 @@ class AxisConfig(BaseModel):
         if all(isinstance(label, str) for label in self.label_values):
             return self.label_values  # type: ignore
         else:
-            return [f"{num:.{self.decimal_places}f}" for num in self.label_values]
+            return [f"{num:,.{self.decimal_places}f}" for num in self.label_values]
 
 
 class AxesConfig(BaseModel):

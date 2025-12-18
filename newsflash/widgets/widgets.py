@@ -19,6 +19,7 @@ class Widget(Element):
     hx_swap_oob: bool = False
 
     children: list[Type["Widget"]] = []
+    parent: "Widget | None" = None
     request_values: RequestValues | None = None
 
     _values_from_request: list[str] = []
@@ -34,7 +35,12 @@ class Widget(Element):
         if self.request_values is not None:
             self._set_values_from_request(self.request_values)
 
-    def query_one(self, type: Type[W], id: str | None = None) -> Type[W]:
+    def get_child_widget(
+        self,
+        type: Type[W],
+        id: str,
+        request_values: RequestValues | None = None,
+    ) -> W:
         """Queries for a single child widget of the specified type and optional id.
 
         Parameters
@@ -57,19 +63,48 @@ class Widget(Element):
             widget for widget in self.children if issubclass(widget, type)
         ]
 
-        if id is None:
-            if len(widgets_of_type) == 1:
-                return widgets_of_type[0]
-            elif len(widgets_of_type) > 1:
-                raise ValueError(
-                    f"Multiple widgets of type {type} found, please specify an id"
-                )
-        else:
+        id_split = id.split("/")
+
+        if len(id_split) == 1:
             for widget in widgets_of_type:
-                if widget().id == id:
-                    return widget
+                widget_instance = widget(
+                    request_values=request_values,
+                    parent=self,
+                )
+
+                if widget_instance.id == id:
+                    widget_instance._post_init()
+                    return widget_instance
+
+        remaining_id = "/".join(id_split[1:])
+        for widget in widgets_of_type:
+            widget_instance = widget(
+                request_values=request_values,
+                parent=self,
+            )
+
+            if widget_instance.id == id_split[0]:
+                widget_instance._post_init()
+                return widget_instance.get_child_widget(
+                    type=type,
+                    id=remaining_id,
+                    request_values=request_values,
+                )
 
         raise ValueError(f"Widget not found: {type} with id {id}")
+
+    @property
+    def full_path(self) -> str:
+        """Returns the full path of the widget based on its parent hierarchy.
+
+        Returns
+        -------
+        The full path of the widget.
+        """
+        if self.parent is not None:
+            return f"{self.parent.full_path}/{self.id}"
+        else:
+            return self.id.removesuffix("/")
 
     def get_additional_context(self) -> dict[str, Any]:
         """Returns additional context for rendering the widget.
@@ -82,13 +117,15 @@ class Widget(Element):
         """
         additional_context = super().get_additional_context()
 
-        children_instances = [child() for child in self.children]
+        children_instances = [child(parent=self) for child in self.children]
         for child in children_instances:
             child._post_init()
 
         rendered_children = {child.id: child.render() for child in children_instances}
 
         additional_context.update({"widgets": rendered_children})
+        additional_context.update({"full_path": self.full_path})
+
         return additional_context
 
     def _build_hx_include(self) -> None:
@@ -151,7 +188,7 @@ class Widget(Element):
         self.request_values = inputs
 
     def _get_callback_fn(self) -> Callable | None:
-        """Returns the callback function of the current widget if defined, else None.
+        """Get the callback function of the widget if defined.
 
         Returns
         -------
@@ -199,7 +236,7 @@ class Widget(Element):
         return input_dict
 
     def _call_callback(self) -> list["Widget"]:
-        """Calls the callback function of the widget and returns the list of widgets to render.
+        """Calls the callback function of the widget.
 
         Returns
         -------
@@ -218,4 +255,5 @@ class Widget(Element):
         -------
         The rendered HTML string of the widget.
         """
+        self.hx_swap_oob = True
         return self.render()

@@ -21,13 +21,23 @@ class Element(BaseModel):
     def modify_context(self, context: dict[str, Any]) -> dict[str, Any]:
         return context
 
-    def render(self, request: Request | None = None) -> str:
+    def render(
+        self,
+        request: Request | None = None,
+        additional_context: dict[str, Any] | None = None,
+    ) -> str:
         context = self.model_dump()
+
         if request is not None:
             context["request"] = request
         context.update(self.get_additional_context())
 
-        assert self.template is not None, "Template is not set."
+        if additional_context is not None:
+            context.update(additional_context)
+
+        assert self.template is not None, (
+            f"Element with ID '{self.id}' has no template defined"
+        )
 
         template = template_registry.get_template(
             template_folder=self.template[0], template_name=self.template[1]

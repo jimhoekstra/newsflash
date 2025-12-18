@@ -1,7 +1,7 @@
 <div
     id="{{ widget_id }}-container"
     class="newsflash-widget-container"
-    hx-post="/_newsflash/{{ widget_id }}"
+    hx-post="{{ full_path }}"
     hx-trigger="revealed delay:50ms, resizeChart delay:250ms"
     hx-swap="none"
     hx-include="{{ hx_include|join(', ') }}"

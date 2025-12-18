@@ -1,5 +1,6 @@
 from typing import Any
 
+from fastapi import Request
 
 from newsflash.svg.element import ElementGroup
 from newsflash.svg.charts.barchart import build_barchart
@@ -29,12 +30,17 @@ class Chart(Widget):
         """Event handler for chart load events."""
         return []
 
-    def render(self) -> str:
+    def render(self, request: Request | None = None) -> str:
         container = WidgetContainer(
             widget_id=self.id,
         )
         container.hx_include.extend(self.hx_include)
-        return container.render()
+
+        context = self.get_additional_context()
+        if request is not None:
+            context["request"] = request
+
+        return container.render(request=request, additional_context=context)
 
     def _render_update(self) -> str:
         return super().render()
