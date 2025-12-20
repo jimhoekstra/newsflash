@@ -8,6 +8,8 @@ class ValueDisplay(Widget):
     label: str = ""
     value: str = ""
 
+    _values_from_request: list[str] = ["label", "value"]
+
 
 class Paragraph(Widget):
     template: tuple[str, str] = ("widgets", "paragraph.html")

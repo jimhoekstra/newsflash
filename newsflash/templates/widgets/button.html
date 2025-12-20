@@ -1,7 +1,7 @@
 <button
     id="{{ id }}"
     class="newsflash-button"
-    hx-post="/_newsflash/{{ id }}"
+    hx-post="{{ full_path }}"
     hx-trigger="click"
     hx-swap="none"
     hx-include="{{ hx_include|join(', ') }}"

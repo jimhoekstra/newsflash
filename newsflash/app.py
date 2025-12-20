@@ -1,16 +1,14 @@
 from typing import Type, TypeVar
 from pathlib import Path
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 
 from newsflash.widgets.widgets import Widget
 from newsflash.widgets import Notifications
 from newsflash.templates.templates import template_registry
-from newsflash.endpoints.page import build_page_endpoint
-from newsflash.endpoints.callback import build_callback_endpoint
-from newsflash.endpoints.parsers import RequestValues
+from newsflash.endpoints.parsers import RequestValues, parse_request_values
 
 
 W = TypeVar("W", bound=Widget)
@@ -69,16 +67,47 @@ class App(FastAPI):
 
             page.children.append(Notifications)  # Automatically add Notification widget
 
-            page_endpoint = build_page_endpoint(
-                page=page,
-                title=page.title,
-            )
+            async def page_endpoint(request: Request) -> str:
+                rendered_content = page.render(request=request)
+
+                page_template = template_registry.get_template("widgets", "index.html")
+                return page_template.render(
+                    request=request,
+                    title=page.title,
+                    content=rendered_content,
+                )
+
             self.add_api_route(
                 page_path, page_endpoint, methods=["GET"], response_class=HTMLResponse
             )
 
     def _build_callback_endpoints(self):
-        callback_endpoint = build_callback_endpoint(self)
+        async def callback_endpoint(request: Request, widget_id: str) -> str:
+            body = await request.form()
+            headers = request.headers
+            request_values = parse_request_values(body, headers)
+
+            widget_instance = self.query_one(
+                path=request_values.url_path,
+                type=Widget,
+                id=widget_id,
+                request_values=request_values,
+            )
+
+            widgets_to_render = widget_instance._call_callback()
+
+            rendered_widgets = []
+            assert isinstance(widgets_to_render, list), (
+                "Callback must return a list of widgets"
+            )
+            for widget in widgets_to_render:
+                assert isinstance(widget, Widget), (
+                    "Callback must return a list of widgets"
+                )
+                widget.hx_swap_oob = True
+                rendered_widgets.append(widget._render_update())
+
+            return "\n".join(rendered_widgets)
 
         self.add_api_route(
             "/{widget_id:path}",

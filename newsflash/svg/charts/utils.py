@@ -69,18 +69,20 @@ def nice_ceil(x: float, reference: float, divisible_by: int) -> float:
     result = ceil(x / factor) * factor
 
     is_result_divisible = (
-        (result % divisible_by) == 0
-        and order_of_magnitude_for_significant_figures(result / divisible_by) >= oom - 1
-    )
+        result % divisible_by
+    ) == 0 and order_of_magnitude_for_significant_figures(
+        result / divisible_by
+    ) >= oom - 1
 
     while not is_result_divisible:
         result += factor
 
         is_result_divisible = (
-            (result % divisible_by) == 0
-            and order_of_magnitude_for_significant_figures(result / divisible_by) >= oom - 1
-        )
-    
+            result % divisible_by
+        ) == 0 and order_of_magnitude_for_significant_figures(
+            result / divisible_by
+        ) >= oom - 1
+
     return result
 
 

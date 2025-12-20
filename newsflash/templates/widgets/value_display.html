@@ -3,6 +3,8 @@
     class="newsflash-value-display"
     {% if hx_swap_oob %}hx-swap-oob="true"{% endif %}
 >
+    <input type="hidden" name="{{ id }}-label" value="{{ label }}">
+    <input type="hidden" name="{{ id }}-value" value="{{ value }}">
     <p class="newsflash-value-display-label">{{ label }}</p>
     <p class="newsflash-value-display-value">{{ value }}</p>
 </div>

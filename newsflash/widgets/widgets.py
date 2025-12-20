@@ -182,8 +182,13 @@ class Widget(Element):
         inputs
             The request values containing the input data.
         """
+        attributes = {
+            k: v
+            for k, v in inputs.widget_attributes.items()
+            if k.startswith(f"{self.id}-")
+        }
         for key in self._values_from_request:
-            self._set_value_from_request(key, inputs.widget_attributes)
+            self._set_value_from_request(key, attributes)
 
         self.request_values = inputs
 
