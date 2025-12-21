@@ -6,6 +6,7 @@ from .widgets import Widget
 
 W = TypeVar("W", bound=Widget)
 
+
 class List(Widget, Generic[W]):
     """A widget that displays a list of items."""
 
@@ -13,71 +14,44 @@ class List(Widget, Generic[W]):
     items: list[W] = []
     template: tuple[str, str] | None = ("widgets", "list.html")
 
+    include_in_context: set[str] = {"id", "hx_include", "hx_swap_oob"}
+
     def get_list_item_by_id(self, item_id: str) -> W | None:
-        """Gets a list item by its ID.
-
-        Parameters
-        ----------
-        item_id
-            The ID of the list item to retrieve.
-
-        Returns
-        -------
-        The list item with the specified ID, or None if not found.
-        """
         for item in self.items:
             if item.id == item_id:
                 return item
         return None
-    
+
     def get_list_item_by_index(self, index: int) -> W | None:
-        """Gets a list item by its index.
-
-        Parameters
-        ----------
-        index
-            The index of the list item to retrieve.
-
-        Returns
-        -------
-        The list item at the specified index, or None if index is out of range.
-        """
         if 0 <= index < len(self.items):
             return self.items[index]
         return None
-    
+
     @property
     def num_items(self) -> int:
         """Returns the number of items in the list."""
         return len(self.items)
- 
-    def set_items(self, items: list[W]) -> Self:
+
+    def set_items(self, items: list[W]) -> None:
         self.items = items
 
     def append_item(self, item: W) -> Self:
         self.items.append(item)
         return self
-    
+
     def filter_items(self, filter_fn: Callable[[W], bool]) -> Self:
         filtered_items = [item for item in self.items if filter_fn(item)]
         return self.model_copy(update={"items": filtered_items})
 
     def get_additional_context(self) -> dict[str, Any]:
-        """Returns additional context for rendering the widget.
+        for child in self.items:
+            child.parent = self
 
-        Returns
-        -------
-        A dictionary containing the additional context.
-        """
-        additional_context = super().get_additional_context()
+        # TODO: figure out why this assignment complains
+        self.children = self.items  # type: ignore
 
-        rendered_children = {child.id: child.render() for child in self.items}
+        return super().get_additional_context()
 
-        additional_context.update({"widgets": rendered_children})
-        additional_context.update({"full_path": self.full_path})
-
-        return additional_context
-    
     def _set_values_from_request(self, inputs: RequestValues) -> None:
         super()._set_values_from_request(inputs)
         items: list[W] = []
@@ -92,8 +66,34 @@ class List(Widget, Generic[W]):
                 parent=self,
             )
             item_widget._post_init()
-            
+
             items.append(item_widget)
             item_idx += 1
 
         self.items = items
+
+    def get_child_widget(
+        self, type: type[W], id: str, request_values: RequestValues | None = None
+    ) -> W:
+        child_type = self.item_type
+        assert issubclass(child_type, type), (
+            f"Child type {child_type} is not a subclass of {type}"
+        )
+
+        item_id_split = id.split("/")
+
+        widget_instance = child_type(
+            id=item_id_split[0],
+            request_values=request_values,
+            parent=self,
+        )
+        widget_instance._post_init()
+
+        if len(item_id_split) == 1:
+            return widget_instance
+        else:
+            return widget_instance.get_child_widget(
+                type=type,
+                id="/".join(item_id_split[1:]),
+                request_values=request_values,
+            )

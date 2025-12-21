@@ -3,5 +3,6 @@
     class="newsflash-paragraph"
     {% if hx_swap_oob %}hx-swap-oob="true"{% endif %}
 >
+    <input type="hidden" name="{{ id }}-text" value="{{ text }}">
     {{ text }}
 </p>

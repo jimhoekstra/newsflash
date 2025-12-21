@@ -65,7 +65,9 @@ class App(FastAPI):
         for page_path, page in self.pages.items():
             assert page.template is not None, "Page template is not set."
 
-            page.children.append(Notifications)  # Automatically add Notification widget
+            page.children.append(
+                Notifications()
+            )  # Automatically add Notification widget
 
             async def page_endpoint(request: Request) -> str:
                 rendered_content = page.render(request=request)

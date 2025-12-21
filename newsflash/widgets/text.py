@@ -15,6 +15,10 @@ class Paragraph(Widget):
     template: tuple[str, str] = ("widgets", "paragraph.html")
     text: str = ""
 
+    include_in_context: set[str] = {"id", "value", "hx_include", "hx_swap_oob", "text"}
+
+    _values_from_request: list[str] = ["text"]
+
 
 class Notification(BaseModel):
     message: str = ""

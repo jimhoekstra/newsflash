@@ -9,6 +9,9 @@ from newsflash.templates.templates import template_registry
 class Element(BaseModel):
     template: tuple[str, str] | None = None
     id: str = ""
+
+    include_in_context: set[str] = set()
+
     classes: list[str] = []
     styles: list[str] = []
     attributes: dict[str, str] = {}
@@ -26,7 +29,7 @@ class Element(BaseModel):
         request: Request | None = None,
         additional_context: dict[str, Any] | None = None,
     ) -> str:
-        context = self.model_dump()
+        context = self.model_dump(include=self.include_in_context)
 
         if request is not None:
             context["request"] = request
