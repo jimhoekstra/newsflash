@@ -1,4 +1,4 @@
-from math import floor, log10, ceil
+from math import floor, log10, ceil, isclose
 from decimal import Decimal
 
 
@@ -12,7 +12,7 @@ def order_of_magnitude(value: float) -> int:
 
 def n_significant_figures(value: float) -> int:
     """Returns the number of significant figures in a given float value."""
-    d = Decimal(str(value)).normalize()
+    d = Decimal(str(value)).quantize(Decimal("0.0000000001")).normalize()
     digits = d.as_tuple().digits
     return len(digits)
 
@@ -62,6 +62,11 @@ def nice_round(x: float, reference: float) -> float:
     return round(x / factor) * factor
 
 
+def is_divisible(number: float | int, divisible_by: float | int) -> bool:
+    x = round(number / divisible_by)
+    return isclose(x * divisible_by, number)
+
+
 def nice_ceil(x: float, reference: float, divisible_by: int) -> float:
     oom = order_of_magnitude(reference)
     factor = pow(10, oom - 1)
@@ -69,8 +74,8 @@ def nice_ceil(x: float, reference: float, divisible_by: int) -> float:
     result = ceil(x / factor) * factor
 
     is_result_divisible = (
-        result % divisible_by
-    ) == 0 and order_of_magnitude_for_significant_figures(
+        is_divisible(result, divisible_by)
+    ) and order_of_magnitude_for_significant_figures(
         result / divisible_by
     ) >= oom - 1
 
@@ -78,8 +83,8 @@ def nice_ceil(x: float, reference: float, divisible_by: int) -> float:
         result += factor
 
         is_result_divisible = (
-            result % divisible_by
-        ) == 0 and order_of_magnitude_for_significant_figures(
+            is_divisible(result, divisible_by)
+        ) and order_of_magnitude_for_significant_figures(
             result / divisible_by
         ) >= oom - 1
 
