@@ -12,6 +12,18 @@ class Line(Element):
     stroke_linecap: str = "round"
     path_length: float = 1.0
 
+    include_in_context: set[str] = {
+        "from_pos",
+        "to_pos",
+        "stroke_color",
+        "stroke_width",
+        "stroke_linecap",
+        "path_length",
+        "classes",
+        "styles",
+        "attributes",
+    }
+
 
 def build_line(
     from_pos: Point,

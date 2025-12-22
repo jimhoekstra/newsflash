@@ -6,3 +6,12 @@ class SVG(ElementGroup):
     width: float
     height: float
     hx_swap_oob: bool = False
+
+    include_in_context: set[str] = {
+        "width",
+        "height",
+        "hx_swap_oob",
+        "classes",
+        "styles",
+        "attributes",
+    }

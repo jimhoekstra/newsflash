@@ -19,6 +19,16 @@ class Text(Element):
     width: float
     font_size: int
 
+    include_in_context: set[str] = {
+        "pos",
+        "text",
+        "width",
+        "font_size",
+        "classes",
+        "styles",
+        "attributes",
+    }
+
     @property
     def top(self) -> YCoor:
         return self.pos.y - self.font_size

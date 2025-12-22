@@ -10,6 +10,12 @@ class WidgetContainer(Element):
     hx_include: list[str] = []
     template: tuple[str, str] = ("widgets", "container.html")
 
+    include_in_context: set[str] = {
+        "widget_id",
+        "full_path",
+        "hx_include",
+    }
+
 
 W = TypeVar("W", bound="Widget")
 

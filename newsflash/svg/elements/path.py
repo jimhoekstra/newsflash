@@ -8,6 +8,14 @@ class Path(Element):
     points: list[Point]
     path_length: float = 100.0
 
+    include_in_context: set[str] = {
+        "points", 
+        "path_length",
+        "classes",
+        "styles",
+        "attributes",
+    }
+
 
 def build_path(
     points: list[Point],

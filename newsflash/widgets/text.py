@@ -31,6 +31,10 @@ class Notifications(Widget):
     template: tuple[str, str] = ("widgets", "notifications.html")
     notifications: list[Notification] = []  # List of notifications to display
 
+    include_in_context: set[str] = {
+        "notifications",
+    }
+
     def push(self, message: str, level: str = "info", duration: int = 5000) -> None:
         notification = Notification(
             message=message,

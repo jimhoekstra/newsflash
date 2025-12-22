@@ -18,6 +18,16 @@ class Rectangle(Element):
     height: float
     rounded: float = 0.0
 
+    include_in_context: set[str] = {
+        "top_left",
+        "width",
+        "height",
+        "rounded",
+        "classes",
+        "styles",
+        "attributes",
+    }
+
     @property
     def top(self) -> YCoor:
         return self.top_left.y

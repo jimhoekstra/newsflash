@@ -23,6 +23,16 @@ class Chart(Widget):
         "position": "absolute",
     }
 
+    include_in_context: set[str] = {
+        "id",
+        "width",
+        "height",
+        "hx_swap_oob",
+        "classes",
+        "styles",
+        "attributes",
+    }
+
     _values_from_request: list[str] = ["width", "height"]
     _callback_fn_name: str = "on_load"
 
