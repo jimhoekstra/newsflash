@@ -49,7 +49,7 @@ def build_barchart(
     x_padding = 0.5
     axes = AxesConfig(
         x=build_x_axis_config_barchart(labels=labels),
-        y=build_y_axis_config(values=values),
+        y=build_y_axis_config(values=values, min_value=0),
     )
 
     barchart_elements, chart_box = build_xy_chart(

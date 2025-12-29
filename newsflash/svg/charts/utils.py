@@ -1,5 +1,6 @@
 from math import floor, log10, ceil, isclose
 from decimal import Decimal
+from bisect import bisect_left
 
 
 def order_of_magnitude(value: float) -> int:
@@ -23,35 +24,40 @@ def order_of_magnitude_for_significant_figures(value: float) -> int:
     return oom - (n_sig_figs - 1)
 
 
+STEP_CANDIDATES = [0.25, 0.5, 1, 2, 2.5, 5, 10]
+
+
 def get_y_label_positions(
     values: list[float] | list[int],
     min_y: float | int | None = None,
     max_y: float | int | None = None,
     divide_by: int = 4,
-    recursive_call: bool = True,
 ) -> list[float] | list[int]:
     min_y_to_use = min(values) if min_y is None else min_y
     max_y_to_use = max(values) if max_y is None else max_y
 
-    min_y_rounded = nice_floor(min_y_to_use, max_y_to_use)
-    max_y_rounded = nice_ceil(max_y_to_use, max_y_to_use, divisible_by=divide_by)
+    step = 0
+    highest_score = 0.0
+    num_steps = 0
 
-    step = (max_y_rounded - min_y_rounded) / divide_by
+    for divide_by in [4]:
+        ideal_step = (max_y_to_use - min_y_to_use) / divide_by
+        normalized_ideal_step = ideal_step / pow(10, order_of_magnitude(ideal_step))
+
+        idx = bisect_left(STEP_CANDIDATES, normalized_ideal_step)
+        next_step = STEP_CANDIDATES[idx]
+    
+        score = normalized_ideal_step / next_step
+        if score > highest_score:
+            highest_score = score
+            step = next_step * pow(10, order_of_magnitude(ideal_step))
+            num_steps = divide_by
 
     y_label_positions = []
-    current_label = min_y_rounded
-    while current_label <= max_y_rounded:
+    current_label = min_y_to_use
+    for _ in range(num_steps + 1):
         y_label_positions.append(current_label)
         current_label += step
-
-    if recursive_call and len(y_label_positions) > (divide_by + 1):
-        return get_y_label_positions(
-            values=values,
-            min_y=min_y,
-            max_y=max_y,
-            divide_by=divide_by - 1,
-            recursive_call=False,
-        )
 
     return y_label_positions
 

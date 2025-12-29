@@ -57,7 +57,9 @@ class Select(Widget):
     _callback_fn_name: str = "on_select"
     _values_from_request: list[str] = ["selected"]
 
-    def model_post_init(self, context: Any) -> None:
+    def _post_init(self) -> None:
+        super()._post_init()
+        
         if self.selected is not None:
             return
         if self.default is not None:

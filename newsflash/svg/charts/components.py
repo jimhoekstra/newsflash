@@ -5,9 +5,9 @@ from newsflash.svg.elements import build_text, Text, build_line
 from newsflash.svg.element import ElementGroup
 
 
-def build_title_box(width: float, title_font_size: int) -> Box:
+def build_title_box(width: float, title_font_size: int, label_font_size: int) -> Box:
     return Box(
-        top=0, right=width, bottom=font_size_to_height(title_font_size) * 1.75, left=0
+        top=0, right=width, bottom=font_size_to_height(title_font_size), left=0
     )
 
 
@@ -24,9 +24,9 @@ def build_title_text(box: Box, title: str, font_size: int) -> Text:
     )
 
 
-def build_multipler_text(multiplier: int, font_size: int, box: Box) -> Text:
+def build_multipler_text(multiplier: float, font_size: int, box: Box) -> Text:
     return build_text(
-        pos=Point(x=0.0, y=0.5),
+        pos=Point(x=0.0, y=1.0),
         text=f"× {multiplier:,}",
         font=lora,
         font_size=font_size,

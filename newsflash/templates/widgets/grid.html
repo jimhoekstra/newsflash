@@ -1,0 +1,15 @@
+<ul
+    id="{{ id }}"
+    class="newsflash-grid"
+    {% if hx_swap_oob %}hx-swap-oob="true"{% endif %}
+    style="display: grid; grid-template-columns: repeat({{ num_columns }}, 1fr); gap: 1em;"
+>
+    {% for item_id, rendered_item in widgets.items() %}
+        <li
+            class="newsflash-grid-item"
+        >
+            <input type="hidden" name="{{ id }}-{{ loop.index0 }}-id" value="{{ item_id }}">
+            {{ rendered_item | safe }}
+        </li>
+    {% endfor %}
+</ul>

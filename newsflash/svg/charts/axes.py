@@ -1,4 +1,5 @@
 from math import ceil, log10, floor
+from collections import Counter
 
 from pydantic import BaseModel
 
@@ -9,7 +10,7 @@ def smart_round(numbers: list[float]) -> tuple[list[float], int]:
     differences = [numbers[i + 1] - numbers[i] for i in range(len(numbers) - 1)]
     min_difference = min(differences)
 
-    decimal_places = max(0, ceil(-log10(min_difference)) + 1)
+    decimal_places = max(0, ceil(-log10(min_difference)))
     return [round(num, decimal_places) for num in numbers], decimal_places
 
 
@@ -19,7 +20,7 @@ class AxisConfig(BaseModel):
     decimal_places: int
     min_value: float | int
     max_value: float | int
-    multiplier: int = 1
+    multiplier: float = 1
 
     @property
     def labels_as_str(self) -> list[str]:
@@ -43,16 +44,17 @@ def build_y_axis_config(
         values, divide_by=(num_labels - 1), min_y=min_value
     )
 
-    oom = order_of_magnitude(label_positions[1])
-    multiplier = pow(10, floor(oom / 3) * 3)
+    ooms = [order_of_magnitude(l) for l in label_positions]
+    multipliers = [pow(10, floor(oom / 3) * 3) for oom in ooms]
+    multiplier = Counter(multipliers).most_common(1)[0][0]
 
-    if multiplier > 1:
+    if multiplier != 1:
         label_position_values = [pos / multiplier for pos in label_positions]
     else:
         label_position_values = label_positions
-
-    if all([isinstance(x, float) for x in values]):
-        label_positions, decimal_places = smart_round(label_positions)  # type: ignore
+    
+    if all([isinstance(x, float) for x in label_position_values]):
+        _, decimal_places = smart_round(label_position_values)  # type: ignore
     else:
         decimal_places = 0
 

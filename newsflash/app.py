@@ -51,6 +51,9 @@ class App(FastAPI):
         request_values: RequestValues | None = None,
     ) -> W:
         page = self.pages[path]
+        assert id.startswith(f"{page.id}/"), (
+            f"Widget id '{id}' not found on page '{page.id}'"
+        )
         id = id.removeprefix(f"{page.id}/")
         return page.get_child_widget(type=type, id=id, request_values=request_values)
 

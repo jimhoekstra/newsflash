@@ -3,6 +3,7 @@ from fontTools.ttLib import TTFont
 from newsflash.svg.box import Box
 from newsflash.svg.utils.fonts import lora, get_text_width
 from newsflash.svg.element import ElementGroup
+from newsflash.svg.utils.fonts import font_size_to_height
 
 from .axes import AxesConfig
 
@@ -32,7 +33,9 @@ def build_xy_chart(
     xy_chart_elements = ElementGroup()
 
     # Title
-    title_box = build_title_box(width=width, title_font_size=title_font_size)
+    if title == "":
+        title_font_size = label_font_size
+    title_box = build_title_box(width=width, title_font_size=title_font_size, label_font_size=label_font_size)
     title_text = build_title_text(box=title_box, title=title, font_size=title_font_size)
     xy_chart_elements.append(title_text)
 
@@ -43,24 +46,31 @@ def build_xy_chart(
             box=title_box,
         )
         xy_chart_elements.append(multiplier_text)
+    
+    title_spacing_box = Box(
+        top=title_box.bottom,
+        right=title_box.right,
+        bottom=title_box.bottom + font_size_to_height(label_font_size),
+        left=title_box.left,
+    )
 
     # Y-Axis
     max_label_width = max(
         [
             get_text_width(font=font, text=str(label), font_size=label_font_size)
-            for label in axes.y.label_values
+            for label in axes.y.labels_as_str
         ]
     )
     y_axis_box = build_y_axis_box(
         min_value=axes.y.min_value,
         max_value=axes.y.max_value,
-        title_box=title_box,
+        title_box=title_spacing_box,
         max_label_width=max_label_width,
         svg_height=height,
         label_font_size=label_font_size,
     )
     y_axis = build_y_axis(
-        y_labels=[str(label) for label in axes.y.label_values],
+        y_labels=[str(label) for label in axes.y.labels_as_str],
         y_label_positions=axes.y.label_positions,
         font_size=label_font_size,
         y_axis_box=y_axis_box,
@@ -93,7 +103,7 @@ def build_xy_chart(
         max_x_axis_value=axes.x.max_value,
         min_y_axis_value=axes.y.min_value,
         max_y_axis_value=axes.y.max_value,
-        title_box=title_box,
+        title_box=title_spacing_box,
         x_axis_box=x_axis_box,
         y_axis_box=y_axis_box,
         padding_left=x_padding,

@@ -97,3 +97,12 @@ class List(Widget, Generic[W]):
                 id="/".join(item_id_split[1:]),
                 request_values=request_values,
             )
+
+
+class Grid(List[W]):
+    """A widget that displays a grid of items."""
+
+    template: tuple[str, str] | None = ("widgets", "grid.html")
+    num_columns: int = 2
+
+    include_in_context: set[str] = {"id", "hx_include", "hx_swap_oob", "num_columns"}

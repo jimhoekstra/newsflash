@@ -78,6 +78,8 @@ class Widget(Element):
                     }
                 )
 
+                widget_copy._post_init()
+
                 return widget_copy.get_child_widget(
                     type=type,
                     id=remaining_id,
@@ -96,6 +98,13 @@ class Widget(Element):
         full_path = full_path.strip("/")
 
         return full_path
+
+    @property
+    def root_widget(self) -> "Widget":
+        if self.parent is None:
+            return self
+        else:
+            return self.parent.root_widget
 
     def get_additional_context(self) -> dict[str, Any]:
         additional_context = super().get_additional_context()
@@ -192,7 +201,9 @@ class Widget(Element):
             widget_class = type_hints.get(param, "Unknown")
             assert issubclass(widget_class, Widget)
 
-            widget_instance = widget_class(request_values=self.request_values)
+            # TODO: determine correct parent for the widget
+            widget_instance = widget_class(request_values=self.request_values, parent=self.root_widget)
+            
             widget_instance._post_init()
             input_dict[param] = widget_instance
 
