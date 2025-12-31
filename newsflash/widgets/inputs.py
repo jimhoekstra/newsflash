@@ -58,18 +58,16 @@ class Select(Widget):
     _values_from_request: list[str] = ["selected"]
 
     def _post_init(self) -> None:
-        super()._post_init()
         
-        if self.selected is not None:
-            return
-        if self.default is not None:
-            self.selected = self.default()
-            return
-        if len(self.options) > 0:
-            self.selected = self.options[0]
-            return
+        if self.selected is None:
+            if self.default is not None:
+                self.selected = self.default()
+            elif len(self.options) > 0:
+                self.selected = self.options[0]
+            else:
+                raise ValueError("Select widget has no options to select from.")
 
-        raise ValueError("Select widget has no options to select from.")
+        super()._post_init()
 
     def on_select(self, *args, **kwargs) -> list[Widget]:
         """Event handler for select events."""

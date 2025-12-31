@@ -43,17 +43,17 @@ class App(FastAPI):
         self._build_page_endpoints()
         self._build_callback_endpoints()
 
-    def query_one(
+    def get_widget(
         self,
         path: str,
         type: Type[W],
         id: str,
         request_values: RequestValues | None = None,
     ) -> W:
-        page = self.pages[path]
-        assert id.startswith(f"{page.id}/"), (
-            f"Widget id '{id}' not found on page '{page.id}'"
-        )
+        page = self.pages[path].model_copy(deep=True)
+        # assert id.startswith(f"{page.id}/"), (
+        #     f"Widget id '{id}' not found on page '{page.id}'"
+        # )
         id = id.removeprefix(f"{page.id}/")
         return page.get_child_widget(type=type, id=id, request_values=request_values)
 
@@ -92,14 +92,14 @@ class App(FastAPI):
             headers = request.headers
             request_values = parse_request_values(body, headers)
 
-            widget_instance = self.query_one(
+            widget = self.get_widget(
                 path=request_values.url_path,
                 type=Widget,
                 id=widget_id,
                 request_values=request_values,
             )
 
-            widgets_to_render = widget_instance._call_callback()
+            widgets_to_render = widget._call_callback()
 
             rendered_widgets = []
             assert isinstance(widgets_to_render, list), (

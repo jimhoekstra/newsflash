@@ -33,34 +33,75 @@ class Widget(Element):
     _callback_fn_name: str | None = None
     _callback_fn_on_parent: bool = False
 
-    _parent: "Widget | None" = None
-
-    def _make_copy(self: W, update: dict[str, Any] = {}) -> W:
-        widget_copy = self.model_copy(update=update)
-        widget_copy._post_init()
-        return widget_copy
+    def _re_init(self: W, update: dict[str, Any] = {}) -> W:
+        # widget_copy = self.model_copy(update=update)
+        for k, v in update.items():
+            setattr(self, k, v)
+        
+        self._post_init()
+        return self
 
     def _post_init(self) -> None:
         self._build_hx_include()
         if self.request_values is not None:
             self._set_values_from_request(self.request_values)
 
+    def get_all_children(
+        self,
+        type: Type[W],
+        request_values: RequestValues | None = None,
+    ) -> list[W]:
+        children_of_type = [
+            widget for widget in self.children if isinstance(widget, type)
+        ]
+        if len(self.children) == 0:
+            children_of_type = [
+                widget._re_init(
+                    update={
+                        "request_values": request_values,
+                        "parent": self,
+                    }
+                ) for widget in children_of_type
+            ]
+            return children_of_type
+
+        for child in self.children:
+            child_children = child.get_all_children(
+                type=type,
+                request_values=request_values,
+            )
+            children_of_type.extend(child_children)
+
+        return children_of_type
+
     def get_child_widget(
         self,
         type: Type[W],
-        id: str,
+        id: str | None = None,
         request_values: RequestValues | None = None,
     ) -> W:
-        widgets_of_type = [
+        children_of_type = [
             widget for widget in self.children if isinstance(widget, type)
         ]
+
+        if id is None:
+            all_children_of_type = self.get_all_children(
+                type=type,
+                request_values=request_values,
+            )
+            if len(all_children_of_type) == 1:
+                return all_children_of_type[0]
+            else:
+                raise ValueError(
+                    f"Multiple or no widgets of type {type} found. Specify an id."
+                )
 
         id_split = id.split("/")
 
         if len(id_split) == 1:
-            for widget in widgets_of_type:
+            for widget in children_of_type:
                 if widget.id == id:
-                    widget_copy = widget._make_copy(
+                    widget_copy = widget._re_init(
                         update={
                             "request_values": request_values,
                             "parent": self,
@@ -69,9 +110,10 @@ class Widget(Element):
                     return widget_copy
 
         remaining_id = "/".join(id_split[1:])
-        for widget in widgets_of_type:
+
+        for widget in children_of_type:
             if widget.id == id_split[0]:
-                widget_copy = widget._make_copy(
+                widget_copy = widget._re_init(
                     update={
                         "request_values": request_values,
                         "parent": self,
@@ -112,7 +154,7 @@ class Widget(Element):
         for child in self.children:
             child.parent = self
 
-        children_instances = [child._make_copy() for child in self.children]
+        children_instances = [child._re_init() for child in self.children]
         rendered_children = {child.id: child.render() for child in children_instances}
 
         additional_context.update({"widgets": rendered_children})
@@ -198,14 +240,13 @@ class Widget(Element):
         for param in parameters:
             if param == "self":
                 continue
-            widget_class = type_hints.get(param, "Unknown")
-            assert issubclass(widget_class, Widget)
+            widget_type = type_hints.get(param, "Unknown")
 
-            # TODO: determine correct parent for the widget
-            widget_instance = widget_class(request_values=self.request_values, parent=self.root_widget)
-            
-            widget_instance._post_init()
-            input_dict[param] = widget_instance
+            widget = self.root_widget.get_child_widget(
+                type=widget_type,
+            )
+
+            input_dict[param] = widget
 
         return input_dict
 
