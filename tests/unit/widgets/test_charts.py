@@ -15,10 +15,10 @@ def test_render_container():
 
     chart = DummyChart()
 
-    def new_render(self) -> str:
+    def new_render(self, *args, **kwargs) -> str:
         return f"<div id={self.widget_id}></div>"
 
     with patch.object(WidgetContainer, "render", new=new_render):
-        rendered = chart.render_container()
+        rendered = chart.render()
 
     assert rendered == "<div id=dummy-chart></div>"

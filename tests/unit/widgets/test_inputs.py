@@ -19,6 +19,7 @@ def test_select_init_default():
     select_widget = Select(
         options=["Option 1", "Option 2", "Option 3"], default=default_option
     )
+    select_widget._post_init()
 
     assert select_widget.selected == "Option 2"
 
@@ -26,6 +27,7 @@ def test_select_init_default():
 def test_select_init_no_default():
     # Test without default function
     select_widget = Select(options=["Option 1", "Option 2", "Option 3"])
+    select_widget._post_init()
 
     assert (
         select_widget.selected == "Option 1"
@@ -33,8 +35,9 @@ def test_select_init_no_default():
 
 
 def test_select_no_options():
+    select_widget = Select(options=[])
     with raises(ValueError, match="Select widget has no options to select from."):
-        Select(options=[])
+        select_widget._post_init()
 
 
 def test_select_default_on_select():

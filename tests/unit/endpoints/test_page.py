@@ -1,10 +1,6 @@
-from typing import Type
-
 from pytest import raises
 
-from newsflash.endpoints.page import build_hx_include, _build_rendered_widgets
 from newsflash.widgets.widgets import Widget
-from newsflash.widgets.charts import Chart
 
 
 class DummyWidgetA(Widget):
@@ -31,14 +27,13 @@ class DummyWidgetC(Widget):
 
 
 def test_build_hx_include():
-    callback_fn = DummyWidgetC.dummy_callback
+    widget = DummyWidgetC()
+    widget._build_hx_include()
 
-    result = build_hx_include(callback_fn)
-
-    assert isinstance(result, list)
-    assert len(result) == 2
-    assert "#widget-a" in result
-    assert "#widget-b" in result
+    assert isinstance(widget.hx_include, list)
+    assert len(widget.hx_include) == 2
+    assert "#widget-a" in widget.hx_include
+    assert "#widget-b" in widget.hx_include
 
 
 class DummyWidgetD(Widget):
@@ -50,12 +45,11 @@ class DummyWidgetD(Widget):
 
 
 def test_build_hx_include_no_inputs():
-    callback_fn = DummyWidgetD.dummy_callback_no_inputs
+    widget = DummyWidgetD()
+    widget._build_hx_include()
 
-    result = build_hx_include(callback_fn)
-
-    assert isinstance(result, list)
-    assert len(result) == 0
+    assert isinstance(widget.hx_include, list)
+    assert len(widget.hx_include) == 0
 
 
 class DummyWidgetE(Widget):
@@ -70,10 +64,10 @@ class DummyWidgetE(Widget):
 
 
 def test_build_hx_include_illegal_inputs():
-    callback_fn = DummyWidgetE.dummy_callback_illegal_inputs
+    widget = DummyWidgetE()
 
     with raises(AssertionError):
-        build_hx_include(callback_fn)
+        widget._build_hx_include()
 
 
 class DummyWidgetF(Widget):
@@ -93,45 +87,9 @@ class DummyWidgetF(Widget):
 
 
 def test_build_rendered_widgets():
-    widgets: list[Type[Widget]] = [DummyWidgetF]
+    widget = DummyWidgetF()
+    widget._build_hx_include()
 
-    rendered_widgets = _build_rendered_widgets(widgets)
-    expected = {
-        "DummyWidgetF": "Dummy Widget F, with hx_include: #widget-a, #widget-b, #widget-c"
-    }
-    assert rendered_widgets == expected
-
-
-def test_build_rendered_widgets_multiple():
-    widgets: list[Type[Widget]] = [DummyWidgetC, DummyWidgetF]
-
-    rendered_widgets = _build_rendered_widgets(widgets)
-    expected = {
-        "DummyWidgetC": "Dummy Widget C, with hx_include: #widget-a, #widget-b",
-        "DummyWidgetF": "Dummy Widget F, with hx_include: #widget-a, #widget-b, #widget-c",
-    }
-    assert rendered_widgets == expected
-
-
-class DummyChartWidget(Chart):
-    id: str = "chart-widget"
-
-    def on_load(
-        self,
-        widget_a: DummyWidgetA,
-    ) -> list[Widget]: ...
-
-    def render(self) -> str: ...
-
-    def render_container(self) -> str:
-        return f"Chart Widget Container, with hx_include: {', '.join(self.hx_include)}"
-
-
-def test_build_rendered_widgets_chart():
-    widgets: list[Type[Widget]] = [DummyChartWidget]
-
-    rendered_widgets = _build_rendered_widgets(widgets)
-    expected = {
-        "DummyChartWidget": "Chart Widget Container, with hx_include: #widget-a"
-    }
-    assert rendered_widgets == expected
+    rendered_widget = widget._render_update()
+    expected = "Dummy Widget F, with hx_include: #widget-a, #widget-b, #widget-c"
+    assert rendered_widget == expected

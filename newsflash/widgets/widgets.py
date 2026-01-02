@@ -178,7 +178,7 @@ class Widget(Element):
 
         include_list: list[str] = []
         for param in parameters:
-            if param == "self":
+            if param == "self" or param == "args" or param == "kwargs":
                 continue
             type_hint = type_hints[param]
 
