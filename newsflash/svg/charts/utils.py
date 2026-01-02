@@ -1,4 +1,4 @@
-from math import floor, log10, ceil, isclose
+from math import floor, log10
 from decimal import Decimal
 from bisect import bisect_left
 
@@ -46,7 +46,7 @@ def get_y_label_positions(
 
         idx = bisect_left(STEP_CANDIDATES, normalized_ideal_step)
         next_step = STEP_CANDIDATES[idx]
-    
+
         score = normalized_ideal_step / next_step
         if score > highest_score:
             highest_score = score
@@ -60,46 +60,3 @@ def get_y_label_positions(
         current_label += step
 
     return y_label_positions
-
-
-def nice_round(x: float, reference: float) -> float:
-    oom = order_of_magnitude(reference)
-    factor = pow(10, oom) * 2
-    return round(x / factor) * factor
-
-
-def is_divisible(number: float | int, divisible_by: float | int) -> bool:
-    x = round(number / divisible_by)
-    return isclose(x * divisible_by, number)
-
-
-def nice_ceil(x: float, reference: float, divisible_by: int) -> float:
-    oom = order_of_magnitude(reference)
-    factor = pow(10, oom - 1)
-
-    result = ceil(x / factor) * factor
-
-    is_result_divisible = (
-        is_divisible(result, divisible_by)
-    ) and order_of_magnitude_for_significant_figures(
-        result / divisible_by
-    ) >= oom - 1
-
-    while not is_result_divisible:
-        result += factor
-
-        is_result_divisible = (
-            is_divisible(result, divisible_by)
-        ) and order_of_magnitude_for_significant_figures(
-            result / divisible_by
-        ) >= oom - 1
-
-    return result
-
-
-def nice_floor(x: float, reference: float) -> float:
-    oom = order_of_magnitude(reference)
-    factor = pow(10, oom)
-    result = floor(x / factor) * factor
-
-    return result

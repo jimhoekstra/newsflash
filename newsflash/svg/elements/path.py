@@ -9,7 +9,7 @@ class Path(Element):
     path_length: float = 100.0
 
     include_in_context: set[str] = {
-        "points", 
+        "points",
         "path_length",
         "classes",
         "styles",

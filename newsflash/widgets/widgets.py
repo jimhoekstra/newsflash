@@ -37,7 +37,7 @@ class Widget(Element):
         # widget_copy = self.model_copy(update=update)
         for k, v in update.items():
             setattr(self, k, v)
-        
+
         self._post_init()
         return self
 
@@ -61,7 +61,8 @@ class Widget(Element):
                         "request_values": request_values,
                         "parent": self,
                     }
-                ) for widget in children_of_type
+                )
+                for widget in children_of_type
             ]
             return children_of_type
 
@@ -92,6 +93,8 @@ class Widget(Element):
             if len(all_children_of_type) == 1:
                 return all_children_of_type[0]
             else:
+                # TODO: distinguish in error message between no or multiple
+                # child widgets found.
                 raise ValueError(
                     f"Multiple or no widgets of type {type} found. Specify an id."
                 )

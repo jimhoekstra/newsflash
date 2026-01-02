@@ -35,7 +35,9 @@ def build_xy_chart(
     # Title
     if title == "":
         title_font_size = label_font_size
-    title_box = build_title_box(width=width, title_font_size=title_font_size, label_font_size=label_font_size)
+    title_box = build_title_box(
+        width=width, title_font_size=title_font_size, label_font_size=label_font_size
+    )
     title_text = build_title_text(box=title_box, title=title, font_size=title_font_size)
     xy_chart_elements.append(title_text)
 
@@ -46,7 +48,7 @@ def build_xy_chart(
             box=title_box,
         )
         xy_chart_elements.append(multiplier_text)
-    
+
     title_spacing_box = Box(
         top=title_box.bottom,
         right=title_box.right,

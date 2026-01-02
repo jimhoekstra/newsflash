@@ -44,7 +44,7 @@ def build_y_axis_config(
         values, divide_by=(num_labels - 1), min_y=min_value
     )
 
-    ooms = [order_of_magnitude(l) for l in label_positions]
+    ooms = [order_of_magnitude(pos) for pos in label_positions]
     multipliers = [pow(10, floor(oom / 3) * 3) for oom in ooms]
     multiplier = Counter(multipliers).most_common(1)[0][0]
 
@@ -52,7 +52,7 @@ def build_y_axis_config(
         label_position_values = [pos / multiplier for pos in label_positions]
     else:
         label_position_values = label_positions
-    
+
     if all([isinstance(x, float) for x in label_position_values]):
         _, decimal_places = smart_round(label_position_values)  # type: ignore
     else:

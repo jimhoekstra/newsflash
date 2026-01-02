@@ -1,4 +1,4 @@
-from typing import Any, Callable
+from typing import Callable
 
 from .widgets import Widget
 
@@ -58,7 +58,6 @@ class Select(Widget):
     _values_from_request: list[str] = ["selected"]
 
     def _post_init(self) -> None:
-        
         if self.selected is None:
             if self.default is not None:
                 self.selected = self.default()

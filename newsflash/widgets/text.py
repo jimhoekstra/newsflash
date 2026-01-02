@@ -8,7 +8,14 @@ class ValueDisplay(Widget):
     label: str = ""
     value: str = ""
 
-    include_in_context: set[str] = {"id", "value", "hx_include", "hx_swap_oob", "label", "value"}
+    include_in_context: set[str] = {
+        "id",
+        "value",
+        "hx_include",
+        "hx_swap_oob",
+        "label",
+        "value",
+    }
 
     _values_from_request: list[str] = ["label", "value"]
 

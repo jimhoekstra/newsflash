@@ -6,9 +6,7 @@ from newsflash.svg.element import ElementGroup
 
 
 def build_title_box(width: float, title_font_size: int, label_font_size: int) -> Box:
-    return Box(
-        top=0, right=width, bottom=font_size_to_height(title_font_size), left=0
-    )
+    return Box(top=0, right=width, bottom=font_size_to_height(title_font_size), left=0)
 
 
 def build_title_text(box: Box, title: str, font_size: int) -> Text:

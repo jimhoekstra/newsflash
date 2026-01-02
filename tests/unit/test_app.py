@@ -1,4 +1,4 @@
-from typing import Type
+from pathlib import Path
 
 from pytest import fixture, raises
 
@@ -6,87 +6,86 @@ from newsflash import App, Page
 from newsflash.widgets.widgets import Widget
 
 
-@fixture
-def test_widget_a() -> Type[Widget]:
-    class TestWidgetA(Widget):
-        id: str = "widget_a"
-
-    return TestWidgetA
+class DummyWidgetA(Widget):
+    id: str = "widget_a"
 
 
-@fixture
-def test_widget_b() -> Type[Widget]:
-    class TestWidgetB(Widget):
-        id: str = "widget_b"
+class DummyWidgetB(Widget):
+    id: str = "widget_b"
 
-    return TestWidgetB
+
+class DummyWidgetC(Widget):
+    id: str = "widget_c"
 
 
 @fixture
-def test_widget_c() -> Type[Widget]:
-    class TestWidgetC(Widget):
-        id: str = "widget_c"
-
-    return TestWidgetC
-
-
-@fixture
-def test_page(test_widget_a: Type[Widget], test_widget_b: Type[Widget]) -> Page:
+def test_page() -> Page:
     return Page(
+        id="test-page",
         path="/test-page",
         title="Test Page",
-        template="test-page.html",
-        widgets=[test_widget_a, test_widget_b],
+        template=("templates", "test_page.html"),
+        children=[DummyWidgetA(), DummyWidgetB()],
     )
 
 
 @fixture
 def test_app(test_page: Page) -> App:
-    app = App(pages=[test_page])
+    app = App(
+        pages=[test_page],
+        template_folders=[("templates", Path.cwd() / "dummy" / "path")],
+    )
     return app
 
 
-def test_query_one(
+def test_get_widget_by_type(
     test_app: App,
-    test_widget_a: Type[Widget],
-    test_widget_b: Type[Widget],
 ):
-    widget_a = test_app.query_one("/test-page", test_widget_a)
-    assert widget_a is test_widget_a
+    widget_a = test_app.get_widget(
+        path="/test-page",
+        type=DummyWidgetA,
+    )
+    assert isinstance(widget_a, DummyWidgetA)
+    assert widget_a.id == "widget_a"
 
-    widget_b = test_app.query_one("/test-page", test_widget_b, id="widget_b")
-    assert widget_b is test_widget_b
+    widget_b = test_app.get_widget(path="/test-page", type=DummyWidgetB)
+    assert isinstance(widget_b, DummyWidgetB)
+    assert widget_b.id == "widget_b"
 
 
 def test_query_one_with_id(
     test_app: App,
-    test_widget_a: Type[Widget],
 ):
-    widget_a = test_app.query_one("/test-page", test_widget_a, id="widget_a")
-    assert widget_a is test_widget_a
+    widget_a = test_app.get_widget(
+        path="/test-page",
+        type=Widget,
+        id="widget_a",
+    )
+    assert isinstance(widget_a, DummyWidgetA)
+    assert widget_a.id == "widget_a"
 
 
 def test_query_one_multiple_found(
     test_app: App,
-    test_widget_a: Type[Widget],
 ):
-    # Add another instance of test_widget_a to the page to simulate
-    # multiple widgets of the same type. #TODO: update once having
-    # multiple widgets of the same type but different ID is actually
-    # possible.
-    test_app.pages["/test-page"].widgets.append(test_widget_a)
+    test_app.pages["/test-page"].children.append(DummyWidgetA(id="widget_a_2"))
 
     with raises(ValueError) as e:
-        test_app.query_one("/test-page", test_widget_a)
+        test_app.get_widget(
+            path="/test-page",
+            type=DummyWidgetA,
+        )
 
-    assert "please specify an id" in str(e.value).lower()
+    assert "specify an id" in str(e.value).lower()
 
 
 def test_query_one_not_found(
     test_app: App,
-    test_widget_c: Type[Widget],
 ):
     with raises(ValueError) as e:
-        test_app.query_one("/test-page", test_widget_c)
+        test_app.get_widget(
+            path="/test-page",
+            type=DummyWidgetC,
+        )
 
-    assert "not found" in str(e.value).lower()
+    assert "no widgets" in str(e.value).lower()

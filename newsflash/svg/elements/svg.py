@@ -8,6 +8,7 @@ class SVG(ElementGroup):
     hx_swap_oob: bool = False
 
     include_in_context: set[str] = {
+        "id",
         "width",
         "height",
         "hx_swap_oob",

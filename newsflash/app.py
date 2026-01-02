@@ -47,14 +47,15 @@ class App(FastAPI):
         self,
         path: str,
         type: Type[W],
-        id: str,
+        id: str | None = None,
         request_values: RequestValues | None = None,
     ) -> W:
         page = self.pages[path].model_copy(deep=True)
         # assert id.startswith(f"{page.id}/"), (
         #     f"Widget id '{id}' not found on page '{page.id}'"
         # )
-        id = id.removeprefix(f"{page.id}/")
+        if id is not None:
+            id = id.removeprefix(f"{page.id}/")
         return page.get_child_widget(type=type, id=id, request_values=request_values)
 
     def _mount_static_folders(self, static_folders: list[tuple[str, Path]]) -> None:
