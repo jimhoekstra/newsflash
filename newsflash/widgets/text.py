@@ -31,7 +31,7 @@ class Paragraph(Widget):
 
 class Notification(BaseModel):
     message: str = ""
-    level: str  # could be 'info', 'warning', 'error', etc.
+    level: str
     duration: int  # duration in milliseconds
 
 

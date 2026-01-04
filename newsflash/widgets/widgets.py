@@ -52,25 +52,23 @@ class Widget(Element):
         request_values: RequestValues | None = None,
     ) -> list[W]:
         children_of_type = [
-            widget for widget in self.children if isinstance(widget, type)
+            widget._re_init(
+                update={
+                    "request_values": request_values,
+                    "parent": self,
+                }
+            ) for widget in self.children if isinstance(widget, type)
         ]
-        if len(self.children) == 0:
-            children_of_type = [
-                widget._re_init(
-                    update={
-                        "request_values": request_values,
-                        "parent": self,
-                    }
-                )
-                for widget in children_of_type
-            ]
-            return children_of_type
+
+        if len(self.children) == 0 and isinstance(self, type):
+            return []
 
         for child in self.children:
             child_children = child.get_all_children(
                 type=type,
                 request_values=request_values,
             )
+
             children_of_type.extend(child_children)
 
         return children_of_type
@@ -247,6 +245,7 @@ class Widget(Element):
 
             widget = self.root_widget.get_child_widget(
                 type=widget_type,
+                request_values=self.request_values,
             )
 
             input_dict[param] = widget

@@ -5,6 +5,11 @@ body {
     font-size: 18px;
 }
 
+h1 {
+    font-size: 40px;
+    font-weight: 400;
+}
+
 .text {
     fill: #cdd6f4;   
 }

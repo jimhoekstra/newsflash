@@ -40,7 +40,7 @@ def get_y_label_positions(
     highest_score = 0.0
     num_steps = 0
 
-    for divide_by in [4]:
+    for divide_by in [4, 3, 5]:
         ideal_step = (max_y_to_use - min_y_to_use) / divide_by
         normalized_ideal_step = ideal_step / pow(10, order_of_magnitude(ideal_step))
 

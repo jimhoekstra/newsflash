@@ -2,6 +2,7 @@ from .charts import BarChart, LineChart, Histogram
 from .inputs import Input, TextArea, Button, Select
 from .text import ValueDisplay, Notifications, Paragraph
 from .list import List, Grid
+from .html import HTML
 
 __all__ = [
     "BarChart",
@@ -16,4 +17,5 @@ __all__ = [
     "Paragraph",
     "List",
     "Grid",
+    "HTML",
 ]
