@@ -31,13 +31,14 @@ class SnapshotTest:
         cls.path_to_rendered.write_text(rendered)
 
     @classmethod
-    def passes_test(cls, content: str) -> bool:
+    def passes_test(cls, content: str | None = None) -> bool:
         if not cls.snapshot_exists():
             return False
     
         snapshot = cls.load_rendered()
         assert snapshot is not None
         rendered = cls.render()
-        assert rendered == content, "Rendered content does not match provided content."
+        if content is not None:
+            assert rendered == content, "Rendered content does not match provided content."
 
         return snapshot == rendered

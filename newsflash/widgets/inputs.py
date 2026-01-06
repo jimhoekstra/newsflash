@@ -77,6 +77,7 @@ class Button(Widget):
     template: tuple[str, str] = ("widgets", "button.html")
     label: str = "Click Me"
     hx_include: list[str] = []
+    disabled: bool = False
 
     include_in_context: set[str] = {
         "id",
@@ -84,6 +85,7 @@ class Button(Widget):
         "hx_swap_oob",
         "full_path",
         "label",
+        "disabled",
     }
 
     _callback_fn_name: str = "on_click"

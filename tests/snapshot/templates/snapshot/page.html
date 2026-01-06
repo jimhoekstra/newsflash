@@ -1,18 +1,71 @@
 <main>
     <h1>Snapshot Test Viewer</h1>
-    {{ widgets["test-select"] | safe }}
 
-    <div class="chart">
-        {{ widgets["snapshot-html"] | safe }}
+    <div class="block">
+        <p class="small-margin dim">Selected test</p>
+        {{ widgets["test-select"] | safe }}
     </div>
-    {{ widgets["test-description"] | safe }}
-    {{ widgets["approve-button"] | safe }}
+
+    <div class="margin-y">
+        {{ widgets["test-description"] | safe }}
+    </div>
+
+    <div class="horizontal">
+        <div class="vertical">
+            <h2>Old Snapshot</h2>
+            <div class="chart">
+                {{ widgets["old-snapshot-html"] | safe }}
+            </div>
+        </div>
+        <div class="vertical">
+            <h2>New Snapshot</h2>
+            <div class="chart">
+                {{ widgets["new-snapshot-html"] | safe }}
+            </div>
+        </div>
+    </div>
+
+    <div class="margin-y">
+        {{ widgets["approve-button"] | safe }}
+    </div>
 </main>
 
 <style>
     main {
         margin: 2em auto;
-        width: 1000px;
+        width: 800px;
+        display: flex;
+        flex-direction: column;
+        gap: 1em;
+    }
+
+    h2 {
+        /* text-decoration: underline; */
+        /* color: rgba(180, 190, 254, 0.8); */
+        color: hsl(0, 0%, 30%);
+    }
+
+    .dim {
+        font-size: 16px;
+        /* color: rgba(180, 190, 254, 0.6); */
+        color: hsl(0, 0%, 40%);
+        text-decoration: underline;
+        margin: 0;
+    }
+
+    /* .block {
+        border-left: 2px solid rgba(180, 190, 254, 0.4);
+        padding: 0 0 0 0.5em;
+    } */
+
+    .horizontal {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 2em;
+    }
+
+    .vertical {
         display: flex;
         flex-direction: column;
         gap: 1em;
@@ -21,10 +74,20 @@
     .chart {
         padding: 1em;
         border-radius: 0.3em;
-        background-color: #1e1e2e;
+        background-color: hsl(28, 100%, 90%);
+    }
+
+    .margin-y {
+        margin-top: 1em;
+        margin-bottom: 1em;
+    }
+
+    .small-margin {
+        margin-top: 0;
+        margin-bottom: 0.5em;
     }
 
     .newsflash-value-display-value {
-        font-size: 20px;
+        font-size: 18px;
     }
 </style>

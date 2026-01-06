@@ -2,7 +2,7 @@ from typing import Type
 from pathlib import Path
 
 from newsflash.app import App, Page
-from newsflash.widgets import HTML, Button, Select, ValueDisplay
+from newsflash.widgets import HTML, Button, Select, ValueDisplay, Notifications
 from newsflash.widgets.widgets import Widget
 
 from .bar_chart import ascending
@@ -18,42 +18,62 @@ def get_all_tests() -> dict[str, Type[SnapshotTest]]:
     return {test.name: test for test in all_tests}
 
 
+class OldSnapshotHTML(HTML):
+    id: str = "old-snapshot-html"
+    html_content: str = ascending.TestAscendingBarChart5.load_rendered() or "<p>No snapshot exists.</p>"
+
+
+class NewSnapshotHTML(HTML):
+    id: str = "new-snapshot-html"
+    html_content: str = ascending.TestAscendingBarChart5.render()
+
+
 class TestSelect(Select):
     id: str = "test-select"
     options: list[str] = list(get_all_tests().keys())
 
     def on_select(
         self,
-        snapshot: "SnapshotHTML",
+        old_snapshot: OldSnapshotHTML,
+        new_snapshot: NewSnapshotHTML,
         test_description: "TestDescription",
+        approve_button: "ApproveButton",
+        notifications: Notifications,
     ) -> list[Widget]:
         assert self.selected is not None
+        notifications.push(f"Selected test: {self.selected}")
         test_class = get_all_tests()[self.selected]
 
-        snapshot.html_content = test_class.render()
+        old_snapshot.html_content = test_class.load_rendered() or "<p>No snapshot exists.</p>"
+
+        new_snapshot.html_content = test_class.render()
         test_description.value = test_class.description
-        return [snapshot, test_description]
 
-
-class SnapshotHTML(HTML):
-    id: str = "snapshot-html"
-    html_content: str = "<p>The snapshot will be displayed here.</p>"
+        if test_class.passes_test():
+            approve_button.label = "Snapshots Already Match"
+            approve_button.disabled = True
+        else:
+            approve_button.label = "Approve Snapshot"
+            approve_button.disabled = False
+        
+        return [old_snapshot, new_snapshot, test_description, approve_button, notifications]
 
 
 class TestDescription(ValueDisplay):
     id: str = "test-description"
     label: str = "Test Description"
-    value: str = "The test description will be displayed here."
+    value: str = ascending.TestAscendingBarChart5.description
 
 
 class ApproveButton(Button):
     id: str = "approve-button"
-    label: str = "Approve Snapshot"
+    label: str = "Approve Snapshot" if not ascending.TestAscendingBarChart5.passes_test() else "Snapshots Already Match"
+    disabled: bool = ascending.TestAscendingBarChart5.passes_test()
 
     def on_click(
         self, 
         test_select: TestSelect,
-        snapshot: SnapshotHTML,
+        snapshot: NewSnapshotHTML,
     ) -> list[Widget]:
         assert test_select.selected is not None
         test_class = get_all_tests()[test_select.selected]
@@ -70,11 +90,12 @@ class ApproveButton(Button):
 page = Page(
     id="",
     path="/",
-    title="Snapshot Test",
+    title="Snapshot Test Viewer",
     template=("snapshot", "page.html"),
     children=[
         TestSelect(),
-        SnapshotHTML(),
+        OldSnapshotHTML(),
+        NewSnapshotHTML(),
         TestDescription(),
         ApproveButton(),
     ],

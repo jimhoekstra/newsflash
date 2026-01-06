@@ -1,6 +1,8 @@
 body {
-    background-color: #181825;
-    color: hsl(226, 64%, 94%);
+    /* background-color: #181825; */
+    background-color: hsl(28, 100%, 96%);
+    /* color: hsl(226, 64%, 94%); */
+    color: black;
     font-family: 'Lora', serif;
     font-size: 18px;
 }
@@ -8,32 +10,43 @@ body {
 h1 {
     font-size: 40px;
     font-weight: 400;
+    color: hsl(0, 0%, 20%);
+}
+
+h2 {
+    font-size: 30px;
+    font-weight: 400;
+    margin: 0;
 }
 
 .text {
-    fill: #cdd6f4;   
+    /* fill: hsl(226, 64%, 94%); */
+    fill: hsl(0, 0%, 0%);
 }
 
 .grid-line {
-    stroke: #313244;
-    stroke-width: 2;
+    stroke: hsl(0, 0%, 40%);
+    stroke-width: 0.5;
     stroke-linecap: round;
 }
 
 .newsflash-input {
     font-family: 'Lora', serif;
     font-size: 18px;
-    color: #cdd6f4;
-    background-color: #1e1e2e;
+    /* color: #cdd6f4; */
+    color: hsl(0, 0%, 0%);
+    /* background-color: #1e1e2e; */
+    background-color: hsl(28, 100%, 90%);
     outline: none;
     border-radius: 0.25em;
     border-style: solid;
-    border-width: 2px;
+    border-width: 0px;
     border-color: #1e1e2e;
     padding: 0.75em 1.1em;
     margin: 0;
     width: 100%;
     box-sizing: border-box;
+    box-shadow: 5px 5px 0 hsl(0, 0%, 60%);
 }
 
 .newsflash-input:focus {
@@ -47,17 +60,20 @@ h1 {
 .newsflash-button {
     font-family: 'Lora', serif;
     font-size: 18px;
-    color: #cdd6f4;
-    background-color: hsl(232, 37%, 35%);
+    /* color: #cdd6f4; */
+    color: white;
+    /* background-color: hsl(232, 37%, 35%); */
+    background-color: hsl(135, 10%, 30%);
     border-radius: 0.25em;
     padding: 0.75em 1.1em;
     width: 100%;
     box-sizing: border-box;
     border-style: solid;
     outline: none;
-    border-width: 2px;
-    border-color: hsl(232, 37%, 35%);
-    box-shadow: 0 0 10px #181825;
+    border-width: 0px;
+    border-color: hsl(0, 0%, 35%);
+    /* box-shadow: 0 0 10px #181825; */
+    box-shadow: 5px 5px 0 hsl(0, 0%, 60%);
 }
 
 .newsflash-button:hover, .newsflash-button:focus {
@@ -69,6 +85,19 @@ h1 {
     border-color: rgba(180, 190, 254, 0.8);
 }
 
+.newsflash-button:disabled {
+    cursor: default;
+    /* background-color: hsl(232, 20%, 35%); */
+    background-color: hsl(28, 0%, 40%);
+    border-color: hsl(28, 0%, 40%);
+    /* border-color: hsl(232, 20%, 35%); */
+}
+
+.newsflash-button:disabled:hover, .newsflash-button:disabled:focus {
+    border-color: hsl(232, 20%, 35%);
+    cursor: default;
+}
+
 .newsflash-widget-container {
     position: relative;
     height: 100%;
@@ -77,7 +106,7 @@ h1 {
 
 .bar {
     opacity: 0;
-    fill: hsl(353, 71%, 55%);
+    fill: hsl(0, 65%, 35%);
     transform: scaleY(0);
     transform-origin: bottom;
     transform-box: fill-box;
@@ -137,10 +166,12 @@ h1 {
     margin: 0.5em 0 0 0;
     padding: 0;
     max-height: 40vh;
-    background-color: hsl(232, 24%, 22%);
-    overflow-y: scroll;
+    /* background-color: hsl(232, 24%, 22%); */
+    background-color: hsl(28, 100%, 90%);
+    overflow-y: auto;
     box-sizing: border-box;
-    box-shadow: 0 14px 30px #181825;
+    /* box-shadow: 0 14px 30px #181825; */
+    box-shadow: 5px 5px 0 hsl(0, 0%, 60%);
     border-radius: 0.25em;
     z-index: 10;
 }
@@ -151,17 +182,20 @@ h1 {
 }
 
 .newsflash-dropdown-option:hover {
-    background-color: hsl(232, 28%, 32%);
+    /* background-color: hsl(232, 28%, 32%); */
+    background-color: hsl(28, 75%, 85%);
 }
 
-.newsflash-value-display {
+/* .newsflash-value-display {
     border-left: 2px solid rgba(180, 190, 254, 0.4);
     padding: 0 0 0 0.5em;
-}
+} */
 
 .newsflash-value-display-label {
     font-size: 16px;
-    color: rgba(180, 190, 254, 0.6);
+    /* color: rgba(180, 190, 254, 0.6); */
+    color: hsl(0, 0%, 40%);
+    text-decoration: underline;
     margin: 0;
 }
 
@@ -187,15 +221,18 @@ li {
 }
 
 .newsflash-notification {
-    background-color: hsl(232, 24%, 22%);
-    padding: 0.75rem 1.5rem;
+    /* background-color: hsl(232, 24%, 22%); */
+    background-color: hsl(28, 70%, 85%);
+    color: black;
+    padding: 0.5rem 1.5rem;
     list-style-type: none;
     margin-top: 1rem;
     border-radius: 0.25rem;
-    box-shadow: 0 0 40px hsl(240, 21%, 3%);
-    border-width: 3px;
+    /* box-shadow: 0 0 40px hsl(240, 21%, 3%); */
+    box-shadow: 0 5px 5px hsl(228, 10%, 10%);
+    border-width: 1px;
     border-style: solid;
-    border-color: hsl(115, 24%, 46%);
+    border-color: hsl(0, 0%, 30%);
 }
 
 .notification-out {

@@ -1,6 +1,7 @@
 <button
     id="{{ id }}"
     class="newsflash-button"
+    {% if disabled %}disabled{% endif %}
     hx-post="{{ full_path }}"
     hx-trigger="click"
     hx-swap="none"

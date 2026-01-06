@@ -36,13 +36,13 @@ class TestAscendingBarChart20(SnapshotTest):
     path_to_rendered: Path = Path(__file__).parent / "rendered" / "ascending-20.html"
     description: str = """
         Expected to see twenty bars labelled 1 to 20 with heights increasing from 
-        left to right in steps of 5. The width of the chart is 800 pixels.
+        left to right in steps of 5. The width of the chart is 600 pixels.
     """
 
     @staticmethod
     def render() -> str:
         chart = BarChart(
-            width=800,
+            width=600,
             height=400,
         )
 
