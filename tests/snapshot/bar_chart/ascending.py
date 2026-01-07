@@ -4,8 +4,7 @@ from newsflash.widgets import BarChart
 from ..snapshot_test import SnapshotTest
 
 
-class TestAscendingBarChart5(SnapshotTest):
-
+class AscendingBarChart5(SnapshotTest):
     name: str = "Ascending Bar Chart 5"
     path_to_rendered: Path = Path(__file__).parent / "rendered" / "ascending-5.html"
     description: str = """
@@ -28,10 +27,9 @@ class TestAscendingBarChart5(SnapshotTest):
         )
 
         return chart._render_update()
-    
 
-class TestAscendingBarChart20(SnapshotTest):
 
+class AscendingBarChart20(SnapshotTest):
     name: str = "Ascending Bar Chart 20"
     path_to_rendered: Path = Path(__file__).parent / "rendered" / "ascending-20.html"
     description: str = """

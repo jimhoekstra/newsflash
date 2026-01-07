@@ -168,6 +168,7 @@ h2 {
     max-height: 40vh;
     /* background-color: hsl(232, 24%, 22%); */
     background-color: hsl(28, 100%, 90%);
+    /* background-color: hsl(28, 60%, 90%); */
     overflow-y: auto;
     box-sizing: border-box;
     /* box-shadow: 0 14px 30px #181825; */
@@ -183,7 +184,7 @@ h2 {
 
 .newsflash-dropdown-option:hover {
     /* background-color: hsl(232, 28%, 32%); */
-    background-color: hsl(28, 75%, 85%);
+    background-color: hsl(213, 44%, 85%);
 }
 
 /* .newsflash-value-display {
@@ -222,12 +223,12 @@ li {
 
 .newsflash-notification {
     /* background-color: hsl(232, 24%, 22%); */
-    background-color: hsl(28, 70%, 85%);
+    background-color: hsl(213, 44%, 80%);
     color: black;
     padding: 0.5rem 1.5rem;
     list-style-type: none;
     margin-top: 1rem;
-    border-radius: 0.25rem;
+    /* border-radius: 0.25rem; */
     /* box-shadow: 0 0 40px hsl(240, 21%, 3%); */
     box-shadow: 0 5px 5px hsl(228, 10%, 10%);
     border-width: 1px;

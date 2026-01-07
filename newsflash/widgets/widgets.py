@@ -57,7 +57,9 @@ class Widget(Element):
                     "request_values": request_values,
                     "parent": self,
                 }
-            ) for widget in self.children if isinstance(widget, type)
+            )
+            for widget in self.children
+            if isinstance(widget, type)
         ]
 
         if len(self.children) == 0 and isinstance(self, type):

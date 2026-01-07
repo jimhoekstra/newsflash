@@ -3,7 +3,15 @@
 
     <div class="block">
         <p class="small-margin dim">Selected test</p>
-        {{ widgets["test-select"] | safe }}
+
+        <div class="horizontal">
+            <div class="flex-1">
+                {{ widgets["test-select"] | safe }}
+            </div>
+            <div class="flex-1">
+                {{ widgets["next-changed-snapshot-button"] | safe }}
+            </div>
+        </div>
     </div>
 
     <div class="margin-y">
@@ -11,18 +19,21 @@
     </div>
 
     <div class="horizontal">
+
         <div class="vertical">
             <h2>Old Snapshot</h2>
             <div class="chart">
                 {{ widgets["old-snapshot-html"] | safe }}
             </div>
         </div>
+
         <div class="vertical">
             <h2>New Snapshot</h2>
             <div class="chart">
                 {{ widgets["new-snapshot-html"] | safe }}
             </div>
         </div>
+        
     </div>
 
     <div class="margin-y">
@@ -40,29 +51,25 @@
     }
 
     h2 {
-        /* text-decoration: underline; */
-        /* color: rgba(180, 190, 254, 0.8); */
         color: hsl(0, 0%, 30%);
     }
 
     .dim {
         font-size: 16px;
-        /* color: rgba(180, 190, 254, 0.6); */
         color: hsl(0, 0%, 40%);
         text-decoration: underline;
         margin: 0;
     }
-
-    /* .block {
-        border-left: 2px solid rgba(180, 190, 254, 0.4);
-        padding: 0 0 0 0.5em;
-    } */
 
     .horizontal {
         display: flex;
         justify-content: center;
         align-items: flex-start;
         gap: 2em;
+    }
+
+    .flex-1 {
+        flex: 1;
     }
 
     .vertical {

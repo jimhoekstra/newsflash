@@ -11,4 +11,7 @@ test:
     uv run pytest tests/
 
 coverage:
-    uv run coverage run -m pytest tests/unit/ && uv run coverage report -m
+    uv run coverage run -m pytest tests/ && uv run coverage report -m
+
+snapshot:
+    uv run fastapi dev tests/snapshot/app.py
