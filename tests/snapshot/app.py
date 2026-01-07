@@ -100,7 +100,9 @@ class ApproveButton(Button):
 
         if not test_class.passes_test(new_snapshot.html_content):
             test_class.save_rendered(new_snapshot.html_content)
-            old_snapshot.html_content = new_snapshot.html_content
+
+            # Update the old snapshot content after approval
+            old_snapshot.html_content = test_class.load_rendered()
             self.label = "Snapshots Already Match"
             self.disabled = True
             return [self, old_snapshot]
