@@ -23,7 +23,7 @@ class SineLine(SnapshotTest):
         chart.title = "Ascending Line Chart"
 
         xs = [x / 100 * 2 * pi for x in range(100)]
-        ys = [sin(x) for x in xs] 
+        ys = [sin(x) for x in xs]
 
         chart.set_values(xs=xs, ys=ys)
 
