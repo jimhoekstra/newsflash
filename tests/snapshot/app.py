@@ -21,7 +21,7 @@ class NewSnapshotHTML(HTML):
 class TestSelect(Select):
     id: str = "test-select"
     options: list[str] = list(get_all_tests().keys())
-    default: Callable[[], str] | None = lambda: get_next_failing_test().name
+    default: Callable[[], str] = lambda: get_next_failing_test().name
 
     def on_select(
         self,

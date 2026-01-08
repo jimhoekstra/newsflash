@@ -1,13 +1,16 @@
 from typing import Type
 
 from .snapshot_test import SnapshotTest, AllSnapshotsPass
-from .bar_chart import ascending
+from .bar_chart import ascending, descending
+from .line_chart import math as math_lines
 
 
 def get_all_tests() -> dict[str, Type[SnapshotTest]]:
     all_tests = [
         ascending.AscendingBarChart5,
         ascending.AscendingBarChart20,
+        descending.DescendingBarChart5,
+        math_lines.SineLine,
     ]
 
     return {test.name: test for test in all_tests}

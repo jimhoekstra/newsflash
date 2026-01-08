@@ -136,7 +136,8 @@ h2 {
 
 .line-path {
     fill: transparent;
-    stroke: hsl(217, 90%, 75%);
+    /* stroke: hsl(217, 90%, 75%); */
+    stroke: hsl(0, 65%, 35%);
     stroke-width: 4;
     stroke-linecap: round;
     stroke-dasharray: 100 200;

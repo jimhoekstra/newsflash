@@ -58,7 +58,7 @@ class Select(Widget):
     _values_from_request: list[str] = ["selected"]
 
     def _post_init(self) -> None:
-        if self.selected is None:
+        if not self.selected:
             if self.default is not None:
                 self.selected = self.default()
             elif len(self.options) > 0:
