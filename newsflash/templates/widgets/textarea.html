@@ -3,8 +3,10 @@
     name="{{ id }}-value"
     class="newsflash-input newsflash-textarea" 
     rows="{{ rows }}"
+    placeholder="{{ placeholder }}"
     spellcheck="{{ 'true' if spellcheck else 'false' }}"
     autocomplete="off"
+    {% if autofocus %}autofocus{% endif %}
     hx-post="{{ full_path }}"
     hx-trigger="input"
     hx-swap="none"

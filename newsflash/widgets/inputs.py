@@ -6,6 +6,9 @@ from .widgets import Widget
 class Input(Widget):
     template: tuple[str, str] = ("widgets", "input.html")
     value: str = ""
+    autofocus: bool = False
+    type: str = "text"
+    placeholder: str = ""
 
     include_in_context: set[str] = {
         "id",
@@ -13,6 +16,9 @@ class Input(Widget):
         "hx_include",
         "hx_swap_oob",
         "full_path",
+        "autofocus",
+        "type",
+        "placeholder",
     }
 
     _values_from_request: list[str] = ["value"]
@@ -33,9 +39,11 @@ class TextArea(Input):
         "hx_include",
         "hx_swap_oob",
         "full_path",
+        "autofocus",
         "value",
         "rows",
         "spellcheck",
+        "placeholder",
     }
 
 

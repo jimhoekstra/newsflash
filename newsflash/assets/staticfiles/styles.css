@@ -197,7 +197,7 @@ h2 {
     font-size: 16px;
     /* color: rgba(180, 190, 254, 0.6); */
     color: hsl(0, 0%, 40%);
-    text-decoration: underline;
+    /* text-decoration: underline; */
     margin: 0;
 }
 
