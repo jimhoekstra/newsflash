@@ -182,7 +182,9 @@ class Widget(Element):
                 continue
             type_hint = type_hints[param]
 
-            assert issubclass(type_hint, Widget)
+            if not issubclass(type_hint, Widget):
+                continue
+
             widget_instance = type_hint()
             include_list.append(f"#{widget_instance.id}")
 
@@ -243,7 +245,10 @@ class Widget(Element):
         for param in parameters:
             if param == "self":
                 continue
+
             widget_type = type_hints.get(param, "Unknown")
+            if widget_type == "Unknown" or not issubclass(widget_type, Widget):
+                continue
 
             widget = self.root_widget.get_child_widget(
                 type=widget_type,

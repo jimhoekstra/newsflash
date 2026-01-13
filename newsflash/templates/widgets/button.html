@@ -1,6 +1,6 @@
 <button
     id="{{ id }}"
-    class="newsflash-button"
+    class="{{ classes|join(' ') }}"
     {% if disabled %}disabled{% endif %}
     hx-post="{{ full_path }}"
     hx-trigger="click"

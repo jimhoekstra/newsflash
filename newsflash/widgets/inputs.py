@@ -5,7 +5,8 @@ from .widgets import Widget
 
 class Input(Widget):
     template: tuple[str, str] = ("widgets", "input.html")
-    value: str = ""
+    value: str | None = None
+    default: Callable[[], str] | None = None
     autofocus: bool = False
     type: str = "text"
     placeholder: str = ""
@@ -23,6 +24,15 @@ class Input(Widget):
 
     _values_from_request: list[str] = ["value"]
     _callback_fn_name: str = "on_input"
+
+    def _post_init(self) -> None:
+        if self.value is None:
+            if self.default is not None:
+                self.value = self.default()
+            else:
+                self.value = ""
+
+        super()._post_init()
 
     def on_input(self, *args, **kwargs) -> list[Widget]:
         """Event handler for input events."""
@@ -66,7 +76,7 @@ class Select(Widget):
     _values_from_request: list[str] = ["selected"]
 
     def _post_init(self) -> None:
-        if not self.selected:
+        if self.selected is None:
             if self.default is not None:
                 self.selected = self.default()
             elif len(self.options) > 0:
@@ -86,6 +96,7 @@ class Button(Widget):
     label: str = "Click Me"
     hx_include: list[str] = []
     disabled: bool = False
+    classes: list[str] = ["newsflash-button"]
 
     include_in_context: set[str] = {
         "id",
@@ -94,6 +105,7 @@ class Button(Widget):
         "full_path",
         "label",
         "disabled",
+        "classes",
     }
 
     _callback_fn_name: str = "on_click"

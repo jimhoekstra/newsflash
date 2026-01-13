@@ -7,6 +7,7 @@
     {% for item_id, rendered_item in widgets.items() %}
         <li
             class="newsflash-grid-item"
+            style="width: 100%; min-width: 0; overflow-wrap: break-word;"
         >
             <input type="hidden" name="{{ id }}-{{ loop.index0 }}-id" value="{{ item_id }}">
             {{ rendered_item | safe }}

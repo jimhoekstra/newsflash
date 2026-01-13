@@ -11,18 +11,32 @@ class List(Widget, Generic[W]):
     """A widget that displays a list of items."""
 
     item_type: type[W]
-    items: list[W] = []
+    items: list[W] | None = None
+    default: Callable[[], list[W]] | None = None
     template: tuple[str, str] | None = ("widgets", "list.html")
 
     include_in_context: set[str] = {"id", "hx_include", "hx_swap_oob"}
 
+    def _post_init(self) -> None:
+        if self.items is None:
+            if self.default is not None:
+                self.items = self.default()
+            else:
+                self.items = []
+        
+        super()._post_init()
+
     def get_list_item_by_id(self, item_id: str) -> W | None:
+        if self.items is None:
+            return None
         for item in self.items:
             if item.id == item_id:
                 return item
         return None
 
     def get_list_item_by_index(self, index: int) -> W | None:
+        if self.items is None:
+            return None
         if 0 <= index < len(self.items):
             return self.items[index]
         return None
@@ -30,20 +44,25 @@ class List(Widget, Generic[W]):
     @property
     def num_items(self) -> int:
         """Returns the number of items in the list."""
+        if self.items is None:
+            return 0
         return len(self.items)
 
     def set_items(self, items: list[W]) -> None:
         self.items = items
 
     def append_item(self, item: W) -> Self:
+        assert self.items is not None, "Items list is not initialized."
         self.items.append(item)
         return self
 
     def filter_items(self, filter_fn: Callable[[W], bool]) -> Self:
+        assert self.items is not None, "Items list is not initialized."
         filtered_items = [item for item in self.items if filter_fn(item)]
         return self.model_copy(update={"items": filtered_items})
 
     def get_additional_context(self) -> dict[str, Any]:
+        assert self.items is not None, "Items list is not initialized."
         for child in self.items:
             child.parent = self
 
