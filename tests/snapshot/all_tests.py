@@ -11,6 +11,7 @@ def get_all_tests() -> dict[str, Type[SnapshotTest]]:
         ascending.AscendingBarChart20,
         descending.DescendingBarChart5,
         math_lines.SineLine,
+        math_lines.CosineLine,
     ]
 
     return {test.name: test for test in all_tests}

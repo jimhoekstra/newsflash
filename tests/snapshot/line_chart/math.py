@@ -1,5 +1,5 @@
 from pathlib import Path
-from math import sin, pi
+from math import sin, pi, cos
 
 from newsflash.widgets import LineChart
 from ..snapshot_test import SnapshotTest
@@ -20,10 +20,35 @@ class SineLine(SnapshotTest):
             height=400,
         )
 
-        chart.title = "Ascending Line Chart"
+        chart.title = "Sine Line Chart"
 
         xs = [x / 100 * 2 * pi for x in range(101)]
         ys = [sin(x) for x in xs]
+
+        chart.set_values(xs=xs, ys=ys)
+
+        return chart._render_update()
+
+
+class CosineLine(SnapshotTest):
+    name: str = "Cosine Line"
+    path_to_rendered: Path = Path(__file__).parent / "rendered" / "cosine-line.html"
+    description: str = """
+        Expected to see a line chart plotting a cosine wave for 10 periods. The amplitude
+        of the wave is 10. The width of the chart is 600 pixels.
+    """
+
+    @staticmethod
+    def render() -> str:
+        chart = LineChart(
+            width=600,
+            height=400,
+        )
+
+        chart.title = "Cosine Line Chart"
+
+        xs = [x / 500 * 20 * pi for x in range(501)]
+        ys = [10 * cos(x) for x in xs]
 
         chart.set_values(xs=xs, ys=ys)
 
