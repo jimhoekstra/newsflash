@@ -91,6 +91,8 @@ class LineChart(Chart):
         self,
         xs: list[float] | list[int],
         ys: list[float] | list[int],
+        # TODO: fix type annotation
+        x_labels: dict[Any, Any] | None = None,
     ) -> None:
         self.elements = build_linechart(
             xs=xs,
@@ -98,6 +100,7 @@ class LineChart(Chart):
             width=self.width,
             height=self.height,
             title=self.title,
+            x_labels=x_labels,
             title_font_size=self.title_font_size,
             label_font_size=self.label_font_size,
         )

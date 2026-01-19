@@ -12,7 +12,7 @@ from .xy_chart import build_xy_chart
 from .axes import (
     AxesConfig,
     build_y_axis_config,
-    build_x_axis_config,
+    build_spaced_x_axis_config,
 )
 
 
@@ -63,7 +63,7 @@ def build_histogram(
     x_padding = x_width / 2
 
     axes = AxesConfig(
-        x=build_x_axis_config(values=xs),
+        x=build_spaced_x_axis_config(values=xs),
         y=build_y_axis_config(values=ys, min_value=0),
     )
 

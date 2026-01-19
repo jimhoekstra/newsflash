@@ -7,7 +7,12 @@ from newsflash.svg.element import ElementGroup
 from newsflash.svg.elements import build_path
 
 from .xy_chart import build_xy_chart
-from .axes import AxesConfig, build_x_axis_config, build_y_axis_config
+from .axes import (
+    AxesConfig, 
+    build_x_axis_config,
+    build_spaced_x_axis_config, 
+    build_y_axis_config,
+)
 
 
 def _build_line(
@@ -41,6 +46,7 @@ def build_linechart(
     width: float,
     height: float,
     title: str,
+    x_labels: dict[float | int, str | int | float] | None = None,
     font: TTFont = lora,
     title_font_size: int = 32,
     label_font_size: int = 16,
@@ -49,8 +55,16 @@ def build_linechart(
 
     x_padding = (max(xs) - min(xs)) / 50
 
+    if x_labels is not None:
+        x_axis_config = build_x_axis_config(
+            values=xs,
+            label_values=x_labels,
+        )
+    else:
+        x_axis_config = build_spaced_x_axis_config(values=xs)
+
     axes = AxesConfig(
-        x=build_x_axis_config(values=xs),
+        x=x_axis_config,
         y=build_y_axis_config(values=ys),
     )
 

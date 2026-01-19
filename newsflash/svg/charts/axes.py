@@ -68,7 +68,7 @@ def build_y_axis_config(
     )
 
 
-def build_x_axis_config(
+def build_spaced_x_axis_config(
     values: list[int] | list[float], num_labels: int = 8
 ) -> AxisConfig:
     x_step = ceil(len(values) / num_labels)
@@ -79,15 +79,25 @@ def build_x_axis_config(
     else:
         decimal_places = 0
 
-    min_value = min(values)
-    max_value = max(values)
-
     return AxisConfig(
         label_positions=label_positions,
         label_values=label_positions,
         decimal_places=decimal_places,
-        min_value=min_value,
-        max_value=max_value,
+        min_value=min(values),
+        max_value=max(values),
+    )
+
+
+def build_x_axis_config(
+    values: list[float] | list[int],
+    label_values: dict[float | int, str | int | float],
+) -> AxisConfig:
+    return AxisConfig(
+        label_positions=list(label_values.keys()),
+        label_values=list(label_values.values()),  # type: ignore
+        decimal_places=0,
+        min_value=min(values),
+        max_value=max(values),
     )
 
 
