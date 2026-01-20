@@ -15,7 +15,9 @@ def get_all_tests() -> dict[str, Type[SnapshotTest]]:
         math_lines.CosineLine,
         math_lines.SineLineWithCustomLabels,
         math_lines.SineLineWithCustomXRange,
-        distributions.GaussianDistributionHistogram
+        distributions.GaussianDistributionHistogram,
+        distributions.BetaDistributionHistogram,
+        distributions.UniformDistributionHistogram,
     ]
 
     return {test.name: test for test in all_tests}
