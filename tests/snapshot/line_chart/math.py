@@ -92,3 +92,33 @@ class SineLineWithCustomLabels(SnapshotTest):
         chart.set_values(xs=xs, ys=ys, x_labels=x_labels)
 
         return chart._render_update()
+
+
+class SineLineWithCustomXRange(SnapshotTest):
+    name: str = "Sine Line Custom X Range"
+    path_to_rendered: Path = Path(__file__).parent / "rendered" / "sine-line-custom-x-range.html"
+    description: str = """
+        Expected to see a line chart plotting a sine wave for 1 period. The amplitude
+        of the wave is 1. The x-axis range is from -2π to 4π. x-labels are set at 0 and 2π.
+        The width of the chart is 600 pixels.
+    """
+
+    @staticmethod
+    def render() -> str:
+        chart = LineChart(
+            width=600,
+            height=400,
+        )
+
+        chart.title = "Sine Line With Custom X Range"
+
+        xs = [x / 100 * 2 * pi for x in range(101)]
+        ys = [sin(x) for x in xs]
+        x_labels: dict[float, str] = {
+            0: "0",
+            2 * pi: "2π",
+        }
+
+        chart.set_values(xs=xs, ys=ys, min_x_value=-2 * pi, max_x_value=4 * pi, x_labels=x_labels)
+
+        return chart._render_update()

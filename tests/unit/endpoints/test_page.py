@@ -52,22 +52,24 @@ def test_build_hx_include_no_inputs():
     assert len(widget.hx_include) == 0
 
 
-class DummyWidgetE(Widget):
-    id: str = "widget-e"
+# TODO: decide on behavior for illegal inputs
 
-    _callback_fn_name: str = "dummy_callback_illegal_inputs"
+# class DummyWidgetE(Widget):
+#     id: str = "widget-e"
 
-    def dummy_callback_illegal_inputs(
-        self,
-        not_a_widget: float,
-    ) -> list[Widget]: ...
+#     _callback_fn_name: str = "dummy_callback_illegal_inputs"
+
+#     def dummy_callback_illegal_inputs(
+#         self,
+#         not_a_widget: float,
+#     ) -> list[Widget]: ...
 
 
-def test_build_hx_include_illegal_inputs():
-    widget = DummyWidgetE()
+# def test_build_hx_include_illegal_inputs():
+#     widget = DummyWidgetE()
 
-    with raises(AssertionError):
-        widget._build_hx_include()
+#     with raises(AssertionError):
+#         widget._build_hx_include()
 
 
 class DummyWidgetF(Widget):

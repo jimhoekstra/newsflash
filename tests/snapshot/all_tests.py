@@ -3,6 +3,7 @@ from typing import Type
 from .snapshot_test import SnapshotTest, AllSnapshotsPass
 from .bar_chart import ascending, descending
 from .line_chart import math as math_lines
+from .histograms import distributions
 
 
 def get_all_tests() -> dict[str, Type[SnapshotTest]]:
@@ -13,6 +14,8 @@ def get_all_tests() -> dict[str, Type[SnapshotTest]]:
         math_lines.SineLine,
         math_lines.CosineLine,
         math_lines.SineLineWithCustomLabels,
+        math_lines.SineLineWithCustomXRange,
+        distributions.GaussianDistributionHistogram
     ]
 
     return {test.name: test for test in all_tests}

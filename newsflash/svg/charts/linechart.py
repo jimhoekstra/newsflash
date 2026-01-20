@@ -47,6 +47,8 @@ def build_linechart(
     height: float,
     title: str,
     x_labels: dict[float | int, str | int | float] | None = None,
+    min_x_value: float | int | None = None,
+    max_x_value: float | int | None = None,
     font: TTFont = lora,
     title_font_size: int = 32,
     label_font_size: int = 16,
@@ -59,9 +61,15 @@ def build_linechart(
         x_axis_config = build_x_axis_config(
             values=xs,
             label_values=x_labels,
+            min_value=min_x_value,
+            max_value=max_x_value,
         )
     else:
-        x_axis_config = build_spaced_x_axis_config(values=xs)
+        x_axis_config = build_spaced_x_axis_config(
+            values=xs,
+            min_value=min_x_value,
+            max_value=max_x_value,
+        )
 
     axes = AxesConfig(
         x=x_axis_config,
