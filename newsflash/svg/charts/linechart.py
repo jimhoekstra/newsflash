@@ -8,9 +8,9 @@ from newsflash.svg.elements import build_path
 
 from .xy_chart import build_xy_chart
 from .axes import (
-    AxesConfig, 
+    AxesConfig,
     build_x_axis_config,
-    build_spaced_x_axis_config, 
+    build_spaced_x_axis_config,
     build_y_axis_config,
 )
 

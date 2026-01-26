@@ -1,4 +1,4 @@
-from math import floor, log10
+from math import floor, ceil, log10
 from decimal import Decimal
 from bisect import bisect_left
 
@@ -60,3 +60,21 @@ def get_y_label_positions(
         current_label += step
 
     return y_label_positions
+
+
+def smart_round(numbers: list[float]) -> tuple[list[float], int]:
+    differences = [numbers[i + 1] - numbers[i] for i in range(len(numbers) - 1)]
+    min_difference = min(differences)
+    oom = order_of_magnitude(min_difference)
+    decimal_places = max(0, -oom)
+
+    return [round(num, decimal_places) for num in numbers], decimal_places
+
+
+def get_step_decimal_places(numbers: list[float]) -> int:
+    differences = [numbers[i + 1] - numbers[i] for i in range(len(numbers) - 1)]
+    min_difference = min(differences)
+    oom = order_of_magnitude_for_significant_figures(min_difference)
+    decimal_places = max(0, -oom)
+
+    return decimal_places

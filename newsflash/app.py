@@ -74,7 +74,7 @@ class App(FastAPI):
             )  # Automatically add Notification widget
 
             async def page_endpoint(request: Request) -> str:
-                rendered_content = page.render(request=request)
+                rendered_content = page.render()
 
                 page_template = template_registry.get_template("widgets", "index.html")
                 return page_template.render(

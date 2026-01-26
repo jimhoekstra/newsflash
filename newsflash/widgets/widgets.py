@@ -34,7 +34,6 @@ class Widget(Element):
     _callback_fn_on_parent: bool = False
 
     def _re_init(self: W, update: dict[str, Any] = {}) -> W:
-        # widget_copy = self.model_copy(update=update)
         for k, v in update.items():
             setattr(self, k, v)
 

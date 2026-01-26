@@ -1,17 +1,9 @@
-from math import ceil, log10, floor
+from math import ceil, floor
 from collections import Counter
 
 from pydantic import BaseModel
 
-from .utils import get_y_label_positions, order_of_magnitude
-
-
-def smart_round(numbers: list[float]) -> tuple[list[float], int]:
-    differences = [numbers[i + 1] - numbers[i] for i in range(len(numbers) - 1)]
-    min_difference = min(differences)
-
-    decimal_places = max(0, ceil(-log10(min_difference)))
-    return [round(num, decimal_places) for num in numbers], decimal_places
+from .utils import get_y_label_positions, order_of_magnitude, smart_round, get_step_decimal_places
 
 
 class AxisConfig(BaseModel):
@@ -54,7 +46,8 @@ def build_y_axis_config(
         label_position_values = label_positions
 
     if all([isinstance(x, float) for x in label_position_values]):
-        _, decimal_places = smart_round(label_position_values)  # type: ignore
+        # _, decimal_places = smart_round(label_position_values)  # type: ignore
+        decimal_places = get_step_decimal_places(label_position_values)  # type: ignore
     else:
         decimal_places = 0
 
@@ -69,7 +62,7 @@ def build_y_axis_config(
 
 
 def build_spaced_x_axis_config(
-    values: list[int] | list[float], 
+    values: list[int] | list[float],
     num_labels: int = 8,
     min_value: float | int | None = None,
     max_value: float | int | None = None,

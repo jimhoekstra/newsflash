@@ -53,11 +53,13 @@ class CosineLine(SnapshotTest):
         chart.set_values(xs=xs, ys=ys)
 
         return chart._render_update()
-    
+
 
 class SineLineWithCustomLabels(SnapshotTest):
     name: str = "Sine Line Custom Labels"
-    path_to_rendered: Path = Path(__file__).parent / "rendered" / "sine-line-with-custom-labels.html"
+    path_to_rendered: Path = (
+        Path(__file__).parent / "rendered" / "sine-line-with-custom-labels.html"
+    )
     description: str = """
         Expected to see a line chart plotting a sine wave for 10 periods. The amplitude
         of the wave is 10. The chart has x labels at every interval of 2*pi. 
@@ -96,7 +98,9 @@ class SineLineWithCustomLabels(SnapshotTest):
 
 class SineLineWithCustomXRange(SnapshotTest):
     name: str = "Sine Line Custom X Range"
-    path_to_rendered: Path = Path(__file__).parent / "rendered" / "sine-line-custom-x-range.html"
+    path_to_rendered: Path = (
+        Path(__file__).parent / "rendered" / "sine-line-custom-x-range.html"
+    )
     description: str = """
         Expected to see a line chart plotting a sine wave for 1 period. The amplitude
         of the wave is 1. The x-axis range is from -2π to 4π. x-labels are set at 0 and 2π.
@@ -119,6 +123,8 @@ class SineLineWithCustomXRange(SnapshotTest):
             2 * pi: "2π",
         }
 
-        chart.set_values(xs=xs, ys=ys, min_x_value=-2 * pi, max_x_value=4 * pi, x_labels=x_labels)
+        chart.set_values(
+            xs=xs, ys=ys, min_x_value=-2 * pi, max_x_value=4 * pi, x_labels=x_labels
+        )
 
         return chart._render_update()

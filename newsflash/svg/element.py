@@ -1,7 +1,6 @@
 from typing import Any
 
 from pydantic import BaseModel, ConfigDict
-from fastapi import Request
 
 from newsflash.templates.templates import template_registry
 
@@ -24,19 +23,9 @@ class Element(BaseModel):
     def modify_context(self, context: dict[str, Any]) -> dict[str, Any]:
         return context
 
-    def render(
-        self,
-        request: Request | None = None,
-        additional_context: dict[str, Any] | None = None,
-    ) -> str:
+    def render(self) -> str:
         context = self.model_dump(include=self.include_in_context)
-
-        if request is not None:
-            context["request"] = request
         context.update(self.get_additional_context())
-
-        if additional_context is not None:
-            context.update(additional_context)
 
         assert self.template is not None, (
             f"Element with ID '{self.id}' has no template defined"

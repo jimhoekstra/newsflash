@@ -14,17 +14,27 @@ from .axes import (
 )
 
 
-def _build_bars(
+def build_bars(
     bars: list[float] | list[int],
     chart_box: Box,
+    xs: list[float] | list[int] | None = None,
 ) -> ElementGroup:
+    assert xs is None or len(xs) == len(bars)
     elements = ElementGroup()
 
-    for idx, bar in enumerate(bars):
+    # TODO: determine x_width inside this if statement
+    # is a little bit hacky
+    if xs is None:
+        xs = list(range(len(bars)))
+        x_width = (max(xs) - min(xs) + 1) / len(xs)
+    else:
+        x_width = (max(xs) - min(xs)) / len(xs)
+
+    for x, y in zip(xs, bars):
         rect = build_rectangle_from_bottom_center(
-            bottom_center=Point(x=idx, y=0.0),
-            width=0.9,
-            height=bar,
+            bottom_center=Point(x=x, y=0.0),
+            width=0.9 * x_width,
+            height=y,
             rounded=0.05,
             classes=["bar"],
             box=chart_box,
@@ -63,7 +73,7 @@ def build_barchart(
         label_font_size=label_font_size,
     )
 
-    bars = _build_bars(bars=values, chart_box=chart_box)
+    bars = build_bars(bars=values, chart_box=chart_box)
     barchart_elements.extend(bars)
 
     return barchart_elements

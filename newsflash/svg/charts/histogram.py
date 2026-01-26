@@ -2,11 +2,8 @@ import polars as pl
 
 from fontTools.ttLib import TTFont
 
-from newsflash.svg.box import Box
-from newsflash.svg.utils import Point
 from newsflash.svg.utils.fonts import lora
 from newsflash.svg.element import ElementGroup
-from newsflash.svg.elements import build_rectangle_from_bottom_center
 
 from .xy_chart import build_xy_chart
 from .axes import (
@@ -14,33 +11,7 @@ from .axes import (
     build_y_axis_config,
     build_spaced_x_axis_config,
 )
-
-
-def _build_bars(
-    bars: list[float] | list[int],
-    chart_box: Box,
-    xs: list[float] | list[int] | None = None,
-) -> ElementGroup:
-    assert xs is None or len(xs) == len(bars)
-    elements = ElementGroup()
-
-    if xs is None:
-        xs = list(range(len(bars)))
-
-    x_width = (max(xs) - min(xs)) / len(xs)
-
-    for x, y in zip(xs, bars):
-        rect = build_rectangle_from_bottom_center(
-            bottom_center=Point(x=x, y=0.0),
-            width=0.9 * x_width,
-            height=y,
-            rounded=0.05,
-            classes=["bar"],
-            box=chart_box,
-        )
-        elements.append(rect)
-
-    return elements
+from .barchart import build_bars
 
 
 def build_histogram(
@@ -78,7 +49,7 @@ def build_histogram(
         label_font_size=label_font_size,
     )
 
-    bars = _build_bars(bars=ys, chart_box=chart_box, xs=xs)
+    bars = build_bars(bars=ys, chart_box=chart_box, xs=xs)
     barchart_elements.extend(bars)
 
     return barchart_elements

@@ -1,4 +1,3 @@
-from pytest import raises
 
 from newsflash.widgets.widgets import Widget
 
@@ -22,8 +21,7 @@ class DummyWidgetC(Widget):
         widget_b: DummyWidgetB,
     ) -> list[Widget]: ...
 
-    def render(self) -> str:
-        return f"Dummy Widget C, with hx_include: {', '.join(self.hx_include)}"
+    def render(self) -> str: ...
 
 
 def test_build_hx_include():

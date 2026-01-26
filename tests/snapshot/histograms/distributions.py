@@ -30,7 +30,7 @@ class GaussianDistributionHistogram(SnapshotTest):
         )
 
         return chart._render_update()
-    
+
 
 class BetaDistributionHistogram(SnapshotTest):
     name: str = "Beta Distribution Histogram"

@@ -47,9 +47,6 @@ class Chart(Widget):
         container.hx_include.extend(self.hx_include)
 
         context = self.get_additional_context()
-        if request is not None:
-            context["request"] = request
-
         return container.render(request=request, additional_context=context)
 
     def _render_update(self) -> str:

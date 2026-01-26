@@ -11,6 +11,7 @@ def get_all_tests() -> dict[str, Type[SnapshotTest]]:
         ascending.AscendingBarChart5,
         ascending.AscendingBarChart20,
         descending.DescendingBarChart5,
+        descending.DescendingBarChartLargeNumbers,
         math_lines.SineLine,
         math_lines.CosineLine,
         math_lines.SineLineWithCustomLabels,

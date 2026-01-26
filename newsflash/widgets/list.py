@@ -23,7 +23,7 @@ class List(Widget, Generic[W]):
                 self.items = self.default()
             else:
                 self.items = []
-        
+
         super()._post_init()
 
     def get_list_item_by_id(self, item_id: str) -> W | None:
