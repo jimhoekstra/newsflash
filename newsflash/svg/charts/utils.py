@@ -1,4 +1,4 @@
-from math import floor, ceil, log10
+from math import floor, log10
 from decimal import Decimal
 from bisect import bisect_left
 

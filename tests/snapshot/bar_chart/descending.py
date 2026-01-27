@@ -31,7 +31,9 @@ class DescendingBarChart5(SnapshotTest):
 
 class DescendingBarChartLargeNumbers(SnapshotTest):
     name: str = "Descending Bar Chart Large Numbers"
-    path_to_rendered: Path = Path(__file__).parent / "rendered" / "descending-large-numbers.html"
+    path_to_rendered: Path = (
+        Path(__file__).parent / "rendered" / "descending-large-numbers.html"
+    )
     description: str = """
         Expected to see five bars labelled A to E with heights decreasing from 
         left to right in steps of 1,000,000. The left starting point is 10,000,000.

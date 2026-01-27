@@ -1,7 +1,7 @@
 import pytest
 
 from newsflash.svg.charts.utils import (
-    order_of_magnitude, 
+    order_of_magnitude,
     n_significant_figures,
     order_of_magnitude_for_significant_figures,
     smart_round,
@@ -49,7 +49,9 @@ def test_n_significant_figures(value: float, expected: int) -> None:
         (12345.6789, -4),
     ],
 )
-def test_order_of_magnitude_for_significant_figures(value: float, expected: int) -> None:
+def test_order_of_magnitude_for_significant_figures(
+    value: float, expected: int
+) -> None:
     assert order_of_magnitude_for_significant_figures(value) == expected
 
 
@@ -65,7 +67,7 @@ def test_order_of_magnitude_for_significant_figures(value: float, expected: int)
             [0, 0.1, 1.01, 2.2, 3, 4],
             [0, 0.1, 1, 2.2, 3, 4],
             1,
-        )
+        ),
     ],
 )
 def test_smart_round(
@@ -83,12 +85,12 @@ def test_smart_round(
     [
         (
             [0.0, 0.25, 0.5, 0.75, 1.0],
-            2, # because 0.25 requires 2 decimal places
+            2,  # because 0.25 requires 2 decimal places
         ),
         (
             [0, 0.1, 1.01, 2.2, 3, 4],
-            1, # because 0.1 requires 1 decimal place
-        )
+            1,  # because 0.1 requires 1 decimal place
+        ),
     ],
 )
 def test_get_step_decimal_places(

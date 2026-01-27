@@ -3,7 +3,12 @@ from collections import Counter
 
 from pydantic import BaseModel
 
-from .utils import get_y_label_positions, order_of_magnitude, smart_round, get_step_decimal_places
+from .utils import (
+    get_y_label_positions,
+    order_of_magnitude,
+    smart_round,
+    get_step_decimal_places,
+)
 
 
 class AxisConfig(BaseModel):

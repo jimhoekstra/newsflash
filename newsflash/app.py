@@ -9,6 +9,7 @@ from newsflash.widgets.widgets import Widget
 from newsflash.widgets import Notifications
 from newsflash.templates.templates import template_registry
 from newsflash.endpoints.parsers import RequestValues, parse_request_values
+from newsflash.endpoints.callback import get_page_callback
 
 
 W = TypeVar("W", bound=Widget)
@@ -73,16 +74,7 @@ class App(FastAPI):
                 Notifications()
             )  # Automatically add Notification widget
 
-            async def page_endpoint(request: Request) -> str:
-                rendered_content = page.render()
-
-                page_template = template_registry.get_template("widgets", "index.html")
-                return page_template.render(
-                    request=request,
-                    title=page.title,
-                    content=rendered_content,
-                )
-
+            page_endpoint = get_page_callback(page)
             self.add_api_route(
                 page_path, page_endpoint, methods=["GET"], response_class=HTMLResponse
             )

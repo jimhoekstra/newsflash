@@ -1,4 +1,3 @@
-
 from newsflash.widgets.widgets import Widget
 
 
