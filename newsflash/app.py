@@ -19,6 +19,13 @@ class Page(Widget):
     path: str
     title: str
 
+    def _post_init(self) -> None:
+        self.children.append(
+            Notifications()
+        )  # Always add Notification widget to pages
+        
+        return super()._post_init()
+
 
 class App(FastAPI):
     pages: dict[str, Page]
@@ -40,7 +47,6 @@ class App(FastAPI):
             ("/_newsflash/static", Path(__file__).parent / "assets" / "staticfiles")
         )
         self._mount_static_folders(static_folders)
-
         self._build_page_endpoints()
         self._build_callback_endpoints()
 
@@ -57,6 +63,8 @@ class App(FastAPI):
         # )
         if id is not None:
             id = id.removeprefix(f"{page.id}/")
+
+        page._post_init()
         return page.get_child_widget(type=type, id=id, request_values=request_values)
 
     def _mount_static_folders(self, static_folders: list[tuple[str, Path]]) -> None:
@@ -69,10 +77,6 @@ class App(FastAPI):
     def _build_page_endpoints(self):
         for page_path, page in self.pages.items():
             assert page.template is not None, "Page template is not set."
-
-            page.children.append(
-                Notifications()
-            )  # Automatically add Notification widget
 
             page_endpoint = get_page_callback(page)
             self.add_api_route(
