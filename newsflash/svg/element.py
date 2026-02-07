@@ -20,12 +20,10 @@ class Element(BaseModel):
     def get_additional_context(self) -> dict[str, Any]:
         return {}
 
-    def modify_context(self, context: dict[str, Any]) -> dict[str, Any]:
-        return context
-
-    def render(self) -> str:
+    def render(self, additional_context: dict[str, Any] = {}) -> str:
         context = self.model_dump(include=self.include_in_context)
         context.update(self.get_additional_context())
+        context.update(additional_context)
 
         assert self.template is not None, (
             f"Element with ID '{self.id}' has no template defined"
@@ -35,7 +33,6 @@ class Element(BaseModel):
             template_folder=self.template[0], template_name=self.template[1]
         )
 
-        context = self.modify_context(context)
         rendered = template.render(context)
         return rendered
 

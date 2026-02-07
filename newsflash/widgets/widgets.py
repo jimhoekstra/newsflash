@@ -177,14 +177,14 @@ class Widget(Element):
 
         include_list: list[str] = []
         for param in parameters:
-            if param == "self" or param == "args" or param == "kwargs":
-                continue
-            type_hint = type_hints[param]
-
-            if not issubclass(type_hint, Widget):
+            if param == "args" or param == "kwargs":
                 continue
 
-            widget_instance = type_hint()
+            widget_type = type_hints[param]
+            if not issubclass(widget_type, Widget):
+                continue
+
+            widget_instance = widget_type()
             include_list.append(f"#{widget_instance.id}")
 
         if self._include_parent and self.parent is not None:
@@ -242,9 +242,6 @@ class Widget(Element):
 
         input_dict = {}
         for param in parameters:
-            if param == "self":
-                continue
-
             widget_type = type_hints.get(param, "Unknown")
             if widget_type == "Unknown" or not issubclass(widget_type, Widget):
                 continue

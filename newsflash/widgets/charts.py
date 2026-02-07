@@ -47,7 +47,7 @@ class Chart(Widget):
         container.hx_include.extend(self.hx_include)
 
         context = self.get_additional_context()
-        return container.render(request=request, additional_context=context)
+        return container.render(additional_context=context)
 
     def _render_update(self) -> str:
         return super().render()
