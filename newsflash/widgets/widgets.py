@@ -1,8 +1,11 @@
-from typing import Any, Type, Callable, get_type_hints, TypeVar
+from typing import Any, Type, Callable, get_type_hints, TypeVar, TYPE_CHECKING
 from inspect import signature
 
 from newsflash.svg.element import Element
 from newsflash.endpoints.parsers import RequestValues
+
+if TYPE_CHECKING:
+    from newsflash.app import Page
 
 
 class WidgetContainer(Element):
@@ -144,8 +147,10 @@ class Widget(Element):
         return full_path
 
     @property
-    def root_widget(self) -> "Widget":
+    def root_widget(self) -> "Page":
         if self.parent is None:
+            # assert isinstance(self, Page), "Root widget must be a Page"
+            # TODO: how to assert the correct type here?
             return self
         else:
             return self.parent.root_widget

@@ -1,7 +1,5 @@
 from typing import Any
 
-from fastapi import Request
-
 from newsflash.svg.element import ElementGroup
 from newsflash.svg.charts.barchart import build_barchart
 from newsflash.svg.charts.linechart import build_linechart
@@ -40,7 +38,7 @@ class Chart(Widget):
         """Event handler for chart load events."""
         return []
 
-    def render(self, request: Request | None = None) -> str:
+    def render(self) -> str:
         container = WidgetContainer(
             widget_id=self.id,
         )

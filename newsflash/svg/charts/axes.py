@@ -51,7 +51,6 @@ def build_y_axis_config(
         label_position_values = label_positions
 
     if all([isinstance(x, float) for x in label_position_values]):
-        # _, decimal_places = smart_round(label_position_values)  # type: ignore
         decimal_places = get_step_decimal_places(label_position_values)  # type: ignore
     else:
         decimal_places = 0

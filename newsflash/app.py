@@ -18,12 +18,11 @@ W = TypeVar("W", bound=Widget)
 class Page(Widget):
     path: str
     title: str
+    query_params: dict[str, list[str]] = {}
 
     def _post_init(self) -> None:
-        self.children.append(
-            Notifications()
-        )  # Always add Notification widget to pages
-        
+        self.children.append(Notifications())  # Always add Notification widget to pages
+
         return super()._post_init()
 
 
