@@ -40,17 +40,17 @@ h2 {
     outline: none;
     border-radius: 0.25em;
     border-style: solid;
-    border-width: 0px;
-    border-color: #1e1e2e;
+    border-width: 2px;
+    border-color: hsl(232, 27%, 70%);
     padding: 0.75em 1.1em;
     margin: 0;
     width: 100%;
     box-sizing: border-box;
-    box-shadow: 5px 5px 0 hsl(0, 0%, 60%);
 }
 
 .newsflash-input:focus {
-    border-color: hsl(232, 27%, 35%);
+    border-color: hsl(232, 27%, 45%);
+    /* border-style: dashed; */
 }
 
 .newsflash-textarea {
