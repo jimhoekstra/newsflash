@@ -172,8 +172,12 @@ h2 {
     /* background-color: hsl(28, 60%, 90%); */
     overflow-y: auto;
     box-sizing: border-box;
+    border-radius: 0.25em;
+    border-style: solid;
+    border-width: 2px;
+    border-color: hsl(232, 27%, 45%);
     /* box-shadow: 0 14px 30px #181825; */
-    box-shadow: 5px 5px 0 hsl(0, 0%, 60%);
+    /* box-shadow: 5px 5px 0 hsl(0, 0%, 60%); */
     border-radius: 0.25em;
     z-index: 10;
 }
@@ -187,11 +191,6 @@ h2 {
     /* background-color: hsl(232, 28%, 32%); */
     background-color: hsl(213, 44%, 85%);
 }
-
-/* .newsflash-value-display {
-    border-left: 2px solid rgba(180, 190, 254, 0.4);
-    padding: 0 0 0 0.5em;
-} */
 
 .newsflash-value-display-label {
     font-size: 16px;

@@ -1,15 +1,15 @@
 from typing import Type, TypeVar
 from pathlib import Path
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 
 from newsflash.widgets.widgets import Widget
 from newsflash.widgets import Notifications
 from newsflash.templates.templates import template_registry
-from newsflash.endpoints.parsers import RequestValues, parse_request_values
-from newsflash.endpoints.callback import get_page_callback
+from newsflash.endpoints.parsers import RequestValues
+from newsflash.endpoints.callback import get_page_callback, get_callback_endpoint
 
 
 W = TypeVar("W", bound=Widget)
@@ -82,37 +82,24 @@ class App(FastAPI):
                 page_path, page_endpoint, methods=["GET"], response_class=HTMLResponse
             )
 
-    def _build_callback_endpoints(self):
-        async def callback_endpoint(request: Request, widget_id: str) -> str:
-            body = await request.form()
-            headers = request.headers
-            request_values = parse_request_values(body, headers)
-
-            widget = self.get_widget(
-                path=request_values.url_path,
-                type=Widget,
-                id=widget_id,
-                request_values=request_values,
-            )
-
-            widgets_to_render = widget._call_callback()
-
-            rendered_widgets = []
-            assert isinstance(widgets_to_render, list), (
-                "Callback must return a list of widgets"
-            )
-            for widget in widgets_to_render:
-                assert isinstance(widget, Widget), (
-                    "Callback must return a list of widgets"
-                )
-                widget.hx_swap_oob = True
-                rendered_widgets.append(widget._render_update())
-
-            return "\n".join(rendered_widgets)
+    def _build_callback_endpoints_for_widget(self, widget: Widget):
+        full_path = widget.full_path
+        print(
+            f"Setting up callback endpoint for widget {widget.id} at path /{full_path}"
+        )
 
         self.add_api_route(
-            "/{widget_id:path}",
-            callback_endpoint,
+            f"/{full_path}",
+            get_callback_endpoint(widget_id=widget.id, app=self),
             methods=["POST"],
             response_class=HTMLResponse,
         )
+
+        if len(widget.children) > 0:
+            for child in widget.children:
+                self._build_callback_endpoints_for_widget(child)
+
+    def _build_callback_endpoints(self):
+        for page in self.pages.values():
+            for child in page.children:
+                self._build_callback_endpoints_for_widget(child)
