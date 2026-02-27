@@ -15,7 +15,7 @@ class Element(BaseModel):
     styles: list[str] = []
     attributes: dict[str, str] = {}
 
-    model_config = ConfigDict(arbitrary_types_allowed=True)
+    model_config = ConfigDict(arbitrary_types_allowed=True, validate_assignment=True)
 
     def get_additional_context(self) -> dict[str, Any]:
         return {}

@@ -1,11 +1,11 @@
-from typing import Callable
+from typing import Any, Callable, Annotated
 
-from .widgets import Widget
+from .widgets import Widget, BodyParam
 
 
 class Input(Widget):
     template: tuple[str, str] = ("widgets", "input.html")
-    value: str | None = None
+    value: Annotated[str | None, BodyParam()] = None
     default: Callable[[], str] | None = None
     autofocus: bool = False
     type: str = "text"
@@ -26,13 +26,12 @@ class Input(Widget):
     _callback_fn_name: str = "on_input"
 
     def _post_init(self) -> None:
+        super()._post_init()
         if self.value is None:
             if self.default is not None:
                 self.value = self.default()
             else:
                 self.value = ""
-
-        super()._post_init()
 
     def on_input(self, *args, **kwargs) -> list[Widget]:
         """Event handler for input events."""
@@ -76,6 +75,7 @@ class Select(Widget):
     _values_from_request: list[str] = ["selected"]
 
     def _post_init(self) -> None:
+        super()._post_init()
         if self.selected is None:
             if self.default is not None:
                 self.selected = self.default()
@@ -83,8 +83,6 @@ class Select(Widget):
                 self.selected = self.options[0]
             else:
                 raise ValueError("Select widget has no options to select from.")
-
-        super()._post_init()
 
     def on_select(self, *args, **kwargs) -> list[Widget]:
         """Event handler for select events."""

@@ -1,6 +1,7 @@
 from typing import Any
 
 from pytest import raises
+from pydantic import ValidationError
 
 from newsflash.endpoints.parsers import RequestValues
 from newsflash.widgets.widgets import Widget
@@ -110,7 +111,7 @@ def test_widget_factory():
     )
 
     widget = DummyWidget(request_values=request_values)
-    widget._post_init()
+    # widget._post_init()
 
     assert isinstance(widget, DummyWidget)
     assert widget.test_value_a == "Hello, World!"
@@ -139,9 +140,8 @@ def test_get_widget_callback_fn_no_callback():
         id: str = "no-callback-widget"
         _callback_fn_name: str = "non_existent_callback"
 
-    no_callback_widget = NoCallbackWidget()
+    with raises(ValidationError) as e:
+        NoCallbackWidget()
+        # no_callback_widget._get_callback_fn()
 
-    with raises(AssertionError) as e:
-        no_callback_widget._get_callback_fn()
-
-    assert str(e.value) == "Widget has no callback function 'non_existent_callback'"
+    assert "Widget has no callback function 'non_existent_callback'" in str(e.value)

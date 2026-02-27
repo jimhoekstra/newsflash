@@ -1,5 +1,5 @@
 import json
-from typing import Any
+from typing import Any, Mapping
 from urllib.parse import urlparse
 
 from starlette.datastructures import FormData, Headers
@@ -34,11 +34,11 @@ def _parse_chart_dimensions(body: FormData) -> dict[str, float]:
     return dimensions_dict
 
 
-def parse_request_values(body: FormData, headers: Headers) -> RequestValues:
-    trigger_element_id = _parse_trigger_element_id(headers)
-    url_path = _parse_url_path(headers)
+def parse_request_values(body: FormData, headers: Headers) -> Mapping[str, str]:
+    # trigger_element_id = _parse_trigger_element_id(headers)
+    # url_path = _parse_url_path(headers)
 
-    widget_attributes: dict[str, Any] = {}
+    widget_attributes: Mapping[str, Any] = {}
 
     for key, value in body.items():
         if key != "dimensions":
@@ -48,8 +48,10 @@ def parse_request_values(body: FormData, headers: Headers) -> RequestValues:
     chart_dimensions = _parse_chart_dimensions(body)
     widget_attributes.update(chart_dimensions)
 
-    return RequestValues(
-        trigger_element_id=trigger_element_id,
-        url_path=url_path,
-        widget_attributes=widget_attributes,
-    )
+    return widget_attributes
+
+    # return RequestValues(
+    #     trigger_element_id=trigger_element_id,
+    #     url_path=url_path,
+    #     widget_attributes=widget_attributes,
+    # )
