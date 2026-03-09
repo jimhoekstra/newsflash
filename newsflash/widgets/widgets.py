@@ -1,18 +1,24 @@
-from typing import Any, Mapping, Type, Callable, get_type_hints, TypeVar, TYPE_CHECKING, Annotated, get_args, get_origin
+from typing import (
+    Any,
+    Mapping,
+    Type,
+    Callable,
+    get_type_hints,
+    TypeVar,
+    TYPE_CHECKING,
+    get_origin,
+)
 from inspect import signature
 from typing_extensions import Self
 
 from newsflash.svg.element import Element
-from newsflash.endpoints.parsers import RequestValues
 
-from rich import inspect
 
 if TYPE_CHECKING:
     from newsflash.app import Page
 
 
 class QueryParam:
-
     query_param_name: str | None = None
 
     def __init__(self, query_param_name: str | None = None) -> None:
@@ -20,10 +26,9 @@ class QueryParam:
 
     def get_query_param_name(self) -> str | None:
         return self.query_param_name
-    
+
 
 class BodyParam:
-
     body_param_name: str | None = None
 
     def __init__(self, body_param_name: str | None = None) -> None:
@@ -69,20 +74,21 @@ class Widget(Element):
         return []
 
     def model_copy(
-        self, 
-        *, 
+        self,
+        *,
         copy: bool = False,
-        update: Mapping[str, Any] | None = None, 
+        update: Mapping[str, Any] | None = None,
         query_params: Mapping[str, list[str]] | None = None,
         body_params: Mapping[str, Any] | None = None,
         parent: "Widget | None" = None,
         # page: "Widget | None" = None,
     ) -> Self:
+
         if parent is not None:
             self.parent = parent
         # if page is not None:
         #     self.page = page
-        
+
         if copy:
             new_instance = super().model_copy(deep=True, update=update)
         else:
@@ -90,7 +96,7 @@ class Widget(Element):
             if update is not None:
                 for k, v in update.items():
                     setattr(new_instance, k, v)
-        
+
         query_parameters: dict[str, Any] = {}
         body_parameters: dict[str, Any] = {}
 
@@ -121,14 +127,17 @@ class Widget(Element):
 
                 body_value = body_params.get(body_param_name, None)
                 if body_value is None:
-                    raise ValueError(f"Missing body parameter '{body_param_name}' for widget '{new_instance.id}'")
+                    continue
+                    # raise ValueError(
+                    #     f"Missing body parameter '{body_param_name}' for widget '{new_instance.id}'"
+                    # )
 
                 body_parameters[k] = body_value
 
         # print(f"\nModel copy for widget {new_instance.id}")
         # print(f"-- query parameters: {query_parameters}")
         # print(f"-- body parameters: {body_parameters}")
-                
+
         for k, v in query_parameters.items():
             setattr(new_instance, k, v)
 
@@ -137,25 +146,22 @@ class Widget(Element):
 
         children = new_instance.compose()
         for child in children:
-            # child.parent = new_instance
             child.model_copy(
                 copy=False,
                 query_params=query_params,
                 body_params=body_params,
                 parent=new_instance,
-                # page=new_instance.page,
             )
 
         new_instance.children = children
         new_instance._build_hx_include()
-                            
+
         return new_instance
 
     def _post_init(self) -> None:
         pass
         # self.children.extend(self.append_widgets())
 
-        
         # if self.request_values is not None:
         #     self._set_values_from_request(self.request_values)
 
@@ -167,18 +173,16 @@ class Widget(Element):
     #     return self
 
     # def _post_init(self) -> None:
-        # self._build_hx_include()
-        # if self.request_values is not None:
-        #     self._set_values_from_request(self.request_values)
+    # self._build_hx_include()
+    # if self.request_values is not None:
+    #     self._set_values_from_request(self.request_values)
 
     def get_all_children(
         self,
         type: Type[W],
     ) -> list[W]:
         children_of_type = [
-            widget.model_copy()
-            for widget in self.children
-            if isinstance(widget, type)
+            widget.model_copy() for widget in self.children if isinstance(widget, type)
         ]
 
         if len(self.children) == 0 and isinstance(self, type):
@@ -266,7 +270,9 @@ class Widget(Element):
         # for child in self.children:
         #     child.parent = self
 
-        children_instances = [child.model_copy(update={"parent": self}) for child in self.children]
+        children_instances = [
+            child.model_copy(update={"parent": self}) for child in self.children
+        ]
         rendered_children = {child.id: child.render() for child in children_instances}
 
         additional_context.update({"widgets": rendered_children})
@@ -354,7 +360,7 @@ class Widget(Element):
             widget_type = type_hints.get(param, "Unknown")
             if widget_type == "Unknown" or not issubclass(widget_type, Widget):
                 continue
-            
+
             widget = self.root_widget.get_child_widget(
                 type=widget_type,
                 # request_values=self.request_values,

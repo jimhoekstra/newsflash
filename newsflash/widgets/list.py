@@ -1,6 +1,5 @@
 from typing import Any, TypeVar, Generic, Self, Callable, Mapping
 
-from newsflash.endpoints.parsers import RequestValues
 from .widgets import Widget
 
 
@@ -17,13 +16,16 @@ class List(Widget, Generic[W]):
 
     include_in_context: set[str] = {"id", "hx_include", "hx_swap_oob"}
 
-    def _post_init(self) -> None:
-        super()._post_init()
-        if self.children is None:
-            if self.default is not None:
-                self.children = self.default()
+    def model_copy(self, *, copy: bool = False, update: Mapping[str, Any] | None = None, query_params: Mapping[str, list[str]] | None = None, body_params: Mapping[str, Any] | None = None, parent: Widget | None = None) -> Self:
+        new_instance = super().model_copy(copy=copy, update=update, query_params=query_params, body_params=body_params, parent=parent)
+
+        if new_instance.children is None:
+            if new_instance.default is not None:
+                new_instance.children = new_instance.default()
             else:
-                self.children = []
+                new_instance.children = []
+
+        return new_instance
 
     def get_list_item_by_id(self, item_id: str) -> W | None:
         if self.children is None:
@@ -70,26 +72,6 @@ class List(Widget, Generic[W]):
 
         return super().get_additional_context()
 
-    # def _set_values_from_request(self, inputs: RequestValues) -> None:
-    #     super()._set_values_from_request(inputs)
-    #     items: list[W] = []
-
-    #     item_idx = 0
-    #     while f"{self.id}-{item_idx}-id" in inputs.widget_attributes:
-    #         item_id = inputs.widget_attributes[f"{self.id}-{item_idx}-id"]
-
-    #         item_widget = self.item_type(
-    #             id=item_id,
-    #             request_values=inputs,
-    #             parent=self,
-    #         )
-    #         # item_widget._post_init()
-
-    #         items.append(item_widget)
-    #         item_idx += 1
-
-    #     self.children = items
-
     def get_child_widget(
         self, type: type[W], id: str, body_params: Mapping[str, str] | None = None
     ) -> W:
@@ -105,7 +87,6 @@ class List(Widget, Generic[W]):
             body_params=body_params,
             parent=self,
         )
-        # widget_instance._post_init()
 
         if len(item_id_split) == 1:
             return widget_instance
@@ -113,7 +94,6 @@ class List(Widget, Generic[W]):
             return widget_instance.get_child_widget(
                 type=type,
                 id="/".join(item_id_split[1:]),
-                body_params=body_params,
             )
 
 

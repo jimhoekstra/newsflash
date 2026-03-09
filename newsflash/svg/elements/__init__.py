@@ -3,6 +3,7 @@ from .rectangle import (
     Rectangle,
     build_rectangle,
     build_rectangle_from_bottom_center,
+    build_rectangle_from_top_center,
     build_background_rectangle,
 )
 from .text import Text, build_text
@@ -16,6 +17,7 @@ __all__ = [
     "Rectangle",
     "build_rectangle",
     "build_rectangle_from_bottom_center",
+    "build_rectangle_from_top_center",
     "build_background_rectangle",
     "Text",
     "build_text",

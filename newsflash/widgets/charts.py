@@ -1,17 +1,17 @@
-from typing import Any
+from typing import Any, Annotated
 
 from newsflash.svg.element import ElementGroup
 from newsflash.svg.charts.barchart import build_barchart
 from newsflash.svg.charts.linechart import build_linechart
 from newsflash.svg.charts.histogram import build_histogram
 
-from .widgets import Widget, WidgetContainer
+from .widgets import Widget, WidgetContainer, BodyParam
 
 
 class Chart(Widget):
     template: tuple[str, str] = ("svg", "svg.svg")
-    width: float = 0.0
-    height: float = 0.0
+    width: Annotated[float, BodyParam()] = 0.0
+    height: Annotated[float, BodyParam()] = 0.0
     title: str = ""
     title_font_size: int = 32
     label_font_size: int = 16
@@ -67,6 +67,7 @@ class BarChart(Chart):
         self,
         values: list[float] | list[int],
         labels: list[str],
+        step: int,
     ) -> None:
         self.elements = build_barchart(
             values=values,
@@ -74,6 +75,7 @@ class BarChart(Chart):
             width=self.width,
             height=self.height,
             title=self.title,
+            step=step,
             title_font_size=self.title_font_size,
             label_font_size=self.label_font_size,
         )

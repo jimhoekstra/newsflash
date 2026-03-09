@@ -6,9 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 
 from newsflash.widgets.widgets import Widget
-from newsflash.widgets import Notifications
 from newsflash.templates.templates import template_registry
-from newsflash.endpoints.parsers import RequestValues
 from newsflash.endpoints.callback import get_page_callback, get_callback_endpoint
 
 
