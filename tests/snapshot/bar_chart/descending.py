@@ -24,6 +24,7 @@ class DescendingBarChart5(SnapshotTest):
         chart.set_values(
             values=[150, 120, 90, 60, 30],
             labels=["A", "B", "C", "D", "E"],
+            step=30,
         )
 
         return chart._render_update()
@@ -54,6 +55,7 @@ class DescendingBarChartLargeNumbers(SnapshotTest):
         chart.set_values(
             values=[10_000_000, 9_000_000, 8_000_000, 7_000_000, 6_000_000],
             labels=["A", "B", "C", "D", "E"],
+            step=2_000_000,
         )
 
         return chart._render_update()

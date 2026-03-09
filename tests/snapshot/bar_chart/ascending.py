@@ -24,6 +24,7 @@ class AscendingBarChart5(SnapshotTest):
         chart.set_values(
             values=[10, 20, 30, 40, 50],
             labels=["A", "B", "C", "D", "E"],
+            step=10,
         )
 
         return chart._render_update()
@@ -49,6 +50,7 @@ class AscendingBarChart20(SnapshotTest):
         chart.set_values(
             values=[x * 5 for x in range(1, 21)],
             labels=[str(x) for x in range(1, 21)],
+            step=20
         )
 
         return chart._render_update()

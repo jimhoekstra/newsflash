@@ -18,7 +18,7 @@ class DummyWidgetC(Widget):
     id: str = "widget_c"
 
 
-class TestPage(Page):
+class DummyPage(Page):
     id: str = "test-page"
     path: str = "/test-page"
     title: str = "Test Page"
@@ -28,7 +28,7 @@ class TestPage(Page):
         return [DummyWidgetA(), DummyWidgetB()]
 
 
-class TestPageSameWidget(Page):
+class DummyPageSameWidget(Page):
     id: str = "test-page"
     path: str = "/test-page"
     title: str = "Test Page"
@@ -51,7 +51,7 @@ class TestPageSameWidget(Page):
 
 @fixture
 def test_app() -> App:
-    test_page = TestPage()
+    test_page = DummyPage()
     app = App(
         pages=[test_page],
         template_folders=[("templates", Path.cwd() / "dummy" / "path")],
@@ -61,7 +61,7 @@ def test_app() -> App:
 
 @fixture
 def test_app_same_widget() -> App:
-    test_page = TestPageSameWidget()
+    test_page = DummyPageSameWidget()
     app = App(
         pages=[test_page],
         template_folders=[("templates", Path.cwd() / "dummy" / "path")],
