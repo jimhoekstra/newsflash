@@ -1,6 +1,5 @@
-from typing import Any, TypeVar, Generic, Self, Callable
+from typing import Any, TypeVar, Generic, Self, Callable, Mapping
 
-from newsflash.endpoints.parsers import RequestValues
 from .widgets import Widget
 
 
@@ -11,88 +10,70 @@ class List(Widget, Generic[W]):
     """A widget that displays a list of items."""
 
     item_type: type[W]
-    items: list[W] | None = None
+    children: list[W] | None = None
     default: Callable[[], list[W]] | None = None
     template: tuple[str, str] | None = ("widgets", "list.html")
 
     include_in_context: set[str] = {"id", "hx_include", "hx_swap_oob"}
 
-    def _post_init(self) -> None:
-        if self.items is None:
-            if self.default is not None:
-                self.items = self.default()
-            else:
-                self.items = []
+    def model_copy(self, *, copy: bool = False, update: Mapping[str, Any] | None = None, query_params: Mapping[str, list[str]] | None = None, body_params: Mapping[str, Any] | None = None, parent: Widget | None = None) -> Self:
+        new_instance = super().model_copy(copy=copy, update=update, query_params=query_params, body_params=body_params, parent=parent)
 
-        super()._post_init()
+        if new_instance.children is None:
+            if new_instance.default is not None:
+                new_instance.children = new_instance.default()
+            else:
+                new_instance.children = []
+
+        return new_instance
 
     def get_list_item_by_id(self, item_id: str) -> W | None:
-        if self.items is None:
+        if self.children is None:
             return None
-        for item in self.items:
+        for item in self.children:
             if item.id == item_id:
                 return item
         return None
 
     def get_list_item_by_index(self, index: int) -> W | None:
-        if self.items is None:
+        if self.children is None:
             return None
-        if 0 <= index < len(self.items):
-            return self.items[index]
+        if 0 <= index < len(self.children):
+            return self.children[index]
         return None
 
     @property
     def num_items(self) -> int:
         """Returns the number of items in the list."""
-        if self.items is None:
+        if self.children is None:
             return 0
-        return len(self.items)
+        return len(self.children)
 
     def set_items(self, items: list[W]) -> None:
-        self.items = items
+        self.children = items
 
     def append_item(self, item: W) -> Self:
-        assert self.items is not None, "Items list is not initialized."
-        self.items.append(item)
+        assert self.children is not None, "Items list is not initialized."
+        self.children.append(item)
         return self
 
     def filter_items(self, filter_fn: Callable[[W], bool]) -> Self:
-        assert self.items is not None, "Items list is not initialized."
-        filtered_items = [item for item in self.items if filter_fn(item)]
+        assert self.children is not None, "Items list is not initialized."
+        filtered_items = [item for item in self.children if filter_fn(item)]
         return self.model_copy(update={"items": filtered_items})
 
     def get_additional_context(self) -> dict[str, Any]:
-        assert self.items is not None, "Items list is not initialized."
-        for child in self.items:
+        assert self.children is not None, "Items list is not initialized."
+        for child in self.children:
             child.parent = self
 
         # TODO: figure out why this assignment complains
-        self.children = self.items  # type: ignore
+        self.children = self.children  # type: ignore
 
         return super().get_additional_context()
 
-    def _set_values_from_request(self, inputs: RequestValues) -> None:
-        super()._set_values_from_request(inputs)
-        items: list[W] = []
-
-        item_idx = 0
-        while f"{self.id}-{item_idx}-id" in inputs.widget_attributes:
-            item_id = inputs.widget_attributes[f"{self.id}-{item_idx}-id"]
-
-            item_widget = self.item_type(
-                id=item_id,
-                request_values=inputs,
-                parent=self,
-            )
-            item_widget._post_init()
-
-            items.append(item_widget)
-            item_idx += 1
-
-        self.items = items
-
     def get_child_widget(
-        self, type: type[W], id: str, request_values: RequestValues | None = None
+        self, type: type[W], id: str, body_params: Mapping[str, str] | None = None
     ) -> W:
         child_type = self.item_type
         assert issubclass(child_type, type), (
@@ -103,10 +84,9 @@ class List(Widget, Generic[W]):
 
         widget_instance = child_type(
             id=item_id_split[0],
-            request_values=request_values,
+            body_params=body_params,
             parent=self,
         )
-        widget_instance._post_init()
 
         if len(item_id_split) == 1:
             return widget_instance
@@ -114,7 +94,6 @@ class List(Widget, Generic[W]):
             return widget_instance.get_child_widget(
                 type=type,
                 id="/".join(item_id_split[1:]),
-                request_values=request_values,
             )
 
 

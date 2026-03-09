@@ -1,11 +1,11 @@
-from typing import Callable
+from typing import Any, Callable, Annotated, Mapping, Self
 
-from .widgets import Widget
+from .widgets import Widget, BodyParam
 
 
 class Input(Widget):
     template: tuple[str, str] = ("widgets", "input.html")
-    value: str | None = None
+    value: Annotated[str | None, BodyParam()] = None
     default: Callable[[], str] | None = None
     autofocus: bool = False
     type: str = "text"
@@ -25,14 +25,29 @@ class Input(Widget):
     _values_from_request: list[str] = ["value"]
     _callback_fn_name: str = "on_input"
 
-    def _post_init(self) -> None:
-        if self.value is None:
-            if self.default is not None:
-                self.value = self.default()
+    def model_copy(
+        self,
+        *,
+        copy: bool = False,
+        update: Mapping[str, Any] | None = None,
+        query_params: Mapping[str, list[str]] | None = None,
+        body_params: Mapping[str, Any] | None = None,
+        parent: Widget | None = None,
+    ) -> Self:
+        new_instance = super().model_copy(
+            copy=copy,
+            update=update,
+            query_params=query_params,
+            body_params=body_params,
+            parent=parent,
+        )
+        if new_instance.value is None:
+            if new_instance.default is not None:
+                new_instance.value = new_instance.default()
             else:
-                self.value = ""
+                new_instance.value = ""
 
-        super()._post_init()
+        return new_instance
 
     def on_input(self, *args, **kwargs) -> list[Widget]:
         """Event handler for input events."""
@@ -60,7 +75,7 @@ class TextArea(Input):
 class Select(Widget):
     template: tuple[str, str] = ("widgets", "select.html")
     options: list[str] = ["-"]
-    selected: str | None = None
+    selected: Annotated[str | None, BodyParam()] = None
     default: Callable[[], str] | None = None
 
     include_in_context: set[str] = {
@@ -75,16 +90,32 @@ class Select(Widget):
     _callback_fn_name: str = "on_select"
     _values_from_request: list[str] = ["selected"]
 
-    def _post_init(self) -> None:
-        if self.selected is None:
-            if self.default is not None:
-                self.selected = self.default()
-            elif len(self.options) > 0:
-                self.selected = self.options[0]
+    def model_copy(
+        self,
+        *,
+        copy: bool = False,
+        update: Mapping[str, Any] | None = None,
+        query_params: Mapping[str, list[str]] | None = None,
+        body_params: Mapping[str, Any] | None = None,
+        parent: Widget | None = None,
+    ) -> Self:
+        new_instance = super().model_copy(
+            copy=copy,
+            update=update,
+            query_params=query_params,
+            body_params=body_params,
+            parent=parent,
+        )
+
+        if new_instance.selected is None:
+            if new_instance.default is not None:
+                new_instance.selected = new_instance.default()
+            elif len(new_instance.options) > 0:
+                new_instance.selected = new_instance.options[0]
             else:
                 raise ValueError("Select widget has no options to select from.")
 
-        super()._post_init()
+        return new_instance
 
     def on_select(self, *args, **kwargs) -> list[Widget]:
         """Event handler for select events."""

@@ -81,9 +81,7 @@ def test_parse_request_values():
 
     request_values = parse_request_values(body, headers)
 
-    assert request_values.trigger_element_id == "input-1"
-    assert request_values.url_path == "/dashboard/view"
-    assert request_values.widget_attributes == {
+    assert request_values == {
         "input-1-value": "some text",
         "select-1-value": "option-2",
         "chart-width": 800.0,

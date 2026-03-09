@@ -32,6 +32,31 @@ class AxesConfig(BaseModel):
     y: AxisConfig
 
 
+def build_y_axis_config_from_step(
+    values: list[int] | list[float],
+    step: float | int,
+) -> AxisConfig:
+    min_value = min(*values, 0)
+    max_value = max(values)
+
+    min_value = floor(min_value / step) * step
+    max_value = ceil(max_value / step) * step
+    
+    current_value = min_value
+    label_positions = []
+
+    while current_value <= max_value:
+        label_positions.append(current_value)
+        current_value += step
+
+    return AxisConfig(
+        label_positions=label_positions,
+        label_values=label_positions,
+        decimal_places=0,
+        min_value=min(label_positions),
+        max_value=max(label_positions),
+    )
+
 def build_y_axis_config(
     values: list[int] | list[float],
     num_labels: int = 5,

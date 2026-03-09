@@ -107,6 +107,37 @@ def build_rectangle_from_bottom_center(
     )
 
 
+def build_rectangle_from_top_center(
+    top_center: Point,
+    width: float,
+    height: float,
+    rounded: float = 0.0,
+    box: Box | None = None,
+    classes: list[str] = [],
+    styles: list[str] = [],
+    attributes: dict[str, str] = {},
+) -> Rectangle:
+    if box is not None:
+        top_center = scale_point_to_box(top_center, box)
+        width = scale_width_to_box(width, box)
+        height = scale_height_to_box(height, box)
+
+    top_left = Point(
+        x=top_center.x - width / 2,
+        y=top_center.y,
+    )
+
+    return Rectangle(
+        top_left=top_left,
+        width=width,
+        height=height,
+        rounded=rounded,
+        classes=classes,
+        styles=styles,
+        attributes=attributes,
+    )
+
+
 def build_background_rectangle(
     box: Box,
     classes: list[str] = [],

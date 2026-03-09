@@ -1,4 +1,4 @@
-from typing import Type, TypeVar
+from typing import Type, TypeVar, Mapping
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -6,9 +6,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 
 from newsflash.widgets.widgets import Widget
-from newsflash.widgets import Notifications
 from newsflash.templates.templates import template_registry
-from newsflash.endpoints.parsers import RequestValues
 from newsflash.endpoints.callback import get_page_callback, get_callback_endpoint
 
 
@@ -18,12 +16,15 @@ W = TypeVar("W", bound=Widget)
 class Page(Widget):
     path: str
     title: str
-    query_params: dict[str, list[str]] = {}
+    # query_params: dict[str, list[str]] = {}
 
-    def _post_init(self) -> None:
-        self.children.append(Notifications())  # Always add Notification widget to pages
+    # def append_widgets(self) -> list[Widget]:
+    #     return [Notifications()]  # Always add Notification widget to pages
 
-        return super()._post_init()
+    # def _post_init(self) -> None:
+    #     self.children.append(Notifications())  # Always add Notification widget to pages
+
+    #     return super()._post_init()
 
 
 class App(FastAPI):
@@ -54,17 +55,16 @@ class App(FastAPI):
         path: str,
         type: Type[W],
         id: str | None = None,
-        request_values: RequestValues | None = None,
+        body_params: Mapping[str, str] | None = None,
     ) -> W:
-        page = self.pages[path].model_copy(deep=True)
+        page = self.pages[path].model_copy(copy=True, body_params=body_params)
         # assert id.startswith(f"{page.id}/"), (
         #     f"Widget id '{id}' not found on page '{page.id}'"
         # )
         if id is not None:
             id = id.removeprefix(f"{page.id}/")
 
-        page._post_init()
-        return page.get_child_widget(type=type, id=id, request_values=request_values)
+        return page.get_child_widget(type=type, id=id)
 
     def _mount_static_folders(self, static_folders: list[tuple[str, Path]]) -> None:
         for mount_path, directory in static_folders:
@@ -84,16 +84,17 @@ class App(FastAPI):
 
     def _build_callback_endpoints_for_widget(self, widget: Widget):
         full_path = widget.full_path
-        print(
-            f"Setting up callback endpoint for widget {widget.id} at path /{full_path}"
-        )
 
-        self.add_api_route(
-            f"/{full_path}",
-            get_callback_endpoint(widget_id=widget.id, app=self),
-            methods=["POST"],
-            response_class=HTMLResponse,
-        )
+        if widget._callback_fn_name is not None:
+            print(
+                f"Setting up callback endpoint for widget {widget.id} ({widget._callback_fn_name}) at path /{full_path}"
+            )
+            self.add_api_route(
+                f"/{full_path}",
+                get_callback_endpoint(widget_id=widget.id, app=self),
+                methods=["POST"],
+                response_class=HTMLResponse,
+            )
 
         if len(widget.children) > 0:
             for child in widget.children:
@@ -101,5 +102,7 @@ class App(FastAPI):
 
     def _build_callback_endpoints(self):
         for page in self.pages.values():
+            page.model_copy()
             for child in page.children:
+                child.model_copy()
                 self._build_callback_endpoints_for_widget(child)

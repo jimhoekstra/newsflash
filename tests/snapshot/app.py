@@ -112,23 +112,26 @@ class ApproveButton(Button):
             return [notifications]
 
 
-page = Page(
-    id="",
-    path="/",
-    title="Snapshot Test Viewer",
-    template=("snapshot", "snapshot_test.html"),
-    children=[
-        TestSelect(),
-        NextChangedSnapshotButton(),
-        OldSnapshotHTML(),
-        NewSnapshotHTML(),
-        TestDescription(),
-        ApproveButton(),
-    ],
-)
+class MainPage(Page):
+    id: str = ""
+    path: str = "/"
+    title: str = "Snapshot Test Viewer"
+    template: tuple[str, str] = ("snapshot", "snapshot_test.html")
+
+    def compose(self) -> list[Widget]:
+        return [
+            TestSelect(),
+            NextChangedSnapshotButton(),
+            OldSnapshotHTML(),
+            NewSnapshotHTML(),
+            TestDescription(),
+            ApproveButton(),
+            Notifications(),
+        ]
+
 
 app = App(
-    pages=[page],
+    pages=[MainPage()],
     template_folders=[
         ("snapshot", Path(__file__).parent / "templates"),
     ],

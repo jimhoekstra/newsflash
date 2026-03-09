@@ -3,6 +3,7 @@ from .inputs import Input, TextArea, Button, Select
 from .text import ValueDisplay, Notifications, Paragraph
 from .list import List, Grid
 from .html import HTML
+from .widgets import QueryParam, BodyParam
 
 __all__ = [
     "BarChart",
@@ -18,4 +19,6 @@ __all__ = [
     "List",
     "Grid",
     "HTML",
+    "QueryParam",
+    "BodyParam",
 ]
