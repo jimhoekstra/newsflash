@@ -1,18 +1,10 @@
-from newsflash.svg.element import ElementGroup
+from typing import Annotated
+
+from newsflash.svg.element import ElementGroup, TemplateParam
 
 
 class SVG(ElementGroup):
     template: tuple[str, str] = ("svg", "svg.svg")
-    width: float
-    height: float
-    hx_swap_oob: bool = False
-
-    include_in_context: set[str] = {
-        "id",
-        "width",
-        "height",
-        "hx_swap_oob",
-        "classes",
-        "styles",
-        "attributes",
-    }
+    width: Annotated[float, TemplateParam()]
+    height: Annotated[float, TemplateParam()]
+    hx_swap_oob: Annotated[bool, TemplateParam()] = False

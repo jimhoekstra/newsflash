@@ -1,7 +1,6 @@
-from typing import Any
+from typing import Any, Annotated
 
-
-from newsflash.svg.element import Element
+from newsflash.svg.element import Element, TemplateParam
 from newsflash.svg.utils import Point, XCoor, YCoor
 from newsflash.svg.box import (
     Box,
@@ -13,20 +12,10 @@ from newsflash.svg.box import (
 
 class Rectangle(Element):
     template: tuple[str, str] = ("svg", "rect.svg")
-    top_left: Point
-    width: float
-    height: float
-    rounded: float = 0.0
-
-    include_in_context: set[str] = {
-        "top_left",
-        "width",
-        "height",
-        "rounded",
-        "classes",
-        "styles",
-        "attributes",
-    }
+    top_left: Annotated[Point, TemplateParam()]
+    width: Annotated[float, TemplateParam()]
+    height: Annotated[float, TemplateParam()]
+    rounded: Annotated[float, TemplateParam()] = 0.0
 
     @property
     def top(self) -> YCoor:

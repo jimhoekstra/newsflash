@@ -1,20 +1,14 @@
+from typing import Annotated
+
 from newsflash.svg.utils import Point
 from newsflash.svg.box import Box, scale_point_to_box
-from newsflash.svg.element import Element
+from newsflash.svg.element import Element, TemplateParam
 
 
 class Path(Element):
     template: tuple[str, str] = ("svg", "path.svg")
-    points: list[Point]
-    path_length: float = 100.0
-
-    include_in_context: set[str] = {
-        "points",
-        "path_length",
-        "classes",
-        "styles",
-        "attributes",
-    }
+    points: Annotated[list[Point], TemplateParam()]
+    path_length: Annotated[float, TemplateParam()] = 100.0
 
 
 def build_path(

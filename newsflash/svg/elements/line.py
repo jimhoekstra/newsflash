@@ -1,28 +1,18 @@
+from typing import Annotated
+
 from newsflash.svg.utils import Point
 from newsflash.svg.box import Box, scale_point_to_box
-from newsflash.svg.element import Element
+from newsflash.svg.element import Element, TemplateParam
 
 
 class Line(Element):
     template: tuple[str, str] = ("svg", "line.svg")
-    from_pos: Point
-    to_pos: Point
-    stroke_color: str = "black"
-    stroke_width: float = 1.0
-    stroke_linecap: str = "round"
-    path_length: float = 1.0
-
-    include_in_context: set[str] = {
-        "from_pos",
-        "to_pos",
-        "stroke_color",
-        "stroke_width",
-        "stroke_linecap",
-        "path_length",
-        "classes",
-        "styles",
-        "attributes",
-    }
+    from_pos: Annotated[Point, TemplateParam()]
+    to_pos: Annotated[Point, TemplateParam()]
+    stroke_color: Annotated[str, TemplateParam()] = "black"
+    stroke_width: Annotated[float, TemplateParam()] = 1.0
+    stroke_linecap: Annotated[str, TemplateParam()] = "round"
+    path_length: Annotated[float, TemplateParam()] = 1.0
 
 
 def build_line(

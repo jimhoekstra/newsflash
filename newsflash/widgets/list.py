@@ -16,8 +16,22 @@ class List(Widget, Generic[W]):
 
     include_in_context: set[str] = {"id", "hx_include", "hx_swap_oob"}
 
-    def model_copy(self, *, copy: bool = False, update: Mapping[str, Any] | None = None, query_params: Mapping[str, list[str]] | None = None, body_params: Mapping[str, Any] | None = None, parent: Widget | None = None) -> Self:
-        new_instance = super().model_copy(copy=copy, update=update, query_params=query_params, body_params=body_params, parent=parent)
+    def model_copy(
+        self,
+        *,
+        copy: bool = False,
+        update: Mapping[str, Any] | None = None,
+        query_params: Mapping[str, list[str]] | None = None,
+        body_params: Mapping[str, Any] | None = None,
+        parent: Widget | None = None,
+    ) -> Self:
+        new_instance = super().model_copy(
+            copy=copy,
+            update=update,
+            query_params=query_params,
+            body_params=body_params,
+            parent=parent,
+        )
 
         if new_instance.children is None:
             if new_instance.default is not None:

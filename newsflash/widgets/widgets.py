@@ -7,11 +7,12 @@ from typing import (
     TypeVar,
     TYPE_CHECKING,
     get_origin,
+    Annotated,
 )
 from inspect import signature
 from typing_extensions import Self
 
-from newsflash.svg.element import Element
+from newsflash.svg.element import Element, TemplateParam
 
 
 if TYPE_CHECKING:
@@ -39,31 +40,23 @@ class BodyParam:
 
 
 class WidgetContainer(Element):
-    widget_id: str
-    hx_include: list[str] = []
+    widget_id: Annotated[str, TemplateParam()]
+    hx_include: Annotated[list[str], TemplateParam()] = []
     template: tuple[str, str] = ("widgets", "container.html")
-
-    include_in_context: set[str] = {
-        "widget_id",
-        "full_path",
-        "hx_include",
-    }
 
 
 W = TypeVar("W", bound="Widget")
 
 
 class Widget(Element):
-    hx_include: list[str] = []
-    hx_swap_oob: bool = False
+    hx_include: Annotated[list[str], TemplateParam()] = []
+    hx_swap_oob: Annotated[bool, TemplateParam()] = False
 
     children: list["Widget"] = []
     parent: "Widget | None" = None
-    # page: "Widget"
 
     body_params: Mapping[str, str] | None = None
 
-    _values_from_request: list[str] = []
     _include_parent: bool = False
     _callback_fn_name: str | None = None
 
@@ -81,13 +74,9 @@ class Widget(Element):
         query_params: Mapping[str, list[str]] | None = None,
         body_params: Mapping[str, Any] | None = None,
         parent: "Widget | None" = None,
-        # page: "Widget | None" = None,
     ) -> Self:
-
         if parent is not None:
             self.parent = parent
-        # if page is not None:
-        #     self.page = page
 
         if copy:
             new_instance = super().model_copy(deep=True, update=update)
@@ -104,39 +93,32 @@ class Widget(Element):
             if len(v.metadata) == 0:
                 continue
 
-            annotation = v.metadata[0]
+            query_param = next(
+                (m for m in v.metadata if isinstance(m, QueryParam)), None
+            )
+            body_param = next((m for m in v.metadata if isinstance(m, BodyParam)), None)
 
-            if isinstance(annotation, QueryParam) and query_params is not None:
-                query_param_name = annotation.get_query_param_name() or k
+            if query_param is not None and query_params is not None:
+                query_param_name = query_param.get_query_param_name() or k
                 value_from_request = query_params.get(query_param_name, [])
 
                 if len(value_from_request) == 0:
                     continue
 
-                expected_type = v.annotation
-                expects_list = get_origin(expected_type) == list
-
-                if expects_list:
+                if get_origin(v.annotation) == list:
                     query_parameters[k] = value_from_request
                 else:
                     query_parameters[k] = value_from_request[0]
 
-            elif isinstance(annotation, BodyParam) and body_params is not None:
-                body_param_name = annotation.get_body_param_name() or k
+            elif body_param is not None and body_params is not None:
+                body_param_name = body_param.get_body_param_name() or k
                 body_param_name = new_instance.id + "-" + body_param_name
 
                 body_value = body_params.get(body_param_name, None)
                 if body_value is None:
                     continue
-                    # raise ValueError(
-                    #     f"Missing body parameter '{body_param_name}' for widget '{new_instance.id}'"
-                    # )
 
                 body_parameters[k] = body_value
-
-        # print(f"\nModel copy for widget {new_instance.id}")
-        # print(f"-- query parameters: {query_parameters}")
-        # print(f"-- body parameters: {body_parameters}")
 
         for k, v in query_parameters.items():
             setattr(new_instance, k, v)
@@ -157,25 +139,6 @@ class Widget(Element):
         new_instance._build_hx_include()
 
         return new_instance
-
-    def _post_init(self) -> None:
-        pass
-        # self.children.extend(self.append_widgets())
-
-        # if self.request_values is not None:
-        #     self._set_values_from_request(self.request_values)
-
-    # def _re_init(self: W, update: dict[str, Any] = {}) -> W:
-    #     for k, v in update.items():
-    #         setattr(self, k, v)
-
-    #     # self._post_init()
-    #     return self
-
-    # def _post_init(self) -> None:
-    # self._build_hx_include()
-    # if self.request_values is not None:
-    #     self._set_values_from_request(self.request_values)
 
     def get_all_children(
         self,
@@ -202,7 +165,6 @@ class Widget(Element):
         type: Type[W],
         id: str | None = None,
     ) -> W:
-        # print(f"Getting child widget of type {type} with id {id}")
         children_of_type = [
             widget for widget in self.children if isinstance(widget, type)
         ]
@@ -234,12 +196,9 @@ class Widget(Element):
             if widget.id == id_split[0]:
                 widget_copy = widget.model_copy()
 
-                # widget_copy._post_init()
-
                 return widget_copy.get_child_widget(
                     type=type,
                     id=remaining_id,
-                    # request_values=request_values,
                 )
 
         raise ValueError(f"Widget not found: {type} with id {id}")
@@ -266,9 +225,6 @@ class Widget(Element):
 
     def get_additional_context(self) -> dict[str, Any]:
         additional_context = super().get_additional_context()
-
-        # for child in self.children:
-        #     child.parent = self
 
         children_instances = [
             child.model_copy(update={"parent": self}) for child in self.children
@@ -307,31 +263,6 @@ class Widget(Element):
 
         self.hx_include = include_list
 
-    # def _set_value_from_request(self, key: str, inputs: dict[str, Any]) -> None:
-    #     current_value = getattr(self, key, None)
-    #     assert current_value is not None, f"Widget has no attribute '{key}'"
-
-    #     value_type = type(current_value)
-    #     value = inputs.get(f"{self.id}-{key}", None)
-
-    #     if value is not None:
-    #         assert isinstance(value, value_type), (
-    #             f"Expected type {value_type} for key '{key}', got {type(value)}"
-    #         )
-    #         setattr(self, key, value)
-
-    # def _set_values_from_request(self, inputs: RequestValues) -> None:
-    #     attributes = {
-    #         k: v
-    #         for k, v in inputs.widget_attributes.items()
-    #         if k.startswith(f"{self.id}-")
-    #     }
-
-    #     for key in self._values_from_request:
-    #         self._set_value_from_request(key, attributes)
-
-    #     # self.request_values = inputs
-
     def _get_callback_fn(self) -> Callable | None:
         callback_fn_name = self._callback_fn_name
         if callback_fn_name is None:
@@ -348,7 +279,6 @@ class Widget(Element):
     def _get_callback_inputs(self) -> dict[str, "Widget"]:
         callback_fn = self._get_callback_fn()
         assert callback_fn is not None, "Widget has no callback function"
-        # assert self.request_values is not None, "Widget has no request values"
 
         sig = signature(callback_fn)
         parameters = sig.parameters
@@ -363,7 +293,6 @@ class Widget(Element):
 
             widget = self.root_widget.get_child_widget(
                 type=widget_type,
-                # request_values=self.request_values,
             )
 
             input_dict[param] = widget

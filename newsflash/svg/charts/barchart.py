@@ -4,12 +4,14 @@ from newsflash.svg.box import Box
 from newsflash.svg.utils import Point
 from newsflash.svg.utils.fonts import lora
 from newsflash.svg.element import ElementGroup
-from newsflash.svg.elements import build_rectangle_from_bottom_center, build_rectangle_from_top_center
+from newsflash.svg.elements import (
+    build_rectangle_from_bottom_center,
+    build_rectangle_from_top_center,
+)
 
 from .xy_chart import build_xy_chart
 from .axes import (
     AxesConfig,
-    build_y_axis_config,
     build_x_axis_config_barchart,
     build_y_axis_config_from_step,
 )

@@ -36,7 +36,7 @@ class App(FastAPI):
         template_folders: list[tuple[str, Path]],
         static_folders: list[tuple[str, Path]] = [],
     ) -> None:
-        super().__init__()
+        super().__init__(docs_url=None, redoc_url=None, openapi_url=None)
 
         self.pages = {page.path: page for page in pages}
 

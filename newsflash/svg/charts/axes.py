@@ -41,7 +41,7 @@ def build_y_axis_config_from_step(
 
     min_value = floor(min_value / step) * step
     max_value = ceil(max_value / step) * step
-    
+
     current_value = min_value
     label_positions = []
 
@@ -56,6 +56,7 @@ def build_y_axis_config_from_step(
         min_value=min(label_positions),
         max_value=max(label_positions),
     )
+
 
 def build_y_axis_config(
     values: list[int] | list[float],

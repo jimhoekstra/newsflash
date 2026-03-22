@@ -50,7 +50,7 @@ class AscendingBarChart20(SnapshotTest):
         chart.set_values(
             values=[x * 5 for x in range(1, 21)],
             labels=[str(x) for x in range(1, 21)],
-            step=20
+            step=20,
         )
 
         return chart._render_update()

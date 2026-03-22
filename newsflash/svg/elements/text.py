@@ -1,8 +1,8 @@
-from typing import Literal
+from typing import Literal, Annotated
 
 from fontTools.ttLib import TTFont
 
-from newsflash.svg.element import Element
+from newsflash.svg.element import Element, TemplateParam
 from newsflash.svg.utils import Point, XCoor, YCoor
 from newsflash.svg.box import Box, scale_point_to_box
 from newsflash.svg.utils.fonts import get_text_width
@@ -14,20 +14,10 @@ type VerticalAlign = Literal["top", "middle", "default", "bottom"]
 
 class Text(Element):
     template: tuple[str, str] = ("svg", "text.svg")
-    pos: Point
-    text: str
-    width: float
-    font_size: int
-
-    include_in_context: set[str] = {
-        "pos",
-        "text",
-        "width",
-        "font_size",
-        "classes",
-        "styles",
-        "attributes",
-    }
+    pos: Annotated[Point, TemplateParam()]
+    text: Annotated[str, TemplateParam()]
+    width: Annotated[float, TemplateParam()]
+    font_size: Annotated[int, TemplateParam()]
 
     @property
     def top(self) -> YCoor:

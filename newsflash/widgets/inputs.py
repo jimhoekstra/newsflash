@@ -1,28 +1,17 @@
 from typing import Any, Callable, Annotated, Mapping, Self
 
+from newsflash.svg.element import TemplateParam
 from .widgets import Widget, BodyParam
 
 
 class Input(Widget):
     template: tuple[str, str] = ("widgets", "input.html")
-    value: Annotated[str | None, BodyParam()] = None
+    value: Annotated[str | None, BodyParam(), TemplateParam()] = None
     default: Callable[[], str] | None = None
-    autofocus: bool = False
-    type: str = "text"
-    placeholder: str = ""
+    autofocus: Annotated[bool, TemplateParam()] = False
+    type: Annotated[str, TemplateParam()] = "text"
+    placeholder: Annotated[str, TemplateParam()] = ""
 
-    include_in_context: set[str] = {
-        "id",
-        "value",
-        "hx_include",
-        "hx_swap_oob",
-        "full_path",
-        "autofocus",
-        "type",
-        "placeholder",
-    }
-
-    _values_from_request: list[str] = ["value"]
     _callback_fn_name: str = "on_input"
 
     def model_copy(
@@ -56,39 +45,17 @@ class Input(Widget):
 
 class TextArea(Input):
     template: tuple[str, str] = ("widgets", "textarea.html")
-    rows: int = 7
-    spellcheck: bool = False
-
-    include_in_context: set[str] = {
-        "id",
-        "hx_include",
-        "hx_swap_oob",
-        "full_path",
-        "autofocus",
-        "value",
-        "rows",
-        "spellcheck",
-        "placeholder",
-    }
+    rows: Annotated[int, TemplateParam()] = 7
+    spellcheck: Annotated[bool, TemplateParam()] = False
 
 
 class Select(Widget):
     template: tuple[str, str] = ("widgets", "select.html")
-    options: list[str] = ["-"]
-    selected: Annotated[str | None, BodyParam()] = None
+    options: Annotated[list[str], TemplateParam()] = ["-"]
+    selected: Annotated[str | None, BodyParam(), TemplateParam()] = None
     default: Callable[[], str] | None = None
 
-    include_in_context: set[str] = {
-        "id",
-        "hx_include",
-        "hx_swap_oob",
-        "full_path",
-        "options",
-        "selected",
-    }
-
     _callback_fn_name: str = "on_select"
-    _values_from_request: list[str] = ["selected"]
 
     def model_copy(
         self,
@@ -124,20 +91,8 @@ class Select(Widget):
 
 class Button(Widget):
     template: tuple[str, str] = ("widgets", "button.html")
-    label: str = "Click Me"
-    hx_include: list[str] = []
-    disabled: bool = False
-    classes: list[str] = ["newsflash-button"]
-
-    include_in_context: set[str] = {
-        "id",
-        "hx_include",
-        "hx_swap_oob",
-        "full_path",
-        "label",
-        "disabled",
-        "classes",
-    }
+    label: Annotated[str, TemplateParam()] = "Click Me"
+    disabled: Annotated[bool, TemplateParam()] = False
 
     _callback_fn_name: str = "on_click"
 

@@ -3,7 +3,6 @@ from typing import Any, Annotated
 from pytest import raises
 from pydantic import ValidationError
 
-from newsflash.endpoints.parsers import RequestValues
 from newsflash.widgets.widgets import Widget, BodyParam
 
 

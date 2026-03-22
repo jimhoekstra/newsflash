@@ -1,6 +1,6 @@
 from typing import Any, Annotated
 
-from newsflash.svg.element import ElementGroup
+from newsflash.svg.element import ElementGroup, TemplateParam
 from newsflash.svg.charts.barchart import build_barchart
 from newsflash.svg.charts.linechart import build_linechart
 from newsflash.svg.charts.histogram import build_histogram
@@ -10,9 +10,9 @@ from .widgets import Widget, WidgetContainer, BodyParam
 
 class Chart(Widget):
     template: tuple[str, str] = ("svg", "svg.svg")
-    width: Annotated[float, BodyParam()] = 0.0
-    height: Annotated[float, BodyParam()] = 0.0
-    title: str = ""
+    width: Annotated[float, BodyParam(), TemplateParam()] = 0.0
+    height: Annotated[float, BodyParam(), TemplateParam()] = 0.0
+    title: Annotated[str, TemplateParam()] = ""
     title_font_size: int = 32
     label_font_size: int = 16
 
@@ -21,17 +21,6 @@ class Chart(Widget):
         "position": "absolute",
     }
 
-    include_in_context: set[str] = {
-        "id",
-        "width",
-        "height",
-        "hx_swap_oob",
-        "classes",
-        "styles",
-        "attributes",
-    }
-
-    _values_from_request: list[str] = ["width", "height"]
     _callback_fn_name: str = "on_load"
 
     def on_load(self, *args, **kwargs) -> list[Widget]:
