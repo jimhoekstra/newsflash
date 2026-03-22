@@ -1,32 +1,20 @@
+from typing import Annotated
+
 from pydantic import BaseModel
 
+from newsflash.svg.element import TemplateParam
 from .widgets import Widget
 
 
 class ValueDisplay(Widget):
     template: tuple[str, str] = ("widgets", "value_display.html")
-    label: str = ""
-    value: str = ""
-
-    include_in_context: set[str] = {
-        "id",
-        "value",
-        "hx_include",
-        "hx_swap_oob",
-        "label",
-        "value",
-    }
-
-    _values_from_request: list[str] = ["label", "value"]
+    label: Annotated[str, TemplateParam()] = ""
+    value: Annotated[str, TemplateParam()] = ""
 
 
 class Paragraph(Widget):
     template: tuple[str, str] = ("widgets", "paragraph.html")
-    text: str = ""
-
-    include_in_context: set[str] = {"id", "value", "hx_include", "hx_swap_oob", "text"}
-
-    _values_from_request: list[str] = ["text"]
+    text: Annotated[str, TemplateParam()] = ""
 
 
 class Notification(BaseModel):
@@ -36,13 +24,9 @@ class Notification(BaseModel):
 
 
 class Notifications(Widget):
-    id: str = "newsflash-notifications-container"
+    id: Annotated[str, TemplateParam()] = "newsflash-notifications-container"
     template: tuple[str, str] = ("widgets", "notifications.html")
-    notifications: list[Notification] = []  # List of notifications to display
-
-    include_in_context: set[str] = {
-        "notifications",
-    }
+    notifications: Annotated[list[Notification], TemplateParam()] = []  # List of notifications to display
 
     def push(self, message: str, level: str = "info", duration: int = 5000) -> None:
         notification = Notification(

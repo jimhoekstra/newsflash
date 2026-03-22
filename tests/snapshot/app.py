@@ -1,26 +1,27 @@
-from typing import Callable
+from typing import Callable, Annotated
 from pathlib import Path
 
 from newsflash.app import App, Page
 from newsflash.widgets import HTML, Button, Select, ValueDisplay, Notifications
-from newsflash.widgets.widgets import Widget
+from newsflash.widgets.widgets import Widget, BodyParam
+from newsflash.svg.element import TemplateParam
 
 from .all_tests import get_all_tests, get_next_failing_test, get_test_by_name
 
 
 class OldSnapshotHTML(HTML):
-    id: str = "old-snapshot-html"
-    html_content: str = get_next_failing_test().load_rendered()
+    id: Annotated[str, TemplateParam()] = "old-snapshot-html"
+    html_content: Annotated[str, TemplateParam()] = get_next_failing_test().load_rendered()
 
 
 class NewSnapshotHTML(HTML):
-    id: str = "new-snapshot-html"
-    html_content: str = get_next_failing_test().render()
+    id: Annotated[str, TemplateParam()] = "new-snapshot-html"
+    html_content: Annotated[str, BodyParam(), TemplateParam()] = get_next_failing_test().render()
 
 
 class TestSelect(Select):
-    id: str = "test-select"
-    options: list[str] = list(get_all_tests().keys())
+    id: Annotated[str, TemplateParam()] = "test-select"
+    options: Annotated[list[str], TemplateParam()] = list(get_all_tests().keys())
     default: Callable[[], str] = lambda: get_next_failing_test().name
 
     def on_select(
@@ -48,8 +49,8 @@ class TestSelect(Select):
 
 
 class NextChangedSnapshotButton(Button):
-    id: str = "next-changed-snapshot-button"
-    label: str = "Next Changed Snapshot"
+    id: Annotated[str, TemplateParam()] = "next-changed-snapshot-button"
+    label: Annotated[str, TemplateParam()] = "Next Changed Snapshot"
 
     def on_click(
         self,
@@ -80,13 +81,13 @@ class TestDescription(ValueDisplay):
 
 
 class ApproveButton(Button):
-    id: str = "approve-button"
-    label: str = (
+    id: Annotated[str, TemplateParam()] = "approve-button"
+    label: Annotated[str, TemplateParam()] = (
         "Approve Snapshot"
         if not get_next_failing_test().passes_test()
         else "Snapshots Already Match"
     )
-    disabled: bool = get_next_failing_test().passes_test()
+    disabled: Annotated[bool, TemplateParam()] = get_next_failing_test().passes_test()
 
     def on_click(
         self,

@@ -93,6 +93,7 @@ class Button(Widget):
     template: tuple[str, str] = ("widgets", "button.html")
     label: Annotated[str, TemplateParam()] = "Click Me"
     disabled: Annotated[bool, TemplateParam()] = False
+    classes: Annotated[list[str], TemplateParam()] = ["newsflash-button"]
 
     _callback_fn_name: str = "on_click"
 
