@@ -64,7 +64,7 @@ def test_widget_set_value_wrong_type():
         "dummy-widget-test_value_b": 3.14,
     }
 
-    with raises(ValidationError) as e:
+    with raises(ValidationError):
         DummyWidget().initialize(
             body_params=body_params,
         )

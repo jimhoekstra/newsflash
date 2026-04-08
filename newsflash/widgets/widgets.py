@@ -230,7 +230,9 @@ class Widget(Element):
                 if len(value_from_request) == 0:
                     continue
 
-                if get_origin(v.annotation) == list:
+                # Ignoring the ruff error about type comparisons here since it seems
+                # to be not fitting to our use case. TODO: double check.
+                if get_origin(v.annotation) == list:  # noqa: E721
                     query_parameters[k] = value_from_request
                 else:
                     query_parameters[k] = value_from_request[0]
