@@ -16,7 +16,7 @@ class List(Widget, Generic[W]):
 
     include_in_context: set[str] = {"id", "hx_include", "hx_swap_oob"}
 
-    def model_copy(
+    def initialize(
         self,
         *,
         copy: bool = False,
@@ -25,7 +25,7 @@ class List(Widget, Generic[W]):
         body_params: Mapping[str, Any] | None = None,
         parent: Widget | None = None,
     ) -> Self:
-        new_instance = super().model_copy(
+        new_instance = super().initialize(
             copy=copy,
             update=update,
             query_params=query_params,
@@ -74,7 +74,7 @@ class List(Widget, Generic[W]):
     def filter_items(self, filter_fn: Callable[[W], bool]) -> Self:
         assert self.children is not None, "Items list is not initialized."
         filtered_items = [item for item in self.children if filter_fn(item)]
-        return self.model_copy(update={"items": filtered_items})
+        return self.initialize(update={"items": filtered_items})
 
     def get_additional_context(self) -> dict[str, Any]:
         assert self.children is not None, "Items list is not initialized."

@@ -11,12 +11,16 @@ from .all_tests import get_all_tests, get_next_failing_test, get_test_by_name
 
 class OldSnapshotHTML(HTML):
     id: Annotated[str, TemplateParam()] = "old-snapshot-html"
-    html_content: Annotated[str, TemplateParam()] = get_next_failing_test().load_rendered()
+    html_content: Annotated[str, TemplateParam()] = (
+        get_next_failing_test().load_rendered()
+    )
 
 
 class NewSnapshotHTML(HTML):
     id: Annotated[str, TemplateParam()] = "new-snapshot-html"
-    html_content: Annotated[str, BodyParam(), TemplateParam()] = get_next_failing_test().render()
+    html_content: Annotated[str, BodyParam(), TemplateParam()] = (
+        get_next_failing_test().render()
+    )
 
 
 class TestSelect(Select):

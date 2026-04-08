@@ -1,20 +1,20 @@
 from typing import (
+    Annotated,
     Any,
-    Mapping,
-    Type,
     Callable,
     get_type_hints,
+    get_origin,
+    Mapping,
+    Type,
     TypeVar,
     TYPE_CHECKING,
-    get_origin,
-    Annotated,
 )
 from inspect import signature
 from typing_extensions import Self
 
 from newsflash.svg.element import Element, TemplateParam
 
-
+# Avoid circular import by only importing Page for type checking.
 if TYPE_CHECKING:
     from newsflash.app import Page
 
@@ -60,13 +60,33 @@ class Widget(Element):
     _include_parent: bool = False
     _callback_fn_name: str | None = None
 
+    @property
+    def full_path(self) -> str:
+        if self.parent is not None:
+            full_path = f"{self.parent.full_path}/{self.id}"
+        else:
+            full_path = self.id
+
+        full_path = full_path.strip("/")
+
+        return full_path
+
+    @property
+    def root_widget(self) -> "Page":
+        if self.parent is None:
+            # assert isinstance(self, Page), "Root widget must be a Page"
+            # TODO: how to assert the correct type here?
+            return self  # type: ignore
+        else:
+            return self.parent.root_widget
+
     def compose(self) -> list["Widget"]:
         return []
 
     def append_widgets(self) -> list["Widget"]:
         return []
 
-    def model_copy(
+    def initialize(
         self,
         *,
         copy: bool = False,
@@ -75,9 +95,65 @@ class Widget(Element):
         body_params: Mapping[str, Any] | None = None,
         parent: "Widget | None" = None,
     ) -> Self:
+        """
+        Hydrate this widget with request data and recursively build the child tree.
+
+        This method sits at the heart of the request-response cycle:
+
+        **Page requests (GET)**
+            The framework calls ``page.initialize(copy=True, query_params=...)`` on the
+            root ``Page`` widget. Fields annotated with ``QueryParam`` are populated from
+            the URL query string. ``compose()`` is then called to produce child widgets,
+            and ``initialize`` recurses into each child so the entire tree is hydrated
+            before ``render()`` is called to produce the HTML response.
+
+        **Callback requests (POST / HTMX)**
+            When an HTMX action fires, the framework calls
+            ``page.initialize(copy=True, body_params=...)`` to rebuild the full widget
+            tree with form-body data. Fields annotated with ``BodyParam`` are populated
+            (keyed by ``<instance_id>-<param_name>``). The framework then locates the
+            target widget in the tree, calls its ``_call_callback()`` method, and renders
+            only the widgets returned by the framework user's callback with
+            ``hx_swap_oob=True`` for partial-page updates.
+
+        Parameters
+        ----------
+        copy
+            When ``True``, produce a deep copy of this widget via Pydantic's
+            ``model_copy`` before applying any mutations. Should be ``True`` for the
+            root page widget so the registered prototype is never mutated between
+            requests.
+        update
+            Explicit field overrides applied before request-parameter extraction.
+        query_params
+            Raw query parameters from the incoming HTTP request, as returned by
+            Starlette's ``request.query_params``.
+        body_params
+            Parsed form-body values from the incoming HTTP request.
+        parent
+            The parent widget in the tree. Set automatically during recursive
+            initialisation; callers should not normally need to pass this.
+
+        Returns
+        -------
+        The initialised widget (either a deep copy or ``self``, depending on
+        ``copy``).
+
+        TODO
+        ----
+        - Consider always copying and removing it from the public signature. However
+          this did lead to issues with the List widgets in the past.
+        - ``_build_hx_include`` inspects the callback signature to derive CSS
+          selectors — this could be computed once at registration time instead of
+          on every request.
+        - ``BodyParam`` lookup relies on ``<instance_id>-<param_name>`` naming
+          convention shared with the HTML templates; formalise this contract.
+        """
+        # Set the parent reference before any copying so it is available downstream.
         if parent is not None:
             self.parent = parent
 
+        # Either produce a deep copy with Pydantic's model_copy, or mutate in place.
         if copy:
             new_instance = super().model_copy(deep=True, update=update)
         else:
@@ -86,19 +162,68 @@ class Widget(Element):
                 for k, v in update.items():
                     setattr(new_instance, k, v)
 
-        query_parameters: dict[str, Any] = {}
-        body_parameters: dict[str, Any] = {}
+        # Apply any field values sourced from URL query parameters.
+        if query_params is not None:
+            query_parameters = self._extract_query_parameters(query_params=query_params)
+            for k, v in query_parameters.items():
+                setattr(new_instance, k, v)
 
-        for k, v in new_instance.__class__.model_fields.items():
+        # Apply any field values sourced from the request body.
+        if body_params is not None:
+            body_parameters = self._extract_body_parameters(
+                body_params=body_params,
+                instance_id=new_instance.id,
+            )
+            for k, v in body_parameters.items():
+                setattr(new_instance, k, v)
+
+        # Build the child widget tree, propagating request params and parent reference
+        # recursively so every descendant is initialised with the same context.
+        children = new_instance.compose()
+        for child in children:
+            child.initialize(
+                copy=False,
+                query_params=query_params,
+                body_params=body_params,
+                parent=new_instance,
+            )
+
+        new_instance.children = children
+
+        # Resolve the hx-include list now that the full child tree is available.
+        new_instance._build_hx_include()
+
+        return new_instance
+
+    @classmethod
+    def _extract_query_parameters(
+        cls, query_params: Mapping[str, list[str]]
+    ) -> dict[str, Any]:
+        """
+        Extract field values from query parameters for fields annotated with `QueryParam`.
+
+        Parameters
+        ----------
+        query_params
+            Mapping of query parameter names to lists of string values from the request.
+
+        Returns
+        -------
+        Mapping of model field names to their extracted values. List-typed fields
+        receive the full list of query parameters; all other fields receive the first
+        value.
+        """
+        query_parameters: dict[str, Any] = {}
+
+        for k, v in cls.model_fields.items():
             if len(v.metadata) == 0:
                 continue
 
             query_param = next(
                 (m for m in v.metadata if isinstance(m, QueryParam)), None
             )
-            body_param = next((m for m in v.metadata if isinstance(m, BodyParam)), None)
 
-            if query_param is not None and query_params is not None:
+            if query_param is not None:
                 query_param_name = query_param.get_query_param_name() or k
                 value_from_request = query_params.get(query_param_name, [])
 
@@ -110,9 +235,38 @@ class Widget(Element):
                 else:
                     query_parameters[k] = value_from_request[0]
 
-            elif body_param is not None and body_params is not None:
+        return query_parameters
+
+    @classmethod
+    def _extract_body_parameters(
+        cls, body_params: Mapping[str, Any], instance_id: str
+    ) -> dict[str, Any]:
+        """
+        Extract field values from body parameters for fields annotated with `BodyParam`.
+
+        Parameters
+        ----------
+        body_params
+            Mapping of body parameter names to their values from the request.
+        instance_id
+            The widget instance ID, prepended to each parameter name when looking up
+            values in ``body_params``.
+
+        Returns
+        -------
+        Mapping of model field names to their extracted values.
+        """
+        body_parameters: dict[str, Any] = {}
+
+        for k, v in cls.model_fields.items():
+            if len(v.metadata) == 0:
+                continue
+
+            body_param = next((m for m in v.metadata if isinstance(m, BodyParam)), None)
+
+            if body_param is not None and body_params is not None:
                 body_param_name = body_param.get_body_param_name() or k
-                body_param_name = new_instance.id + "-" + body_param_name
+                body_param_name = instance_id + "-" + body_param_name
 
                 body_value = body_params.get(body_param_name, None)
                 if body_value is None:
@@ -120,32 +274,14 @@ class Widget(Element):
 
                 body_parameters[k] = body_value
 
-        for k, v in query_parameters.items():
-            setattr(new_instance, k, v)
-
-        for k, v in body_parameters.items():
-            setattr(new_instance, k, v)
-
-        children = new_instance.compose()
-        for child in children:
-            child.model_copy(
-                copy=False,
-                query_params=query_params,
-                body_params=body_params,
-                parent=new_instance,
-            )
-
-        new_instance.children = children
-        new_instance._build_hx_include()
-
-        return new_instance
+        return body_parameters
 
     def get_all_children(
         self,
         type: Type[W],
     ) -> list[W]:
         children_of_type = [
-            widget.model_copy() for widget in self.children if isinstance(widget, type)
+            widget.initialize() for widget in self.children if isinstance(widget, type)
         ]
 
         if len(self.children) == 0 and isinstance(self, type):
@@ -187,14 +323,14 @@ class Widget(Element):
         if len(id_split) == 1:
             for widget in children_of_type:
                 if widget.id == id:
-                    widget_copy = widget.model_copy()
+                    widget_copy = widget.initialize()
                     return widget_copy
 
         remaining_id = "/".join(id_split[1:])
 
         for widget in children_of_type:
             if widget.id == id_split[0]:
-                widget_copy = widget.model_copy()
+                widget_copy = widget.initialize()
 
                 return widget_copy.get_child_widget(
                     type=type,
@@ -203,31 +339,11 @@ class Widget(Element):
 
         raise ValueError(f"Widget not found: {type} with id {id}")
 
-    @property
-    def full_path(self) -> str:
-        if self.parent is not None:
-            full_path = f"{self.parent.full_path}/{self.id}"
-        else:
-            full_path = self.id
-
-        full_path = full_path.strip("/")
-
-        return full_path
-
-    @property
-    def root_widget(self) -> "Page":
-        if self.parent is None:
-            # assert isinstance(self, Page), "Root widget must be a Page"
-            # TODO: how to assert the correct type here?
-            return self  # type: ignore
-        else:
-            return self.parent.root_widget
-
     def get_additional_context(self) -> dict[str, Any]:
         additional_context = super().get_additional_context()
 
         children_instances = [
-            child.model_copy(update={"parent": self}) for child in self.children
+            child.initialize(update={"parent": self}) for child in self.children
         ]
         rendered_children = {child.id: child.render() for child in children_instances}
 

@@ -26,7 +26,9 @@ class Notification(BaseModel):
 class Notifications(Widget):
     id: Annotated[str, TemplateParam()] = "newsflash-notifications-container"
     template: tuple[str, str] = ("widgets", "notifications.html")
-    notifications: Annotated[list[Notification], TemplateParam()] = []  # List of notifications to display
+    notifications: Annotated[
+        list[Notification], TemplateParam()
+    ] = []  # List of notifications to display
 
     def push(self, message: str, level: str = "info", duration: int = 5000) -> None:
         notification = Notification(

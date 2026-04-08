@@ -14,7 +14,7 @@ class Input(Widget):
 
     _callback_fn_name: str = "on_input"
 
-    def model_copy(
+    def initialize(
         self,
         *,
         copy: bool = False,
@@ -23,7 +23,7 @@ class Input(Widget):
         body_params: Mapping[str, Any] | None = None,
         parent: Widget | None = None,
     ) -> Self:
-        new_instance = super().model_copy(
+        new_instance = super().initialize(
             copy=copy,
             update=update,
             query_params=query_params,
@@ -57,7 +57,7 @@ class Select(Widget):
 
     _callback_fn_name: str = "on_select"
 
-    def model_copy(
+    def initialize(
         self,
         *,
         copy: bool = False,
@@ -66,7 +66,7 @@ class Select(Widget):
         body_params: Mapping[str, Any] | None = None,
         parent: Widget | None = None,
     ) -> Self:
-        new_instance = super().model_copy(
+        new_instance = super().initialize(
             copy=copy,
             update=update,
             query_params=query_params,

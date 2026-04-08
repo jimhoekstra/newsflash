@@ -48,7 +48,8 @@ class App(FastAPI):
         id: str | None = None,
         body_params: Mapping[str, str] | None = None,
     ) -> W:
-        page = self.pages[path].model_copy(copy=True, body_params=body_params)
+        page = self.pages[path].initialize(copy=True, body_params=body_params)
+        # TODO: enable this assertion again.
         # assert id.startswith(f"{page.id}/"), (
         #     f"Widget id '{id}' not found on page '{page.id}'"
         # )
@@ -93,7 +94,7 @@ class App(FastAPI):
 
     def _build_callback_endpoints(self):
         for page in self.pages.values():
-            page.model_copy()
+            page.initialize()
             for child in page.children:
-                child.model_copy()
+                child.initialize()
                 self._build_callback_endpoints_for_widget(child)

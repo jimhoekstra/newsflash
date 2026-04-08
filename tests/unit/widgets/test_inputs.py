@@ -18,14 +18,14 @@ def test_select_init_default():
 
     select_widget = Select(
         options=["Option 1", "Option 2", "Option 3"], default=default_option
-    ).model_copy()
+    ).initialize()
 
     assert select_widget.selected == "Option 2"
 
 
 def test_select_init_no_default():
     # Test without default function
-    select_widget = Select(options=["Option 1", "Option 2", "Option 3"]).model_copy()
+    select_widget = Select(options=["Option 1", "Option 2", "Option 3"]).initialize()
 
     assert (
         select_widget.selected == "Option 1"
@@ -35,7 +35,7 @@ def test_select_init_no_default():
 def test_select_no_options():
     select = Select(options=[])
     with raises(ValueError, match="Select widget has no options to select from."):
-        select.model_copy()
+        select.initialize()
 
 
 def test_select_default_on_select():

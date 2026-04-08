@@ -16,7 +16,7 @@ def get_page_callback(page: "Page"):
         for k in query_params.keys():
             query_params_dict[k] = query_params.getlist(k)
 
-        page_copy = page.model_copy(
+        page_copy = page.initialize(
             copy=True,
             query_params=query_params_dict,
         )

@@ -22,7 +22,7 @@ def test_widget_set_value_from_request():
         "dummy-widget-test_value_a": "Hello, World!",
         "dummy-widget-test_value_b": 3.14,
     }
-    dummy_widget = DummyWidget().model_copy(
+    dummy_widget = DummyWidget().initialize(
         body_params=body_params,
     )
 
@@ -35,7 +35,7 @@ def test_widget_set_value_no_attribute():
         "dummy-widget-test_value_a": "Hello, World!",
         "dummy-widget-test_value_c": 3.14,
     }
-    dummy_widget = DummyWidget().model_copy(
+    dummy_widget = DummyWidget().initialize(
         body_params=body_params,
     )
 
@@ -65,7 +65,7 @@ def test_widget_set_value_wrong_type():
     }
 
     with raises(ValidationError) as e:
-        DummyWidget().model_copy(
+        DummyWidget().initialize(
             body_params=body_params,
         )
 
@@ -93,6 +93,6 @@ def test_get_widget_callback_fn_no_callback():
         _callback_fn_name: str = "non_existent_callback"
 
     with raises(AssertionError) as e:
-        NoCallbackWidget().model_copy()
+        NoCallbackWidget().initialize()
 
     assert "Widget has no callback function 'non_existent_callback'" in str(e.value)
