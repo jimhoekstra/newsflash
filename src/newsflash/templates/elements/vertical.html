@@ -1,0 +1,5 @@
+<div id="{{ id }}">
+    {% for element in elements.values() %}
+        {{ element | safe }}
+    {% endfor %}
+</div>
