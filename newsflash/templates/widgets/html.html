@@ -1,8 +1,0 @@
-<div
-    id="{{ id }}"
-    class="newsflash-html-widget"
-    {% if hx_swap_oob %}hx-swap-oob="true"{% endif %}
->
-    <input type="hidden" name="{{ id }}-html_content" value="{{ html_content }}">
-    {{ html_content | safe }}
-</div>

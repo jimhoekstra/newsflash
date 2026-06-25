@@ -1,3 +1,0 @@
-# NewsFlash
-
-Documentation coming soon...

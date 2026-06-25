@@ -1,7 +1,0 @@
-<path 
-    class="{{ classes|join(' ') }}" 
-    d="{% for point in points %}{% if loop.first %}M {% else %}L {% endif %}{{ point.x }} {{ point.y }} {% endfor %}"
-    pathLength="{{ path_length }}" 
-    style="{{ styles|join(' ') }}"{% for attr, value in attributes.items() %}
-    {{ attr }}="{{ value }}"{% endfor %}
-/>

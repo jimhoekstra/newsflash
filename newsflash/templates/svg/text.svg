@@ -1,9 +1,0 @@
-<text 
-    class="{{ classes|join(' ') }}" 
-    x="{{ pos.x }}" 
-    y="{{ pos.y }}" 
-    style="{{ styles|join(' ') }}"{% for attr, value in attributes.items() %}
-    {{ attr }}="{{ value }}"{% endfor %}
->
-    {{ text }}
-</text>
