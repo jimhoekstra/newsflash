@@ -1,0 +1,7 @@
+<div id="{{ id }}" class="horizontal">
+    {% for element in elements.values() %}
+        <div class="horizontal-item">
+            {{ element | safe }}
+        </div>
+    {% endfor %}
+</div>

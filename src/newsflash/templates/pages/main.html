@@ -3,13 +3,138 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>newsflash</title>
+    <title>{{ title }}</title>
 
     <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.js" integrity="sha384-Q+Dky3iHVJOr6wUjQ4ulh6uQ76an/t+ak1+PjMVaxRjbZamFLAG+u9InkfjbsEQf" crossorigin="anonymous"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: hsl(28, 100%, 96%);
+            font-family: 'Lora', serif;
+            font-size: 18px;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 2em auto;
+
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+        }
+
+        input {
+            font-family: 'Lora';
+            font-size: 18px;
+            background-color: hsl(28, 100%, 90%);
+         
+            width: 100%;
+            outline: none;
+            margin: 0;
+            padding: 0.7em 1.1em;
+            
+            border-radius: 0.2em;
+            border-style: solid;
+            border-width: 2px;
+            border-color: hsl(28, 100%, 90%);
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: hsl(232, 27%, 45%);
+        }
+
+        button {
+            font-family: 'Lora';
+            font-size: 18px;
+            color: white;
+            background-color: hsl(135, 10%, 30%);
+         
+            width: 100%;
+            outline: none;
+            margin: 0;
+            padding: 0.7em 1.1em;
+            
+            border-radius: 0.2em;
+            border-style: solid;
+            border-width: 2px;
+            border-color: hsl(135, 10%, 30%);
+            box-sizing: border-box;
+        }
+
+        button:hover {
+            cursor: pointer;
+        }
+        
+        button:active, button:focus {
+            border-style: dotted;
+            border-color: hsl(28, 100%, 90%);
+        }
+
+        h1 {
+            font-weight: 400;
+        }
+
+        svg text {
+            font-family: inherit !important;
+            font-size: 18px;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        .horizontal {
+            display: flex;
+            flex-direction: row;
+            gap: 1em;
+        }
+
+        .horizontal-item {
+            flex: 1;
+        }
+    </style>
 </head>
 <body>
-    {% for element in elements.values() %}
-        {{ element | safe }}
-    {% endfor %}
+    <main>
+        {% for element in elements.values() %}
+            {{ element | safe }}
+        {% endfor %}
+    </main>
+
+    <script>
+        function getChartDimensions() {
+            const dimensionsList = [...document.getElementsByClassName("newsflash-plot")].map((chart) => {
+                const style = getComputedStyle(chart);
+                return {
+                    "chartID": chart.id,
+                    "width": chart.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight),
+                    "height": chart.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom),
+                }
+            });
+
+            const dimensions = {};
+            dimensionsList.forEach((dim) => {
+                const chartID = dim.chartID;
+                const widthKey = chartID + "--width";
+                const heightKey = chartID + "--height";
+                dimensions[widthKey] = dim.width;
+                dimensions[heightKey] = dim.height;
+            });
+
+            return dimensions;
+        }
+
+        document.body.addEventListener("htmx:configRequest", (event) => {
+            chartDimensions = getChartDimensions();
+            for (const [key, value] of Object.entries(chartDimensions)) {
+                event.detail.parameters[key] = value;
+            }
+        });
+    </script>
 </body>
 </html>

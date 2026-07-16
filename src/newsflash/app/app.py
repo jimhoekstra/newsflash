@@ -31,21 +31,26 @@ def collect_function_inputs(
     return function_inputs
 
 
-def build_function_endpoint(fn: FunctionDefinition, fn_registry: FunctionRegistry):
+def build_function_endpoint(
+    fns: list[FunctionDefinition], fn_registry: FunctionRegistry
+):
 
     async def function_endpoint(request: Request) -> HTMLResponse:
         body = await request.form()
+        collected_outputs: Iterable[Element] = []
 
-        fn_inputs = collect_function_inputs(
-            fn=fn,
-            values=body,
-        )
+        for fn in fns:
+            fn_inputs = collect_function_inputs(
+                fn=fn,
+                values=body,
+            )
 
-        fn_outputs: Iterable[Element] = fn.func(**fn_inputs)
+            fn_outputs: Iterable[Element] = fn.func(**fn_inputs)
+            collected_outputs.extend(fn_outputs)
 
         rendered_outputs: list[str] = [
             fn_output.render(functions=fn_registry, hx_swap_oob="true")
-            for fn_output in fn_outputs
+            for fn_output in collected_outputs
         ]
 
         return HTMLResponse(content="\n".join(rendered_outputs), status_code=200)
@@ -57,6 +62,7 @@ class NewsflashApp(FastAPI):
     function_registry: FunctionRegistry
     template_dir_name: str = "newsflash-pages"
     template_name: str = "main.html"
+    page_title: str = "newsflash"
 
     def __init__(self, functions: FunctionRegistry) -> None:
         super().__init__()
@@ -72,15 +78,22 @@ class NewsflashApp(FastAPI):
 
     def register_function_endpoints(self) -> None:
 
-        for fn in self.function_registry.functions:
-            for trigger in fn.triggers:
-                self.add_api_route(
-                    path=f"/{trigger.element.name}/{trigger.element.id}/{trigger.trigger}",
-                    endpoint=build_function_endpoint(
-                        fn=fn, fn_registry=self.function_registry
-                    ),
-                    methods=["POST"],
-                )
+        element_to_fn_definitions = _build_element_to_fn_definitions_map(
+            function_definitions=self.function_registry.functions
+        )
+
+        for (
+            trigger_name,
+            trigger_id,
+            trigger_event,
+        ), fn_definitions in element_to_fn_definitions.items():
+            self.add_api_route(
+                path=f"/{trigger_name}/{trigger_id}/{trigger_event}",
+                endpoint=build_function_endpoint(
+                    fns=fn_definitions, fn_registry=self.function_registry
+                ),
+                methods=["POST"],
+            )
 
     def render(self, request: Request) -> Response:
         elements = list(self.compose())
@@ -96,9 +109,33 @@ class NewsflashApp(FastAPI):
                         functions=self.function_registry, hx_swap_oob=None
                     )
                     for element in elements
-                }
+                },
+                "title": self.page_title,
             },
         )
 
     def compose(self) -> Iterable["Element"]:
         yield from ()
+
+
+def _build_element_to_fn_definitions_map(
+    function_definitions: list[FunctionDefinition],
+) -> dict[tuple[str, str, str], list[FunctionDefinition]]:
+    element_to_fn_definitions: dict[tuple[str, str, str], list[FunctionDefinition]] = {}
+
+    for fn_definition in function_definitions:
+        for trigger in fn_definition.triggers:
+            if (
+                trigger.element.name,
+                trigger.element.id,
+                trigger.trigger,
+            ) not in element_to_fn_definitions:
+                element_to_fn_definitions[
+                    (trigger.element.name, trigger.element.id, trigger.trigger)
+                ] = [fn_definition]
+            else:
+                element_to_fn_definitions[
+                    (trigger.element.name, trigger.element.id, trigger.trigger)
+                ].append(fn_definition)
+
+    return element_to_fn_definitions
