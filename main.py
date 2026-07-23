@@ -22,6 +22,7 @@ functions = FunctionRegistry()
         Plot(id="line-plot").revealed(),
         Button(id="submit-btn").click(),
         InputInteger(id="sine-wave-amplitude").input(),
+        InputInteger(id="cosine-wave-amplitude").input(),
     ]
 )
 def recreate_sine_plot(
