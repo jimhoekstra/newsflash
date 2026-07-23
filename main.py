@@ -17,47 +17,55 @@ from newsflash.app import NewsflashApp
 functions = FunctionRegistry()
 
 
-@functions.add(on=Button(id="submit-btn").click())
+@functions.add(
+    on=[
+        Plot(id="line-plot").revealed(),
+        Button(id="submit-btn").click(),
+        InputInteger(id="sine-wave-amplitude").input(),
+    ]
+)
 def recreate_sine_plot(
-    input_a: Annotated[InputInteger, "input-a"],
+    sine_wave_amplitude: Annotated[InputInteger, "sine-wave-amplitude"],
+    cosine_wave_amplitude: Annotated[InputInteger, "cosine-wave-amplitude"],
     line_plot: Annotated[Plot, "line-plot"],
 ) -> Iterable[Element]:
     fig, ax = line_plot.create_figure()
 
     ax.plot(
         [x / 10 for x in range(300)],
-        [sin(x / 10) * input_a.value for x in range(300)],
+        [sin(x / 10) * sine_wave_amplitude.value for x in range(300)],
         linewidth=3,
         color="#931f1f",
         label="sine",
     )
     ax.plot(
         [x / 10 for x in range(300)],
-        [cos(x / 10) * input_a.value for x in range(300)],
+        [cos(x / 10) * cosine_wave_amplitude.value for x in range(300)],
         linewidth=3,
         color="green",
         label="cosine",
     )
-    ax.set_title("Sine Wave Plot")
+    ax.set_title("A sine and a cosine")
     ax.legend()
 
     line_plot.set_figure(figure=fig)
-
     yield line_plot
+
+
+class InputsRow(Horizontal):
+    id: str = "horizontal-inputs"
+
+    def compose(self) -> Iterable[Element]:
+        yield InputInteger(id="sine-wave-amplitude", value=5)
+        yield InputInteger(id="cosine-wave-amplitude", value=7)
+        yield Button(id="submit-btn", label="Regenerate Plot")
 
 
 class NumbersApp(NewsflashApp):
     def compose(self) -> Iterable[Element]:
-        yield Header(id="page-header", text="Sine Plot")
-        yield Paragraph(id="input-label", text="Enter the amplitude of the sine wave:")
-
-        yield Horizontal(
-            id="horizontal-inputs",
-            children=[
-                InputInteger(id="input-a"),
-                Button(id="submit-btn", label="Regenerate Plot"),
-            ],
-        )
+        yield Header(id="page-header", text="Sines and Cosines")
+        yield Paragraph(id="inputs-label", text="Enter the amplitude for the waves:")
+        yield InputsRow()
 
         yield Horizontal(
             id="horizontal-plot",

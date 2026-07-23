@@ -3,6 +3,7 @@ from typing import Iterable, Any
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import HTMLResponse
 from starlette.datastructures import FormData
+from pydantic import ValidationError
 
 from newsflash.elements import Element, FunctionRegistry, FunctionDefinition
 from newsflash.templates import template_registry
@@ -10,8 +11,8 @@ from newsflash.templates import template_registry
 
 def collect_function_inputs(
     fn: FunctionDefinition, values: FormData
-) -> dict[str, Element]:
-    function_inputs: dict[str, Element] = {}
+) -> dict[str, Element | None]:
+    function_inputs: dict[str, Element | None] = {}
 
     for function_input in fn.inputs:
         input_type = function_input.element_type
@@ -25,8 +26,13 @@ def collect_function_inputs(
             if input_id == function_input.element_id:
                 input_values[input_parameter] = v
 
-        input_element = input_type.model_validate(input_values)
-        function_inputs[function_input.arg_name] = input_element
+        try:
+            input_element = input_type.model_validate(input_values)
+            function_inputs[function_input.arg_name] = input_element
+        except ValidationError:
+            function_inputs[function_input.arg_name] = None
+            # TODO: display validation error in the UI at the element's position
+            print(f"Failed to parse input values for: {function_input.element_id}")
 
     return function_inputs
 
@@ -44,6 +50,13 @@ def build_function_endpoint(
                 fn=fn,
                 values=body,
             )
+
+            if any([fn_input is None for fn_input in fn_inputs.values()]):
+                # TODO: handle with a message showing up in the UI
+                print(
+                    f"Failed to call function: {fn.func.__name__} because of missing inputs"
+                )
+                continue
 
             fn_outputs: Iterable[Element] = fn.func(**fn_inputs)
             collected_outputs.extend(fn_outputs)

@@ -9,7 +9,7 @@ from matplotlib.figure import Figure
 from matplotlib.axes import Axes
 import matplotlib.pyplot as plt
 
-from .base import Element
+from .base import Element, Trigger
 
 
 class Plot(Element):
@@ -39,3 +39,9 @@ class Plot(Element):
         buf = io.StringIO()
         figure.savefig(buf, format="svg", transparent=True)
         self.rendered_plot = buf.getvalue()
+
+    def revealed(self) -> Trigger:
+        return Trigger(
+            element=self,
+            trigger="revealed",
+        )

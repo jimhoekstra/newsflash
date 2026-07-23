@@ -1,3 +1,13 @@
-<button id="{{ id }}"{% if is_trigger %} hx-post="/{{ name }}/{{ id }}/click" hx-trigger="click" hx-swap="none" hx-include="{{ hx_include }}"{% endif %}{% if hx_swap_oob %} hx-swap-oob="true" {% endif %}>
+<button 
+    id="{{ id }}"
+    {% if is_trigger %} 
+        hx-post="/{{ name }}/{{ id }}/click" 
+        hx-trigger="click" 
+        hx-swap="none" 
+        hx-include="{{ hx_include }}"
+    {% endif %}
+    {% if hx_swap_oob %} 
+        hx-swap-oob="true"
+    {% endif %}>
     {{ label }}
 </button>

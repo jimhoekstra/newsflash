@@ -1,3 +1,14 @@
 <div id="{{ id }}">
-    <input id="{{ id }}--value" type="text" value="{{ value }}" name="{{ id }}--value">
+    <input 
+        id="{{ id }}--value" 
+        {% if is_trigger %} 
+            hx-post="/{{ name }}/{{ id }}/input" 
+            hx-trigger="input" 
+            hx-swap="none" 
+            hx-include="{{ hx_include }}"
+        {% endif %}
+        type="text" 
+        value="{{ value }}" 
+        name="{{ id }}--value"
+    >
 </div>
