@@ -1,4 +1,9 @@
-<div id="{{ id }}">
+<div 
+    id="{{ id }}"
+    {% if hx_swap_oob %} 
+        hx-swap-oob="true"
+    {% endif %}
+>
     <input 
         id="{{ id }}--value" 
         {% if is_trigger %} 

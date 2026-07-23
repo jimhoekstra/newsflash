@@ -1,4 +1,10 @@
-<div id="{{ id }}" class="horizontal">
+<div 
+    id="{{ id }}" 
+    class="horizontal"
+    {% if hx_swap_oob %} 
+        hx-swap-oob="true"
+    {% endif %}
+>
     {% for element in elements.values() %}
         <div class="horizontal-item">
             {{ element | safe }}
