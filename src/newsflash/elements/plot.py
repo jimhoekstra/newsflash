@@ -20,6 +20,8 @@ class Plot(Element):
     height: int = 400
     width: int | None = None
 
+    _all_triggers: list[str] = ["revealed"]
+
     def create_figure(self) -> tuple[Figure, Axes]:
         if self.width is None:
             raise ValueError("can only create figure if width is defined")

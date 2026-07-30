@@ -1,6 +1,7 @@
 from .base import Element, FunctionRegistry, FunctionDefinition
 from .button import Button
 from .input import Input, InputFloat, InputInteger
+from .select import Select
 from .paragraph import Paragraph
 from .header import Header
 from .registry import ElementRegistry
@@ -17,6 +18,7 @@ __all__ = [
     "Input",
     "InputFloat",
     "InputInteger",
+    "Select",
     "Paragraph",
     "Header",
     "ElementRegistry",

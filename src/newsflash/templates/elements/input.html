@@ -6,11 +6,11 @@
 >
     <input 
         id="{{ id }}--value" 
-        {% if is_trigger %} 
+        {% if has_input_trigger %} 
             hx-post="/{{ name }}/{{ id }}/input" 
             hx-trigger="input" 
             hx-swap="none" 
-            hx-include="{{ hx_include }}"
+            hx-include="{{ input_hx_include }}"
         {% endif %}
         type="text" 
         value="{{ value }}" 

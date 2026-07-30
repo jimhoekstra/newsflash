@@ -5,6 +5,7 @@ from newsflash.elements import (
     FunctionRegistry,
     Button,
     InputInteger,
+    Select,
     Element,
     Paragraph,
     Header,
@@ -15,6 +16,31 @@ from newsflash.app import NewsflashApp
 
 
 functions = FunctionRegistry()
+
+
+class LinePlot(Plot):
+    id: str = "line-plot"
+
+
+class SineWaveAplitudeInput(InputInteger):
+    id: str = "sine-wave-amplitude"
+    value: int = 5
+
+
+class CosineWaveAplitudeInput(InputInteger):
+    id: str = "cosine-wave-amplitude"
+    value: int = 7
+
+
+class TestSelect(Select):
+    id: str = "test-select"
+    options: list[str ] =["Option A", "Option B", "Option C", "Option D"]
+    selected: str = "Option A"
+
+
+class ResetInputsButton(Button):
+    id: str = "reset-inputs-btn"
+    label: str = "Reset Inputs"
 
 
 def build_line_plot(
@@ -47,10 +73,9 @@ def build_line_plot(
 
 @functions.add(
     on=[
-        Plot(id="line-plot").revealed(),
-        Button(id="submit-btn").click(),
-        InputInteger(id="sine-wave-amplitude").input(),
-        InputInteger(id="cosine-wave-amplitude").input(),
+        LinePlot().revealed(),
+        SineWaveAplitudeInput().input(),
+        CosineWaveAplitudeInput().input(),
     ]
 )
 def recreate_sine_plot(
@@ -65,12 +90,25 @@ def recreate_sine_plot(
     )
 
 
-@functions.add(on=Button(id="submit-btn").click())
+@functions.add(on=[
+    TestSelect().select(),
+    TestSelect().revealed(),
+])
+def log_select(
+    select: Annotated[Select, "test-select"]
+) -> Iterable[Element]:
+    yield Paragraph(
+        id="selected-log",
+        text=f"You have selected: '{select.selected}'"
+    )
+
+
+@functions.add(on=ResetInputsButton().click())
 def reset_inputs(
     line_plot: Annotated[Plot, "line-plot"],
 ) -> Iterable[Element]:
-    yield InputInteger(id="sine-wave-amplitude", value=5)
-    yield InputInteger(id="cosine-wave-amplitude", value=7)
+    yield SineWaveAplitudeInput()
+    yield CosineWaveAplitudeInput()
     yield build_line_plot(
         line_plot=line_plot,
         sine_wave_amplitude=5,
@@ -82,9 +120,10 @@ class InputsRow(Horizontal):
     id: str = "horizontal-inputs"
 
     def compose(self) -> Iterable[Element]:
-        yield InputInteger(id="sine-wave-amplitude", value=5)
-        yield InputInteger(id="cosine-wave-amplitude", value=7)
-        yield Button(id="submit-btn", label="Reset Inputs")
+        yield SineWaveAplitudeInput()
+        yield CosineWaveAplitudeInput()
+        yield TestSelect()
+        yield ResetInputsButton()
 
 
 class NumbersApp(NewsflashApp):
@@ -92,7 +131,8 @@ class NumbersApp(NewsflashApp):
         yield Header(id="page-header", text="Sines and Cosines")
         yield Paragraph(id="inputs-label", text="Enter the amplitude for the waves:")
         yield InputsRow()
-        yield Plot(id="line-plot")
+        yield Paragraph(id="selected-log")
+        yield LinePlot()
 
 
 app = NumbersApp(functions=functions)

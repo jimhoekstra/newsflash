@@ -8,6 +8,8 @@ class Input(Element):
     placeholder: str = ""
     value: str = ""
 
+    _all_triggers: list[str] = ["input"]
+
     def input(self) -> Trigger:
         return Trigger(
             element=self,
@@ -22,6 +24,8 @@ class InputFloat(Element):
     placeholder: str = ""
     value: float = 0.0
 
+    _all_triggers: list[str] = ["input"]
+
     def input(self) -> Trigger:
         return Trigger(
             element=self,
@@ -35,6 +39,8 @@ class InputInteger(Element):
     template_name: str = "input.html"
     placeholder: str = ""
     value: int = 0
+
+    _all_triggers: list[str] = ["input"]
 
     def input(self) -> Trigger:
         return Trigger(

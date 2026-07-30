@@ -1,10 +1,10 @@
 <button 
     id="{{ id }}"
-    {% if is_trigger %} 
+    {% if has_click_trigger %} 
         hx-post="/{{ name }}/{{ id }}/click" 
         hx-trigger="click" 
         hx-swap="none" 
-        hx-include="{{ hx_include }}"
+        hx-include="{{ click_hx_include }}"
     {% endif %}
     {% if hx_swap_oob %} 
         hx-swap-oob="true"

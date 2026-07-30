@@ -11,11 +11,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <style>
         body {
             background-color: hsl(28, 100%, 96%);
             font-family: 'Lora', serif;
-            font-size: 18px;
+            font-size: 17px;
         }
 
         main {
@@ -29,7 +31,7 @@
 
         input {
             font-family: 'Lora';
-            font-size: 18px;
+            font-size: 17px;
             background-color: hsl(28, 100%, 90%);
          
             width: 100%;
@@ -50,7 +52,7 @@
 
         button {
             font-family: 'Lora';
-            font-size: 18px;
+            font-size: 17px;
             color: white;
             background-color: hsl(135, 10%, 30%);
          
@@ -97,10 +99,52 @@
         .horizontal-item {
             flex: 1;
         }
+
+        .vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+        }
+        
+        .select-list-container {
+            position: relative;
+        }
+
+        .select-list {
+            position: absolute;
+            list-style-type: none;
+            z-index: 10;
+            overflow-y: auto;
+            max-height: 40vh;
+
+            font-family: 'Lora';
+            font-size: 17px;
+            background-color: hsl(28, 100%, 90%);
+         
+            width: 100%;
+            outline: none;
+            margin: 0.5em 0 0 0;
+            padding: 0.2em 0;
+            
+            border-radius: 0.2em;
+            border-style: solid;
+            border-width: 2px;
+            border-color: hsl(232, 27%, 45%);
+            box-sizing: border-box;
+        }
+
+        .select-list-item {
+            padding: 0.5em 0.9em;
+            cursor: pointer;
+        }
+
+        .select-list-item:hover {
+            background-color: hsl(213, 44%, 85%);
+        }
     </style>
 </head>
 <body>
-    <main>
+    <main class="vertical">
         {% for element in elements.values() %}
             {{ element | safe }}
         {% endfor %}

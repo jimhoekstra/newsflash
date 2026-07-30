@@ -15,25 +15,27 @@ class Element(BaseModel):
 
     children: list["Element"] = []
 
+    _all_triggers: list[str] = []
+
     def get_trigger_context(
         self, functions: "FunctionRegistry"
     ) -> dict[str, str | bool]:
-        function_definitions = get_functions_triggered_by_element(
+        
+        function_definitions_per_trigger = get_functions_triggered_by_element(
             function_registry=functions,
             element_id=self.id,
+            triggers=self._all_triggers,
         )
 
-        if len(function_definitions) == 0:
-            return {"is_trigger": False}
+        trigger_context: dict[str, str | bool] = {}
 
-        hx_include_string = build_hx_include_string(
-            triggered_functions=function_definitions
-        )
+        for trigger, function_definitions in function_definitions_per_trigger.items():
+            trigger_context[f"has_{trigger}_trigger"] = len(function_definitions) > 0
+            trigger_context[f"{trigger}_hx_include"] = build_hx_include_string(
+                triggered_functions=function_definitions_per_trigger[trigger]
+            )
 
-        return {
-            "is_trigger": True,
-            "hx_include": hx_include_string,
-        }
+        return trigger_context
 
     def render(self, functions: "FunctionRegistry", hx_swap_oob: str | None) -> str:
         template = template_registry.get_template(
@@ -136,19 +138,27 @@ class FunctionRegistry:
 
 
 def get_functions_triggered_by_element(
-    function_registry: FunctionRegistry, element_id: str
-) -> list[FunctionDefinition]:
-    function_definitions: list[FunctionDefinition] = []
+    function_registry: FunctionRegistry, element_id: str, triggers: list[str]
+) -> dict[str, list[FunctionDefinition]]:
+    function_definitions_per_trigger: dict[str, list[FunctionDefinition]] = {} 
 
-    for func in function_registry.functions:
-        for trigger in func.triggers:
-            if trigger.element.id == element_id:
-                function_definitions.append(func)
+    for trigger in triggers:
 
-    return function_definitions
+        function_definitions: list[FunctionDefinition] = []
+        for fn in function_registry.functions:
+            for t in fn.triggers:
+                if t.element.id == element_id and t.trigger == trigger:
+                    function_definitions.append(fn)
+        
+        function_definitions_per_trigger[trigger] = function_definitions
+
+    return function_definitions_per_trigger
 
 
 def build_hx_include_string(triggered_functions: list[FunctionDefinition]) -> str:
+    if len(triggered_functions) == 0:
+        return ""
+    
     element_ids: list[str] = []
 
     for func in triggered_functions:

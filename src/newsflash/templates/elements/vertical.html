@@ -1,4 +1,7 @@
-<div id="{{ id }}">
+<div 
+    id="{{ id }}"
+    class="vertical"
+>
     {% for element in elements.values() %}
         {{ element | safe }}
     {% endfor %}

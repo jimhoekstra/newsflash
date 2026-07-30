@@ -2,11 +2,11 @@
     id="{{ id }}" 
     class="newsflash-plot" 
     style="height: {{ height }}px;"
-    {% if is_trigger and not hx_swap_oob %} 
+    {% if has_revealed_trigger and not hx_swap_oob %} 
         hx-post="/{{ name }}/{{ id }}/revealed" 
         hx-trigger="revealed" 
         hx-swap="none" 
-        hx-include="{{ hx_include }}"
+        hx-include="{{ revealed_hx_include }}"
     {% endif %}
     {% if hx_swap_oob %} hx-swap-oob="true" {% endif %}
 >
