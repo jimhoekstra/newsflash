@@ -22,6 +22,13 @@
     <div
         class="select-container"
 
+        {% if has_select_trigger %} 
+            hx-post="/{{ name }}/{{ id }}/select" 
+            hx-trigger="selectByClick" 
+            hx-swap="none" 
+            hx-include="{{ select_hx_include }}"
+        {% endif %}
+
         x-data="{
             selectValue(value) {
                 open = false
@@ -35,16 +42,18 @@
     
         <input 
             id="{{ id }}--selected" 
-            {% if has_select_trigger %} 
-                hx-post="/{{ name }}/{{ id }}/select" 
-                hx-trigger="selectByClick" 
-                hx-swap="none" 
-                hx-include="{{ select_hx_include }}"
-            {% endif %}
+            
             type="text" 
             value="{{ selected }}" 
             name="{{ id }}--selected"
             autocomplete="off"
+
+            {% if has_input_trigger %} 
+                hx-post="/{{ name }}/{{ id }}/input" 
+                hx-trigger="input" 
+                hx-swap="none" 
+                hx-include="{{ input_hx_include }}"
+            {% endif %}
 
             x-ref="selectInput"
             @focus="open = true"

@@ -10,7 +10,13 @@ class Select(Input):
     options: list[str] = []
     selected: str = ""
 
-    _all_triggers: list[str] = ["select", "revealed"]
+    _all_triggers: list[str] = ["input", "select", "revealed"]
+
+    def input(self) -> Trigger:
+        return Trigger(
+            element=self,
+            trigger="input",
+        )
 
     def select(self) -> Trigger:
         return Trigger(

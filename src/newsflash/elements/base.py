@@ -2,7 +2,7 @@ import typing
 from inspect import Signature, signature
 from functools import wraps
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ValidationError
 
 from newsflash.templates import template_registry
 
@@ -72,18 +72,41 @@ class FunctionInput(BaseModel):
     element_id: str
 
 
+class ID:
+
+    id: str
+
+    def __init__(self, id: str) -> None:
+        self.id = id
+
+
 def build_function_input(arg_name: str, annotation: typing.Any) -> FunctionInput:
     origin = typing.get_origin(annotation)
-    if origin != typing.Annotated:
-        raise ValueError("type is not annotated")
 
-    args = typing.get_args(annotation)
-    id_arg = args[1]
+    if origin == typing.Annotated:
+        args = typing.get_args(annotation)
+        element_type = args[0]
+        id_arg: ID | None = next((arg for arg in args if isinstance(arg, ID)), None)
+
+    elif issubclass(annotation, Element):
+        element_type = annotation
+        try:
+            element_instance = element_type()  # type: ignore
+            id_arg = ID(id=element_instance.id)
+        except ValidationError:
+            id_arg = None
+
+    else:
+        element_type = None
+        id_arg = None
+
+    if id_arg is None or element_type is None or not issubclass(element_type, Element):
+        raise ValueError(f"element: {arg_name} is not sufficiently defined")
 
     return FunctionInput(
         arg_name=arg_name,
-        element_type=args[0],
-        element_id=id_arg,
+        element_type=element_type,
+        element_id=id_arg.id,
     )
 
 

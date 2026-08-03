@@ -11,6 +11,7 @@ from newsflash.elements import (
     Header,
     Plot,
     Horizontal,
+    ID,
 )
 from newsflash.app import NewsflashApp
 
@@ -79,9 +80,9 @@ def build_line_plot(
     ]
 )
 def recreate_sine_plot(
-    sine_wave_amplitude: Annotated[InputInteger, "sine-wave-amplitude"],
-    cosine_wave_amplitude: Annotated[InputInteger, "cosine-wave-amplitude"],
-    line_plot: Annotated[Plot, "line-plot"],
+    sine_wave_amplitude: Annotated[InputInteger, ID("sine-wave-amplitude")],
+    cosine_wave_amplitude: Annotated[InputInteger, ID("cosine-wave-amplitude")],
+    line_plot: Annotated[Plot, ID("line-plot")],
 ) -> Iterable[Element]:
     yield build_line_plot(
         line_plot=line_plot,
@@ -95,7 +96,7 @@ def recreate_sine_plot(
     TestSelect().revealed(),
 ])
 def log_select(
-    select: Annotated[Select, "test-select"]
+    select: TestSelect,
 ) -> Iterable[Element]:
     yield Paragraph(
         id="selected-log",
@@ -103,9 +104,17 @@ def log_select(
     )
 
 
+@functions.add(on=TestSelect().input())
+def log_select_input(
+    select: TestSelect,
+) -> Iterable[Element]:
+    print(select.selected)
+    return []
+
+
 @functions.add(on=ResetInputsButton().click())
 def reset_inputs(
-    line_plot: Annotated[Plot, "line-plot"],
+    line_plot: Annotated[Plot, ID("line-plot")],
 ) -> Iterable[Element]:
     yield SineWaveAplitudeInput()
     yield CosineWaveAplitudeInput()
