@@ -1,6 +1,6 @@
 <div 
     id="{{ id }}" 
-    class="horizontal"
+    class="horizontal{% if wide %} wide{% endif %}"
     {% if hx_swap_oob %} 
         hx-swap-oob="true"
     {% endif %}

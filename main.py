@@ -127,6 +127,7 @@ def reset_inputs(
 
 class InputsRow(Horizontal):
     id: str = "horizontal-inputs"
+    wide: bool = True
 
     def compose(self) -> Iterable[Element]:
         yield SineWaveAplitudeInput()
