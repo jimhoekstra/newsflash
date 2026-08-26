@@ -62,7 +62,8 @@ class Element(BaseModel):
 
 
 class Trigger(BaseModel):
-    element: Element
+    element_id: str
+    element_name: str
     trigger: str
 
 
@@ -169,8 +170,8 @@ def get_functions_triggered_by_element(
 
         function_definitions: list[FunctionDefinition] = []
         for fn in function_registry.functions:
-            for t in fn.triggers:
-                if t.element.id == element_id and t.trigger == trigger:
+            for function_trigger in fn.triggers:
+                if function_trigger.element_id == element_id and function_trigger.trigger == trigger:
                     function_definitions.append(fn)
         
         function_definitions_per_trigger[trigger] = function_definitions

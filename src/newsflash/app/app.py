@@ -139,16 +139,16 @@ def _build_element_to_fn_definitions_map(
     for fn_definition in function_definitions:
         for trigger in fn_definition.triggers:
             if (
-                trigger.element.name,
-                trigger.element.id,
+                trigger.element_name,
+                trigger.element_id,
                 trigger.trigger,
             ) not in element_to_fn_definitions:
                 element_to_fn_definitions[
-                    (trigger.element.name, trigger.element.id, trigger.trigger)
+                    (trigger.element_name, trigger.element_id, trigger.trigger)
                 ] = [fn_definition]
             else:
                 element_to_fn_definitions[
-                    (trigger.element.name, trigger.element.id, trigger.trigger)
+                    (trigger.element_name, trigger.element_id, trigger.trigger)
                 ].append(fn_definition)
 
     return element_to_fn_definitions

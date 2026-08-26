@@ -14,18 +14,21 @@ class Select(Input):
 
     def input(self) -> Trigger:
         return Trigger(
-            element=self,
+            element_id=self.id,
+            element_name=self.name,
             trigger="input",
         )
 
     def select(self) -> Trigger:
         return Trigger(
-            element=self,
+            element_id=self.id,
+            element_name=self.name,
             trigger="select",
         )
 
     def revealed(self) -> Trigger:
         return Trigger(
-            element=self,
+            element_id=self.id,
+            element_name=self.name,
             trigger="revealed",
         )

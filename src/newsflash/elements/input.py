@@ -12,7 +12,8 @@ class Input(Element):
 
     def input(self) -> Trigger:
         return Trigger(
-            element=self,
+            element_id=self.id,
+            element_name=self.name,
             trigger="input",
         )
 
@@ -28,7 +29,8 @@ class InputFloat(Element):
 
     def input(self) -> Trigger:
         return Trigger(
-            element=self,
+            element_id=self.id,
+            element_name=self.name,
             trigger="input",
         )
 
@@ -44,6 +46,7 @@ class InputInteger(Element):
 
     def input(self) -> Trigger:
         return Trigger(
-            element=self,
+            element_id=self.id,
+            element_name=self.name,
             trigger="input",
         )

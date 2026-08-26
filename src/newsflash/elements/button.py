@@ -11,6 +11,7 @@ class Button(Element):
 
     def click(self) -> Trigger:
         return Trigger(
-            element=self,
+            element_id=self.id,
+            element_name=self.name,
             trigger="click",
         )
