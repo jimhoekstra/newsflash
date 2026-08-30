@@ -7,7 +7,7 @@ class Select(Input):
     name: str = "select"
     template_dir_name: str = "newsflash-elements"
     template_name: str = "select.html"
-    
+
     options: list[str] = []
     selected: str = ""
 

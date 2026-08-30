@@ -5,10 +5,11 @@ from newsflash.templates import template_registry
 
 
 class BaseElement(Element):
-
     def render(
-        self, 
-        trigger_context_getter: typing.Callable[[str, list[str]], dict[str, str | bool]],
+        self,
+        trigger_context_getter: typing.Callable[
+            [str, list[str]], dict[str, str | bool]
+        ],
         hx_swap_oob: str | None,
     ) -> str:
         template = template_registry.get_template(
@@ -23,7 +24,9 @@ class BaseElement(Element):
                 **self.model_dump(exclude={"_children"}),
                 "hx_swap_oob": hx_swap_oob,
                 "elements": {
-                    element.id: element.render(trigger_context_getter=trigger_context_getter, hx_swap_oob=None)
+                    element.id: element.render(
+                        trigger_context_getter=trigger_context_getter, hx_swap_oob=None
+                    )
                     for element in self.compose()
                 },
                 **trigger_context,

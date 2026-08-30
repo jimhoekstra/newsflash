@@ -4,7 +4,7 @@ from .functions import get_functions_triggered_by_element, build_hx_include_stri
 
 def get_trigger_context(
     element_id: str, element_triggers: list[str], functions: "FunctionRegistry"
-) -> dict[str, str | bool]:    
+) -> dict[str, str | bool]:
     function_definitions_per_trigger = get_functions_triggered_by_element(
         function_registry=functions,
         element_id=element_id,

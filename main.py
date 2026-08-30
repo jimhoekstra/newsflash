@@ -35,7 +35,7 @@ class CosineWaveAplitudeInput(InputInteger):
 
 class TestSelect(Select):
     id: str = "test-select"
-    options: list[str ] =["Option A", "Option B", "Option C", "Option D"]
+    options: list[str] = ["Option A", "Option B", "Option C", "Option D"]
     selected: str = "Option A"
 
 
@@ -91,17 +91,16 @@ def recreate_sine_plot(
     )
 
 
-@functions.add(on=[
-    TestSelect().select(),
-    TestSelect().revealed(),
-])
+@functions.add(
+    on=[
+        TestSelect().select(),
+        TestSelect().revealed(),
+    ]
+)
 def log_select(
     select: TestSelect,
 ) -> Iterable[Element]:
-    yield Paragraph(
-        id="selected-log",
-        text=f"You have selected: '{select.selected}'"
-    )
+    yield Paragraph(id="selected-log", text=f"You have selected: '{select.selected}'")
 
 
 @functions.add(on=TestSelect().input())

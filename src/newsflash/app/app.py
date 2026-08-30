@@ -7,7 +7,11 @@ from starlette.datastructures import FormData
 from pydantic import ValidationError
 
 from newsflash.elements import Element
-from newsflash.functions import FunctionRegistry, FunctionDefinition, get_trigger_context
+from newsflash.functions import (
+    FunctionRegistry,
+    FunctionDefinition,
+    get_trigger_context,
+)
 from newsflash.templates import template_registry
 
 
@@ -70,11 +74,12 @@ def build_function_endpoint(
 
         rendered_outputs: list[str] = []
         for fn_output in collected_outputs:
-
-            rendered_outputs.append(fn_output.render(
-                trigger_context_getter=_get_trigger_context,
-                hx_swap_oob="true",
-            ))
+            rendered_outputs.append(
+                fn_output.render(
+                    trigger_context_getter=_get_trigger_context,
+                    hx_swap_oob="true",
+                )
+            )
 
         return HTMLResponse(content="\n".join(rendered_outputs), status_code=200)
 
@@ -124,9 +129,9 @@ class NewsflashApp(FastAPI):
         rendered_elements: dict[str, str] = {}
         for element in elements:
             _get_trigger_context = partial(
-                    get_trigger_context,
-                    functions=self.function_registry,
-                )
+                get_trigger_context,
+                functions=self.function_registry,
+            )
 
             rendered_elements[element.id] = element.render(
                 trigger_context_getter=_get_trigger_context,
