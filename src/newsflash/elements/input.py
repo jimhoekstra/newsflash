@@ -1,4 +1,6 @@
-from .base import Element, Trigger
+from .base import Element
+
+from newsflash.models import Trigger
 
 
 class Input(Element):
@@ -8,7 +10,7 @@ class Input(Element):
     placeholder: str = ""
     value: str = ""
 
-    _all_triggers: list[str] = ["input"]
+    all_triggers: list[str] = ["input"]
 
     def input(self) -> Trigger:
         return Trigger(
@@ -25,7 +27,7 @@ class InputFloat(Element):
     placeholder: str = ""
     value: float = 0.0
 
-    _all_triggers: list[str] = ["input"]
+    all_triggers: list[str] = ["input"]
 
     def input(self) -> Trigger:
         return Trigger(
@@ -42,7 +44,7 @@ class InputInteger(Element):
     placeholder: str = ""
     value: int = 0
 
-    _all_triggers: list[str] = ["input"]
+    all_triggers: list[str] = ["input"]
 
     def input(self) -> Trigger:
         return Trigger(

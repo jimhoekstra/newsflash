@@ -2,7 +2,7 @@ import typing
 from inspect import signature
 from functools import wraps
 
-from newsflash.elements.base import Trigger
+from newsflash.models import Trigger
 
 from .function_definition import FunctionDefinition
 from .input import get_function_inputs

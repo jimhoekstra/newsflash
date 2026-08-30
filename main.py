@@ -2,7 +2,6 @@ from typing import Annotated, Iterable
 from math import sin, cos
 
 from newsflash.elements import (
-    FunctionRegistry,
     Button,
     InputInteger,
     Select,
@@ -11,8 +10,9 @@ from newsflash.elements import (
     Header,
     Plot,
     Horizontal,
-    ID,
 )
+from newsflash.models import ID
+from newsflash.functions import FunctionRegistry
 from newsflash.app import NewsflashApp
 
 

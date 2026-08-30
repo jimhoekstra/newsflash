@@ -1,5 +1,6 @@
-from .base import Trigger
 from .input import Input
+
+from newsflash.models import Trigger
 
 
 class Select(Input):
@@ -10,7 +11,7 @@ class Select(Input):
     options: list[str] = []
     selected: str = ""
 
-    _all_triggers: list[str] = ["input", "select", "revealed"]
+    all_triggers: list[str] = ["input", "select", "revealed"]
 
     def input(self) -> Trigger:
         return Trigger(

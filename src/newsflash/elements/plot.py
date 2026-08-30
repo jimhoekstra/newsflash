@@ -9,7 +9,9 @@ from matplotlib.figure import Figure
 from matplotlib.axes import Axes
 import matplotlib.pyplot as plt
 
-from .base import Element, Trigger
+from .base import Element
+
+from newsflash.models import Trigger
 
 
 class Plot(Element):
@@ -20,7 +22,7 @@ class Plot(Element):
     height: int = 400
     width: int | None = None
 
-    _all_triggers: list[str] = ["revealed"]
+    all_triggers: list[str] = ["revealed"]
 
     def create_figure(self) -> tuple[Figure, Axes]:
         if self.width is None:

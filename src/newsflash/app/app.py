@@ -1,11 +1,13 @@
 from typing import Iterable, Any
+from functools import partial
 
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import HTMLResponse
 from starlette.datastructures import FormData
 from pydantic import ValidationError
 
-from newsflash.elements import Element, FunctionRegistry, FunctionDefinition
+from newsflash.elements import Element
+from newsflash.functions import FunctionRegistry, FunctionDefinition, get_trigger_context
 from newsflash.templates import template_registry
 
 
@@ -41,6 +43,11 @@ def build_function_endpoint(
     fns: list[FunctionDefinition], fn_registry: FunctionRegistry
 ):
 
+    _get_trigger_context = partial(
+        get_trigger_context,
+        functions=fn_registry,
+    )
+
     async def function_endpoint(request: Request) -> HTMLResponse:
         body = await request.form()
         collected_outputs: Iterable[Element] = []
@@ -61,10 +68,13 @@ def build_function_endpoint(
             fn_outputs: Iterable[Element] = fn.func(**fn_inputs)
             collected_outputs.extend(fn_outputs)
 
-        rendered_outputs: list[str] = [
-            fn_output.render(functions=fn_registry, hx_swap_oob="true")
-            for fn_output in collected_outputs
-        ]
+        rendered_outputs: list[str] = []
+        for fn_output in collected_outputs:
+
+            rendered_outputs.append(fn_output.render(
+                trigger_context_getter=_get_trigger_context,
+                hx_swap_oob="true",
+            ))
 
         return HTMLResponse(content="\n".join(rendered_outputs), status_code=200)
 
@@ -111,18 +121,25 @@ class NewsflashApp(FastAPI):
     def render(self, request: Request) -> Response:
         elements = list(self.compose())
 
+        rendered_elements: dict[str, str] = {}
+        for element in elements:
+            _get_trigger_context = partial(
+                    get_trigger_context,
+                    functions=self.function_registry,
+                )
+
+            rendered_elements[element.id] = element.render(
+                trigger_context_getter=_get_trigger_context,
+                hx_swap_oob=None,
+            )
+
         return template_registry.get_jinja2_templates(
             dir_name=self.template_dir_name,
         ).TemplateResponse(
             request=request,
             name=self.template_name,
             context={
-                "elements": {
-                    element.id: element.render(
-                        functions=self.function_registry, hx_swap_oob=None
-                    )
-                    for element in elements
-                },
+                "elements": rendered_elements,
                 "title": self.page_title,
             },
         )

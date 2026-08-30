@@ -2,7 +2,7 @@ import typing
 
 from pydantic import BaseModel
 
-from newsflash.elements.base import Trigger
+from newsflash.models import Trigger
 
 from .input import FunctionInput
 

@@ -1,4 +1,6 @@
-from .base import Element, Trigger
+from .base import Element
+
+from newsflash.models import Trigger
 
 
 class Button(Element):
@@ -7,7 +9,7 @@ class Button(Element):
     template_dir_name: str = "newsflash-elements"
     template_name: str = "button.html"
 
-    _all_triggers: list[str] = ["click"]
+    all_triggers: list[str] = ["click"]
 
     def click(self) -> Trigger:
         return Trigger(
