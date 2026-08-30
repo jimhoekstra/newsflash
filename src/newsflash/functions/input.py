@@ -3,8 +3,7 @@ from inspect import Signature
 
 from pydantic import BaseModel, ValidationError
 
-from newsflash.elements.base import Element
-from newsflash.models import ID
+from newsflash.models import Element, ID
 
 
 class FunctionInput(BaseModel):

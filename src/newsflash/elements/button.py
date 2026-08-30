@@ -1,9 +1,9 @@
-from .base import Element
+from .base import BaseElement
 
 from newsflash.models import Trigger
 
 
-class Button(Element):
+class Button(BaseElement):
     name: str = "button"
     label: str = "Button"
     template_dir_name: str = "newsflash-elements"

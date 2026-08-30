@@ -1,7 +1,7 @@
-from .base import Element
+from .base import BaseElement
 
 
-class Header(Element):
+class Header(BaseElement):
     name: str = "header"
     template_dir_name: str = "newsflash-elements"
     template_name: str = "header.html"

@@ -1,7 +1,7 @@
-from ..base import Element
+from ..base import BaseElement
 
 
-class Vertical(Element):
+class Vertical(BaseElement):
     name: str = "vertical"
     template_dir_name: str = "newsflash-elements"
     template_name: str = "vertical.html"

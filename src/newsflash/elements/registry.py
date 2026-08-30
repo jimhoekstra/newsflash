@@ -1,12 +1,12 @@
 import typing
 
-from .base import Element
+from .base import BaseElement
 
-ElementT = typing.TypeVar("ElementT", bound=typing.Type[Element])
+ElementT = typing.TypeVar("ElementT", bound=typing.Type[BaseElement])
 
 
 class ElementRegistry:
-    elements: list[Element]
+    elements: list[BaseElement]
 
     def __init__(self) -> None:
         self.elements = []

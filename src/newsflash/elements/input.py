@@ -1,9 +1,9 @@
-from .base import Element
+from .base import BaseElement
 
 from newsflash.models import Trigger
 
 
-class Input(Element):
+class Input(BaseElement):
     name: str = "input"
     template_dir_name: str = "newsflash-elements"
     template_name: str = "input.html"
@@ -20,7 +20,7 @@ class Input(Element):
         )
 
 
-class InputFloat(Element):
+class InputFloat(BaseElement):
     name: str = "input-float"
     template_dir_name: str = "newsflash-elements"
     template_name: str = "input.html"
@@ -37,7 +37,7 @@ class InputFloat(Element):
         )
 
 
-class InputInteger(Element):
+class InputInteger(BaseElement):
     name: str = "input-integer"
     template_dir_name: str = "newsflash-elements"
     template_name: str = "input.html"

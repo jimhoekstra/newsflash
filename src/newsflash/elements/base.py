@@ -1,20 +1,10 @@
 import typing
 
-from pydantic import BaseModel
-
+from newsflash.models import Element
 from newsflash.templates import template_registry
 
 
-class Element(BaseModel):
-
-    id: str
-    name: str
-    template_dir_name: str
-    template_name: str
-
-    children: list["Element"] = []
-
-    all_triggers: list[str] = []
+class BaseElement(Element):
 
     def render(
         self, 

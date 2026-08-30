@@ -9,12 +9,12 @@ from matplotlib.figure import Figure
 from matplotlib.axes import Axes
 import matplotlib.pyplot as plt
 
-from .base import Element
+from .base import BaseElement
 
 from newsflash.models import Trigger
 
 
-class Plot(Element):
+class Plot(BaseElement):
     name: str = "plot"
     template_dir_name: str = "newsflash-elements"
     template_name: str = "plot.html"

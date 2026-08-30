@@ -1,7 +1,7 @@
-from .base import Element
+from .base import BaseElement
 
 
-class Paragraph(Element):
+class Paragraph(BaseElement):
     name: str = "paragraph"
     template_dir_name: str = "newsflash-elements"
     template_name: str = "paragraph.html"
