@@ -1,10 +1,10 @@
-from .function_definition import FunctionDefinition
 from .registry import FunctionRegistry
 from .trigger import get_trigger_context
+from .input import build_function_inputs_from_data
 
 
 __all__ = [
-    "FunctionDefinition",
     "FunctionRegistry",
     "get_trigger_context",
+    "build_function_inputs_from_data",
 ]

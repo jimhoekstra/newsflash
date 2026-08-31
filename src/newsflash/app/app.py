@@ -1,89 +1,16 @@
-from typing import Iterable, Any
+from typing import Iterable
 from functools import partial
 
 from fastapi import FastAPI, Request, Response
 from fastapi.responses import HTMLResponse
-from starlette.datastructures import FormData
-from pydantic import ValidationError
 
-from newsflash.elements import Element
+from newsflash.models import FunctionDefinition, Element
 from newsflash.functions import (
     FunctionRegistry,
-    FunctionDefinition,
     get_trigger_context,
+    build_function_inputs_from_data,
 )
 from newsflash.templates import template_registry
-
-
-def collect_function_inputs(
-    fn: FunctionDefinition, values: FormData
-) -> dict[str, Element | None]:
-    function_inputs: dict[str, Element | None] = {}
-
-    for function_input in fn.inputs:
-        input_type = function_input.element_type
-
-        input_values: dict[str, Any] = {
-            "id": function_input.element_id,
-        }
-
-        for k, v in values.items():
-            input_id, input_parameter = k.split("--")
-            if input_id == function_input.element_id:
-                input_values[input_parameter] = v
-
-        try:
-            input_element = input_type.model_validate(input_values)
-            function_inputs[function_input.arg_name] = input_element
-        except ValidationError:
-            function_inputs[function_input.arg_name] = None
-            # TODO: display validation error in the UI at the element's position
-            print(f"Failed to parse input values for: {function_input.element_id}")
-
-    return function_inputs
-
-
-def build_function_endpoint(
-    fns: list[FunctionDefinition], fn_registry: FunctionRegistry
-):
-
-    _get_trigger_context = partial(
-        get_trigger_context,
-        functions=fn_registry,
-    )
-
-    async def function_endpoint(request: Request) -> HTMLResponse:
-        body = await request.form()
-        collected_outputs: Iterable[Element] = []
-
-        for fn in fns:
-            fn_inputs = collect_function_inputs(
-                fn=fn,
-                values=body,
-            )
-
-            if any([fn_input is None for fn_input in fn_inputs.values()]):
-                # TODO: handle with a message showing up in the UI
-                print(
-                    f"Failed to call function: {fn.func.__name__} because of missing inputs"
-                )
-                continue
-
-            fn_outputs: Iterable[Element] = fn.func(**fn_inputs)
-            collected_outputs.extend(fn_outputs)
-
-        rendered_outputs: list[str] = []
-        for fn_output in collected_outputs:
-            rendered_outputs.append(
-                fn_output.render(
-                    trigger_context_getter=_get_trigger_context,
-                    hx_swap_oob="true",
-                )
-            )
-
-        return HTMLResponse(content="\n".join(rendered_outputs), status_code=200)
-
-    return function_endpoint
 
 
 class NewsflashApp(FastAPI):
@@ -118,7 +45,7 @@ class NewsflashApp(FastAPI):
             self.add_api_route(
                 path=f"/{trigger_name}/{trigger_id}/{trigger_event}",
                 endpoint=build_function_endpoint(
-                    fns=fn_definitions, fn_registry=self.function_registry
+                    function_definitions=fn_definitions, function_registry=self.function_registry
                 ),
                 methods=["POST"],
             )
@@ -151,6 +78,49 @@ class NewsflashApp(FastAPI):
 
     def compose(self) -> Iterable["Element"]:
         yield from ()
+
+
+def build_function_endpoint(
+    function_definitions: list[FunctionDefinition], function_registry: FunctionRegistry
+):
+
+    _get_trigger_context = partial(
+        get_trigger_context,
+        functions=function_registry,
+    )
+
+    async def function_endpoint(request: Request) -> HTMLResponse:
+        body = await request.form()
+        collected_outputs: Iterable[Element] = []
+
+        for function_definition in function_definitions:
+            function_inputs = build_function_inputs_from_data(
+                function_definition=function_definition,
+                values={k: v for k, v in body.items() if isinstance(v, str)},
+            )
+
+            if any([fn_input is None for fn_input in function_inputs.values()]):
+                # TODO: handle with a message showing up in the UI
+                print(
+                    f"Failed to call function: {function_definition.func.__name__} because of missing inputs"
+                )
+                continue
+
+            fn_outputs: Iterable[Element] = function_definition.func(**function_inputs)
+            collected_outputs.extend(fn_outputs)
+
+        rendered_outputs: list[str] = []
+        for fn_output in collected_outputs:
+            rendered_outputs.append(
+                fn_output.render(
+                    trigger_context_getter=_get_trigger_context,
+                    hx_swap_oob="true",
+                )
+            )
+
+        return HTMLResponse(content="\n".join(rendered_outputs), status_code=200)
+
+    return function_endpoint
 
 
 def _build_element_to_fn_definitions_map(

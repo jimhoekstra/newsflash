@@ -1,5 +1,6 @@
+from newsflash.models import FunctionDefinition
+
 from .registry import FunctionRegistry
-from .function_definition import FunctionDefinition
 
 
 def get_functions_triggered_by_element(

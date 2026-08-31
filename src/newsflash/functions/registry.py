@@ -2,10 +2,9 @@ import typing
 from inspect import signature
 from functools import wraps
 
-from newsflash.models import Trigger
+from newsflash.models import Trigger, FunctionDefinition
 
-from .function_definition import FunctionDefinition
-from .input import get_function_inputs
+from .input import get_function_input_definitions
 
 
 class FunctionRegistry:
@@ -19,7 +18,7 @@ class FunctionRegistry:
         def decorator(func: typing.Callable[..., typing.Any]):
 
             sig = signature(func)
-            function_inputs = get_function_inputs(sig)
+            function_inputs = get_function_input_definitions(sig)
             if isinstance(on, list):
                 triggers = on
             else:
