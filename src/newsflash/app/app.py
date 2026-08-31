@@ -45,7 +45,8 @@ class NewsflashApp(FastAPI):
             self.add_api_route(
                 path=f"/{trigger_name}/{trigger_id}/{trigger_event}",
                 endpoint=build_function_endpoint(
-                    function_definitions=fn_definitions, function_registry=self.function_registry
+                    function_definitions=fn_definitions,
+                    function_registry=self.function_registry,
                 ),
                 methods=["POST"],
             )

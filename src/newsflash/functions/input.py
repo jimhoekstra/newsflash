@@ -6,9 +6,11 @@ from pydantic import ValidationError
 from newsflash.models import Element, ID, FunctionInputDefinition, FunctionDefinition
 
 
-def build_function_input_definition(arg_name: str, annotation: typing.Any) -> FunctionInputDefinition:
+def build_function_input_definition(
+    arg_name: str, annotation: typing.Any
+) -> FunctionInputDefinition:
     """Build a function input definition for a single function argument.
-    
+
     Parameters
     ----------
     arg_name
@@ -16,7 +18,7 @@ def build_function_input_definition(arg_name: str, annotation: typing.Any) -> Fu
     annotation
         The type annotation of the function argument. This can be one of two types:
             - `typing.Annotated`, in which case the first argument is the
-              actual element type. There should be one additional argument to 
+              actual element type. There should be one additional argument to
               the annotation that is of type ID and contains a reference to the
               ID of the element.
             - A fully specified `Element`, where fully specified means that it can
@@ -34,7 +36,7 @@ def build_function_input_definition(arg_name: str, annotation: typing.Any) -> Fu
         When the type of `annotation` is `Element` but it can't be instantiated
         without additional arguments passed to the constructor.
     ValueError
-        When either the element type or the element ID cannot be derived from 
+        When either the element type or the element ID cannot be derived from
         the annotation.
     """
     origin = typing.get_origin(annotation)
@@ -56,7 +58,11 @@ def build_function_input_definition(arg_name: str, annotation: typing.Any) -> Fu
         element_type = None
         element_id = None
 
-    if element_id is None or element_type is None or not issubclass(element_type, Element):
+    if (
+        element_id is None
+        or element_type is None
+        or not issubclass(element_type, Element)
+    ):
         raise ValueError(f"element: {arg_name} is not sufficiently defined")
 
     return FunctionInputDefinition(
@@ -66,15 +72,17 @@ def build_function_input_definition(arg_name: str, annotation: typing.Any) -> Fu
     )
 
 
-def get_function_input_definitions(function_signature: Signature) -> list[FunctionInputDefinition]:
+def get_function_input_definitions(
+    function_signature: Signature,
+) -> list[FunctionInputDefinition]:
     """Get the function input definition for a function signature.
-    
+
     Arguments
     ---------
     function_signature
         The function signature of the function for which to get the function
         input definitions
-    
+
     Returns
     -------
     A list of function input definitions with one element for every parameter in
@@ -83,7 +91,9 @@ def get_function_input_definitions(function_signature: Signature) -> list[Functi
     function_inputs: list[FunctionInputDefinition] = []
     for arg_name, arg in function_signature.parameters.items():
         function_inputs.append(
-            build_function_input_definition(arg_name=arg_name, annotation=arg.annotation)
+            build_function_input_definition(
+                arg_name=arg_name, annotation=arg.annotation
+            )
         )
 
     return function_inputs
@@ -93,7 +103,7 @@ def build_function_inputs_from_data(
     function_definition: FunctionDefinition, values: dict[str, str]
 ) -> dict[str, Element | None]:
     """Collect all required inputs for a function given a dict of values.
-    
+
     Parameters
     ----------
     function_definition
