@@ -1,4 +1,4 @@
-from typing import Annotated, Iterable
+from typing import Iterable
 from math import sin, cos
 
 from newsflash.elements import (
@@ -44,11 +44,11 @@ class ResetInputsButton(Button):
     label: str = "Reset Inputs"
 
 
-def build_line_plot(
-    line_plot: Plot,
+def _build_line_plot(
+    line_plot: LinePlot,
     sine_wave_amplitude: int,
     cosine_wave_amplitude: int,
-) -> Plot:
+) -> LinePlot:
     fig, ax = line_plot.create_figure()
 
     ax.plot(
@@ -80,67 +80,72 @@ def build_line_plot(
     ]
 )
 def recreate_sine_plot(
-    sine_wave_amplitude: Annotated[InputInteger, ID("sine-wave-amplitude")],
-    cosine_wave_amplitude: Annotated[InputInteger, ID("cosine-wave-amplitude")],
-    line_plot: Annotated[Plot, ID("line-plot")],
+    sine_wave_amplitude: SineWaveAplitudeInput,
+    cosine_wave_amplitude: CosineWaveAplitudeInput,
+    line_plot: LinePlot,
 ) -> Iterable[Element]:
-    yield build_line_plot(
+    # Rebuild the line plot given the updated input values.
+    yield _build_line_plot(
         line_plot=line_plot,
         sine_wave_amplitude=sine_wave_amplitude.value,
         cosine_wave_amplitude=cosine_wave_amplitude.value,
     )
 
 
-@functions.add(
-    on=[
-        TestSelect().select(),
-        TestSelect().revealed(),
-    ]
-)
-def log_select(
-    select: TestSelect,
+# Example that shows the same trigger, in this case an input trigger on the
+# SineWaveAmplitudeInput element, can trigger multiple functions (this one,
+# in addition to recreate_sine_plot above).
+@functions.add(on=SineWaveAplitudeInput().input())
+def log_sine_wave_amplitude_input_event(
+    sine_wave_amplitude: SineWaveAplitudeInput,
 ) -> Iterable[Element]:
-    yield Paragraph(id="selected-log", text=f"You have selected: '{select.selected}'")
+    # Log a message
+    print(f"User submitted new sine wave amplitude input: {sine_wave_amplitude.value}")
 
-
-@functions.add(on=TestSelect().input())
-def log_select_input(
-    select: TestSelect,
-) -> Iterable[Element]:
-    print(select.selected)
+    # Return nothing, since this function does not change anything in the UI.
     return []
 
 
 @functions.add(on=ResetInputsButton().click())
 def reset_inputs(
-    line_plot: Annotated[Plot, ID("line-plot")],
+    line_plot: LinePlot,
 ) -> Iterable[Element]:
-    yield SineWaveAplitudeInput()
-    yield CosineWaveAplitudeInput()
-    yield build_line_plot(
+    sine_wave_amplitude_input = SineWaveAplitudeInput()
+    cosine_wave_amplitude_input = CosineWaveAplitudeInput()
+
+    yield sine_wave_amplitude_input
+    yield cosine_wave_amplitude_input
+    yield _build_line_plot(
         line_plot=line_plot,
-        sine_wave_amplitude=5,
-        cosine_wave_amplitude=7,
+        sine_wave_amplitude=sine_wave_amplitude_input.value,
+        cosine_wave_amplitude=cosine_wave_amplitude_input.value,
     )
 
 
 class InputsRow(Horizontal):
     id: str = "horizontal-inputs"
-    wide: bool = True
 
     def compose(self) -> Iterable[Element]:
         yield SineWaveAplitudeInput()
         yield CosineWaveAplitudeInput()
-        yield TestSelect()
         yield ResetInputsButton()
 
 
 class NumbersApp(NewsflashApp):
     def compose(self) -> Iterable[Element]:
+        # You can use generic Element types like Header and Paragraph, as long
+        # as you pass all the required inputs (like `id`) to the constructor.
         yield Header(id="page-header", text="Sines and Cosines")
         yield Paragraph(id="inputs-label", text="Enter the amplitude for the waves:")
+
+        # You can also nest elements, like in this example using InputsRow
         yield InputsRow()
         yield Paragraph(id="selected-log")
+
+        # Lastly, you can yield your custom Element types, like LinePlot. The
+        # advantage of this is that the LinePlot type can be reused across other
+        # elements and function so that you don't depend on reconstructing generic
+        # plots with the same ID every time.
         yield LinePlot()
 
 
