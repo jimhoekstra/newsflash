@@ -11,6 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
 
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
     <style>
@@ -29,7 +30,7 @@
             gap: 1em;
         }
 
-        input {
+        input, textarea {
             font-family: 'Lora';
             font-size: 17px;
             background-color: hsl(28, 100%, 90%);
@@ -46,7 +47,11 @@
             box-sizing: border-box;
         }
 
-        input:focus {
+        textarea {
+            resize: none;
+        }
+
+        input:focus, textarea:focus {
             border-color: hsl(232, 27%, 45%);
         }
 
@@ -131,7 +136,7 @@
             width: 100%;
             outline: none;
             margin: 0.5em 0 0 0;
-            padding: 0.2em 0;
+            padding: 0;
             
             border-radius: 0.2em;
             border-style: solid;

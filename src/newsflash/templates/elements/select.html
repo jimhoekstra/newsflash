@@ -59,8 +59,8 @@
             @focus="open = true"
         >
 
-        <div class="select-list-container" x-show="open">
-            <ul class="select-list">
+        <div class="select-list-container" >
+            <ul class="select-list" x-show="open" x-collapse>
                 <template x-for="option in filteredOptions">
                     <li 
                         class="select-list-item"

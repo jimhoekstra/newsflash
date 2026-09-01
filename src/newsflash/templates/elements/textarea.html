@@ -1,0 +1,20 @@
+<div 
+    id="{{ id }}"
+    {% if hx_swap_oob %} 
+        hx-swap-oob="true"
+    {% endif %}
+>
+    <textarea 
+        id="{{ id }}--value" 
+        {% if has_input_trigger %} 
+            hx-post="/{{ name }}/{{ id }}/input" 
+            hx-trigger="input" 
+            hx-swap="none" 
+            hx-include="{{ input_hx_include }}"
+        {% endif %}
+        {% if rows %}rows="{{ rows }}"{% endif %}
+        {% if cols %}cols="{{ cols }}"{% endif %}
+        name="{{ id }}--value"
+        autocomplete="off"
+    >{{ value }}</textarea>
+</div>

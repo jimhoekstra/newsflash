@@ -10,8 +10,8 @@ from newsflash.elements import (
     Header,
     Plot,
     Horizontal,
+    Textarea,
 )
-from newsflash.models import ID
 from newsflash.functions import FunctionRegistry
 from newsflash.app import NewsflashApp
 
@@ -28,15 +28,10 @@ class SineWaveAplitudeInput(InputInteger):
     value: int = 5
 
 
-class CosineWaveAplitudeInput(InputInteger):
+class CosineWaveAplitudeSelect(Select):
     id: str = "cosine-wave-amplitude"
-    value: int = 7
-
-
-class TestSelect(Select):
-    id: str = "test-select"
-    options: list[str] = ["Option A", "Option B", "Option C", "Option D"]
-    selected: str = "Option A"
+    options: list[int] = [2, 7, 27, 49]
+    selected: int = 7
 
 
 class ResetInputsButton(Button):
@@ -73,22 +68,23 @@ def _build_line_plot(
 
 
 @functions.add(
+    # A single function can have multiple triggers.
     on=[
         LinePlot().revealed(),
         SineWaveAplitudeInput().input(),
-        CosineWaveAplitudeInput().input(),
+        CosineWaveAplitudeSelect().select(),
     ]
 )
 def recreate_sine_plot(
     sine_wave_amplitude: SineWaveAplitudeInput,
-    cosine_wave_amplitude: CosineWaveAplitudeInput,
+    cosine_wave_amplitude: CosineWaveAplitudeSelect,
     line_plot: LinePlot,
 ) -> Iterable[Element]:
     # Rebuild the line plot given the updated input values.
     yield _build_line_plot(
         line_plot=line_plot,
         sine_wave_amplitude=sine_wave_amplitude.value,
-        cosine_wave_amplitude=cosine_wave_amplitude.value,
+        cosine_wave_amplitude=cosine_wave_amplitude.selected,
     )
 
 
@@ -111,14 +107,14 @@ def reset_inputs(
     line_plot: LinePlot,
 ) -> Iterable[Element]:
     sine_wave_amplitude_input = SineWaveAplitudeInput()
-    cosine_wave_amplitude_input = CosineWaveAplitudeInput()
+    cosine_wave_amplitude_select = CosineWaveAplitudeSelect()
 
     yield sine_wave_amplitude_input
-    yield cosine_wave_amplitude_input
+    yield cosine_wave_amplitude_select
     yield _build_line_plot(
         line_plot=line_plot,
         sine_wave_amplitude=sine_wave_amplitude_input.value,
-        cosine_wave_amplitude=cosine_wave_amplitude_input.value,
+        cosine_wave_amplitude=cosine_wave_amplitude_select.selected,
     )
 
 
@@ -127,7 +123,7 @@ class InputsRow(Horizontal):
 
     def compose(self) -> Iterable[Element]:
         yield SineWaveAplitudeInput()
-        yield CosineWaveAplitudeInput()
+        yield CosineWaveAplitudeSelect()
         yield ResetInputsButton()
 
 
@@ -147,6 +143,7 @@ class NumbersApp(NewsflashApp):
         # elements and function so that you don't depend on reconstructing generic
         # plots with the same ID every time.
         yield LinePlot()
+        yield Textarea(id="test-text", rows=10, value="Hello!")
 
 
 app = NumbersApp(functions=functions)

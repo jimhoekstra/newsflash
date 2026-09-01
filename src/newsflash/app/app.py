@@ -52,6 +52,18 @@ class NewsflashApp(FastAPI):
             )
 
     def render(self, request: Request) -> Response:
+        """Render the newsflash app.
+        
+        Parameters
+        ----------
+        request
+            The FastAPI request object.
+
+        Returns
+        -------
+        A FastAPI response object with an HTML page with the rendered 
+        newsflash app.
+        """
         elements = list(self.compose())
 
         rendered_elements: dict[str, str] = {}

@@ -1,6 +1,7 @@
 from .base import Element
 from .button import Button
 from .input import Input, InputFloat, InputInteger
+from .textarea import Textarea
 from .select import Select
 from .paragraph import Paragraph
 from .header import Header
@@ -16,6 +17,7 @@ __all__ = [
     "Input",
     "InputFloat",
     "InputInteger",
+    "Textarea",
     "Select",
     "Paragraph",
     "Header",
