@@ -6,8 +6,8 @@ from .select import Select
 from .paragraph import Paragraph
 from .header import Header
 from .registry import ElementRegistry
-from .layout.vertical import Vertical
-from .layout.horizontal import Horizontal
+from .vertical import Vertical
+from .horizontal import Horizontal
 from .plot import Plot
 
 

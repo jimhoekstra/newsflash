@@ -10,7 +10,6 @@ from newsflash.elements import (
     Header,
     Plot,
     Horizontal,
-    Textarea,
 )
 from newsflash.functions import FunctionRegistry
 from newsflash.app import NewsflashApp
@@ -143,7 +142,6 @@ class NumbersApp(NewsflashApp):
         # elements and function so that you don't depend on reconstructing generic
         # plots with the same ID every time.
         yield LinePlot()
-        yield Textarea(id="test-text", rows=10, value="Hello!")
 
 
 app = NumbersApp(functions=functions)
