@@ -10,6 +10,8 @@ from .registry import ElementRegistry
 from .vertical import Vertical
 from .horizontal import Horizontal
 from .plot import Plot
+from .notifications import NotificationContainer
+from .notification import Notification
 
 
 __all__ = [
@@ -27,4 +29,6 @@ __all__ = [
     "Vertical",
     "Horizontal",
     "Plot",
+    "NotificationContainer",
+    "Notification",
 ]

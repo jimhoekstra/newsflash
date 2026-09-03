@@ -1,6 +1,7 @@
 from typing import Iterable
 from math import sin, cos
 
+from newsflash import NewsflashApp, FunctionRegistry
 from newsflash.elements import (
     Button,
     InputInteger,
@@ -10,10 +11,9 @@ from newsflash.elements import (
     Header,
     Plot,
     Horizontal,
+    NotificationContainer,
+    Notification,
 )
-from newsflash.functions import FunctionRegistry
-from newsflash.app import NewsflashApp
-
 
 functions = FunctionRegistry()
 
@@ -115,6 +115,7 @@ def reset_inputs(
         sine_wave_amplitude=sine_wave_amplitude_input.value,
         cosine_wave_amplitude=cosine_wave_amplitude_select.selected,
     )
+    yield Notification(message="Button pressed!")
 
 
 class InputsRow(Horizontal):
@@ -126,7 +127,7 @@ class InputsRow(Horizontal):
         yield ResetInputsButton()
 
 
-class NumbersApp(NewsflashApp):
+class SineWavesApp(NewsflashApp):
     def compose(self) -> Iterable[Element]:
         # You can use generic Element types like Header and Paragraph, as long
         # as you pass all the required inputs (like `id`) to the constructor.
@@ -142,6 +143,7 @@ class NumbersApp(NewsflashApp):
         # elements and function so that you don't depend on reconstructing generic
         # plots with the same ID every time.
         yield LinePlot()
+        yield NotificationContainer()
 
 
-app = NumbersApp(functions=functions)
+app = SineWavesApp(functions=functions)

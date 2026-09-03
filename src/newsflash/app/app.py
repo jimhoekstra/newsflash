@@ -34,7 +34,6 @@ class NewsflashApp(FastAPI):
         self.add_api_route(path="/", endpoint=root_page, methods=["GET"])
 
     def register_function_endpoints(self) -> None:
-
         element_to_fn_definitions = _build_element_to_function_definitions_map(
             function_definitions=self.function_registry._functions
         )
