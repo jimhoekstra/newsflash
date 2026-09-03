@@ -94,11 +94,10 @@ def recreate_sine_plot(
 def log_sine_wave_amplitude_input_event(
     sine_wave_amplitude: SineWaveAplitudeInput,
 ) -> Iterable[Element]:
-    # Log a message
-    print(f"User submitted new sine wave amplitude input: {sine_wave_amplitude.value}")
-
-    # Return nothing, since this function does not change anything in the UI.
-    return []
+    # Show a notification in the UI
+    yield Notification(
+        message=f"User submitted new sine wave amplitude input: {sine_wave_amplitude.value}"
+    )
 
 
 @functions.add(on=ResetInputsButton().click())

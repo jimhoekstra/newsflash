@@ -10,7 +10,7 @@ from .registry import ElementRegistry
 from .vertical import Vertical
 from .horizontal import Horizontal
 from .plot import Plot
-from .notifications import NotificationContainer
+from .notification_container import NotificationContainer
 from .notification import Notification
 
 
