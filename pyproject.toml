@@ -25,3 +25,6 @@ test = [
     "pytest>=9.1.1",
     "coverage>=7.16.0",
 ]
+
+[tool.coverage.run]
+source = ["src/newsflash"]

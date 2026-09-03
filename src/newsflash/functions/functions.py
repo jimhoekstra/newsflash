@@ -10,7 +10,7 @@ def get_functions_triggered_by_element(
 
     for trigger in triggers:
         function_definitions: list[FunctionDefinition] = []
-        for fn in function_registry.functions:
+        for fn in function_registry._functions:
             for function_trigger in fn.triggers:
                 if (
                     function_trigger.element_id == element_id
@@ -29,8 +29,10 @@ def build_hx_include_string(triggered_functions: list[FunctionDefinition]) -> st
 
     element_ids: list[str] = []
 
-    for func in triggered_functions:
-        for func_input in func.inputs:
-            element_ids.append(f"#{func_input.element_id}")
+    for function in triggered_functions:
+        for function_input in function.inputs:
+            element_ids.append(f"#{function_input.element_id}")
 
-    return ", ".join(element_ids)
+    # Sort the element IDs to make the function output deterministic and
+    # easier to test
+    return ", ".join(sorted(set(element_ids)))

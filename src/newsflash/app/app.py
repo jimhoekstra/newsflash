@@ -36,7 +36,7 @@ class NewsflashApp(FastAPI):
     def register_function_endpoints(self) -> None:
 
         element_to_fn_definitions = _build_element_to_function_definitions_map(
-            function_definitions=self.function_registry.functions
+            function_definitions=self.function_registry._functions
         )
 
         for trigger_path, fn_definitions in element_to_fn_definitions.items():
