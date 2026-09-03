@@ -1,0 +1,20 @@
+<div 
+    id="{{ id }}"
+    {% if hx_swap_oob %} 
+        hx-swap-oob="true"
+    {% endif %}
+>
+    <input 
+        id="{{ id }}--value" 
+        {% if has_click_trigger %} 
+            hx-post="/{{ name }}/{{ id }}/click" 
+            hx-trigger="click" 
+            hx-swap="none" 
+            hx-include="{{ input_hx_include }}"
+        {% endif %}
+        type="checkbox" 
+        {% if checked %}checked{% endif %}
+        name="{{ id }}--value"
+    >
+    <label for="{{ id }}--value">{{ label }}</label>
+</div>

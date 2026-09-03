@@ -22,6 +22,8 @@ class NewsflashApp(FastAPI):
     def __init__(self, functions: FunctionRegistry) -> None:
         super().__init__()
         self.function_registry = functions
+        # TODO: allow for registering multiple pages at different
+        # paths
         self.register_root_page()
         self.register_function_endpoints()
 
@@ -33,17 +35,13 @@ class NewsflashApp(FastAPI):
 
     def register_function_endpoints(self) -> None:
 
-        element_to_fn_definitions = _build_element_to_fn_definitions_map(
+        element_to_fn_definitions = _build_element_to_function_definitions_map(
             function_definitions=self.function_registry.functions
         )
 
-        for (
-            trigger_name,
-            trigger_id,
-            trigger_event,
-        ), fn_definitions in element_to_fn_definitions.items():
+        for trigger_path, fn_definitions in element_to_fn_definitions.items():
             self.add_api_route(
-                path=f"/{trigger_name}/{trigger_id}/{trigger_event}",
+                path=trigger_path,
                 endpoint=build_function_endpoint(
                     function_definitions=fn_definitions,
                     function_registry=self.function_registry,
@@ -53,7 +51,7 @@ class NewsflashApp(FastAPI):
 
     def render(self, request: Request) -> Response:
         """Render the newsflash app.
-        
+
         Parameters
         ----------
         request
@@ -61,7 +59,7 @@ class NewsflashApp(FastAPI):
 
         Returns
         -------
-        A FastAPI response object with an HTML page with the rendered 
+        A FastAPI response object with an HTML page with the rendered
         newsflash app.
         """
         elements = list(self.compose())
@@ -90,6 +88,7 @@ class NewsflashApp(FastAPI):
         )
 
     def compose(self) -> Iterable["Element"]:
+        """Compose the app, empty until overwritten."""
         yield from ()
 
 
@@ -102,6 +101,9 @@ def build_function_endpoint(
         functions=function_registry,
     )
 
+    # TODO: dynamically set the parameters of this function if there are
+    # "Depends" injections required for the FastAPI endpoint as configured
+    # by the library users in the callback function signatures.
     async def function_endpoint(request: Request) -> HTMLResponse:
         body = await request.form()
         collected_outputs: Iterable[Element] = []
@@ -136,24 +138,17 @@ def build_function_endpoint(
     return function_endpoint
 
 
-def _build_element_to_fn_definitions_map(
+def _build_element_to_function_definitions_map(
     function_definitions: list[FunctionDefinition],
-) -> dict[tuple[str, str, str], list[FunctionDefinition]]:
-    element_to_fn_definitions: dict[tuple[str, str, str], list[FunctionDefinition]] = {}
+) -> dict[str, list[FunctionDefinition]]:
+    element_to_fn_definitions: dict[str, list[FunctionDefinition]] = {}
 
     for fn_definition in function_definitions:
         for trigger in fn_definition.triggers:
-            if (
-                trigger.element_name,
-                trigger.element_id,
-                trigger.trigger,
-            ) not in element_to_fn_definitions:
-                element_to_fn_definitions[
-                    (trigger.element_name, trigger.element_id, trigger.trigger)
-                ] = [fn_definition]
+            trigger_path = trigger.to_path()
+            if trigger_path not in element_to_fn_definitions:
+                element_to_fn_definitions[trigger_path] = [fn_definition]
             else:
-                element_to_fn_definitions[
-                    (trigger.element_name, trigger.element_id, trigger.trigger)
-                ].append(fn_definition)
+                element_to_fn_definitions[trigger_path].append(fn_definition)
 
     return element_to_fn_definitions

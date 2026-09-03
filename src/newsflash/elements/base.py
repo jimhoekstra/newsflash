@@ -16,12 +16,12 @@ class BaseElement(Element, abc.ABC):
         hx_swap_oob: str | None,
     ) -> str:
         """Render an Element to an HTML string.
-        
+
         Parameters
         ----------
         trigger_context_getter
             A function that takes an element ID and a list of triggers, and returns
-            the context needed to include the htmx-enabled interactivity in the 
+            the context needed to include the htmx-enabled interactivity in the
             rendered HTML returned from this method.
         hx_swap_oob
             A flag that adds the `hx-swap-oob="true"` flag to the rendered HTML
@@ -57,7 +57,7 @@ class BaseElement(Element, abc.ABC):
 
     def compose(self) -> typing.Iterable["Element"]:
         """Compose the children of the element.
-        
+
         If subclasses of BaseElement don't overwrite this method, then return
         the elements in the children attribute, if any.
 
