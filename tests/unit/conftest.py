@@ -50,7 +50,9 @@ def callback_function_a_input_definitions() -> list[FunctionInputDefinition]:
 
 
 @pytest.fixture
-def callback_function_b() -> typing.Callable[[DummyButton, DummyInput], typing.Iterable[Element]]:
+def callback_function_b() -> typing.Callable[
+    [DummyButton, DummyInput], typing.Iterable[Element]
+]:
     def fn(
         dummy_button: DummyButton, dummy_input: DummyInput
     ) -> typing.Iterable[Element]:
@@ -154,5 +156,7 @@ def function_registry_single_trigger_multiple_values(
     function_definitions_single_trigger_multiple_functions,
 ) -> FunctionRegistry:
     function_registry = FunctionRegistry()
-    function_registry._functions = function_definitions_single_trigger_multiple_functions
+    function_registry._functions = (
+        function_definitions_single_trigger_multiple_functions
+    )
     return function_registry

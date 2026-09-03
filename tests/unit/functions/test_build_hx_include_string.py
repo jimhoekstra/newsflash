@@ -1,9 +1,7 @@
 from newsflash.functions.functions import build_hx_include_string
 
 
-def test_build_hx_include_string_simple(
-    function_definitions_simple
-) -> None:
+def test_build_hx_include_string_simple(function_definitions_simple) -> None:
     result = build_hx_include_string(
         triggered_functions=function_definitions_simple,
     )
@@ -12,7 +10,7 @@ def test_build_hx_include_string_simple(
 
 
 def test_build_hx_include_string_multiple_functions(
-    function_definitions_single_trigger_multiple_functions
+    function_definitions_single_trigger_multiple_functions,
 ) -> None:
     result = build_hx_include_string(
         triggered_functions=function_definitions_single_trigger_multiple_functions

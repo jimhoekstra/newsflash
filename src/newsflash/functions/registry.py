@@ -13,10 +13,12 @@ class FunctionRegistry:
     def __init__(self) -> None:
         self._functions = []
 
-    def _add(self, on: Trigger | list[Trigger], function: typing.Callable[..., typing.Any]) -> None:
+    def _add(
+        self, on: Trigger | list[Trigger], function: typing.Callable[..., typing.Any]
+    ) -> None:
         sig = signature(function)
         function_inputs = get_function_input_definitions(sig)
-    
+
         if isinstance(on, list):
             triggers = on
         else:
