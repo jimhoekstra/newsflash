@@ -152,7 +152,7 @@ def function_registry_multiple_triggers(
 
 
 @pytest.fixture
-def function_registry_single_trigger_multiple_values(
+def function_registry_single_trigger_multiple_functions(
     function_definitions_single_trigger_multiple_functions,
 ) -> FunctionRegistry:
     function_registry = FunctionRegistry()
