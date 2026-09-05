@@ -1,3 +1,8 @@
 <ul hx-swap-oob="beforeend:#newsflash-notification-container">
-    <li class="newsflash-notification">{{ message }}</li>
+    <li 
+        class="newsflash-notification"
+        hx-trigger="load delay:{{ duration }}s"
+        hx-swap="outerHTML swap:1s"
+        hx-get="/_empty"
+    >{{ message }}</li>
 </ul>

@@ -96,7 +96,7 @@ def log_sine_wave_amplitude_input_event(
 ) -> Iterable[Element]:
     # Show a notification in the UI
     yield Notification(
-        message=f"User submitted new sine wave amplitude input: {sine_wave_amplitude.value}"
+        message=f"User submitted new sine wave amplitude input: {sine_wave_amplitude.value}",
     )
 
 

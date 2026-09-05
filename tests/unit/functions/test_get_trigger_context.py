@@ -1,9 +1,7 @@
 from newsflash.functions.trigger import get_trigger_context
 
 
-def test_get_trigger_context_simple(
-    function_registry_simple
-) -> None:
+def test_get_trigger_context_simple(function_registry_simple) -> None:
     result = get_trigger_context(
         element_id="dummy-button",
         element_triggers=["click"],
@@ -60,6 +58,6 @@ def test_get_trigger_context_single_trigger_multiple_functions(
     assert result["has_click_trigger"] == True
 
     assert "click_hx_include" in result
-    # hx-include should also contain #dummy-input since it's part of the 
+    # hx-include should also contain #dummy-input since it's part of the
     # function inputs.
     assert result["click_hx_include"] == "#dummy-button, #dummy-input"

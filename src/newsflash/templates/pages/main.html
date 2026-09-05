@@ -162,14 +162,29 @@
             position: fixed;
             bottom: 10px;
             right: 30px;
-            border: 2px solid black;
-            padding: 0.5em 2em;
+
+            display: flex;
+            flex-direction: column;
+            gap: 0.5em;
 
             list-style-type: none;
         }
 
         .newsflash-notification {
             width: 400px;
+
+            border-style: solid;
+            border-width: 2px;
+            border-color: hsl(232, 27%, 45%);
+            border-radius: 0.2em;
+
+            padding: 1em 1.2em;
+            background-color: rgb(209, 232, 255);
+        }
+
+        .newsflash-notification.htmx-swapping {
+            transform: translateX(120%);
+            transition: transform 0.5s ease-in;
         }
     </style>
 </head>
@@ -204,7 +219,7 @@
         }
 
         document.body.addEventListener("htmx:configRequest", (event) => {
-            chartDimensions = getChartDimensions();
+            let chartDimensions = getChartDimensions();
             for (const [key, value] of Object.entries(chartDimensions)) {
                 event.detail.parameters[key] = value;
             }

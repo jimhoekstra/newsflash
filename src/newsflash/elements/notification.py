@@ -8,3 +8,4 @@ class Notification(BaseElement):
     template_dir_name: str = "newsflash-elements"
     template_name: str = "notification.html"
     message: str
+    duration: int = 5

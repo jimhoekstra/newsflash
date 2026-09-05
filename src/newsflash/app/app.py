@@ -25,6 +25,7 @@ class NewsflashApp(FastAPI):
         # TODO: allow for registering multiple pages at different
         # paths
         self.register_root_page()
+        self.register_empty_endpoint()
         self.register_function_endpoints()
 
     def register_root_page(self) -> None:
@@ -32,6 +33,16 @@ class NewsflashApp(FastAPI):
             return self.render(request=request)
 
         self.add_api_route(path="/", endpoint=root_page, methods=["GET"])
+
+    def register_empty_endpoint(self) -> None:
+        def empty_request() -> Response:
+            return HTMLResponse(content="")
+
+        self.add_api_route(
+            path="/_empty",
+            endpoint=empty_request,
+            methods=["GET"],
+        )
 
     def register_function_endpoints(self) -> None:
         element_to_fn_definitions = _build_element_to_function_definitions_map(
