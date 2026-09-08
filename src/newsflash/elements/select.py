@@ -1,23 +1,25 @@
-from .input import Input
+import typing
+
+from .base import BaseElement
 
 from newsflash.models import Trigger
 
 
-class Select(Input):
+class Select(BaseElement):
     name: str = "select"
     template_dir_name: str = "newsflash-elements"
     template_name: str = "select.html"
 
+    value: str = ""
     options: list[str] = []
-    selected: str = ""
 
-    all_triggers: list[str] = ["input", "select", "revealed"]
+    all_triggers: list[str] = ["search", "select"]
 
-    def input(self) -> Trigger:
+    def search(self) -> Trigger:
         return Trigger(
             element_id=self.id,
             element_name=self.name,
-            trigger="input",
+            trigger="search",
         )
 
     def select(self) -> Trigger:
@@ -27,9 +29,6 @@ class Select(Input):
             trigger="select",
         )
 
-    def revealed(self) -> Trigger:
-        return Trigger(
-            element_id=self.id,
-            element_name=self.name,
-            trigger="revealed",
-        )
+    def with_options(self, options: list[str] | list[int] | list[float]) -> typing.Self:
+        self.options = [str(x) for x in options]
+        return self

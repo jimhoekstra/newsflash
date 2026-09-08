@@ -1,76 +1,48 @@
 <div 
     id="{{ id }}"
-    class="select"
+    class="select-wrapper" 
+    tabindex="-1"
+
+    hx-post="/_empty"
+    hx-trigger="focusout[!this.contains(event.relatedTarget)] delay:1ms"
+    hx-target="#{{ id }}_options"
+    hx-swap="innerHTML"
+    
     {% if hx_swap_oob %} 
         hx-swap-oob="true"
     {% endif %}
-
-    {% if has_revealed_trigger and not hx_swap_oob %} 
-        hx-post="/{{ name }}/{{ id }}/revealed" 
-        hx-trigger="revealed" 
-        hx-swap="none" 
-        hx-include="{{ revealed_hx_include }}"
-    {% endif %}
-
-    x-data="{
-        open: false,
-        selected: '{{ selected }}',
-        options: {{ options }},
-        filteredOptions: {{ options }}
-    }"
 >
-    <div
-        class="select-container"
+    <input
+        id="{{ id }}--value"
+        type="text"
+        autocomplete="off"
+        value="{{ value }}"
+        name="{{ id }}--value"
 
-        {% if has_select_trigger %} 
-            hx-post="/{{ name }}/{{ id }}/select" 
-            hx-trigger="selectByClick" 
+        {% if has_search_trigger %} 
+            hx-post="/{{ name }}/{{ id }}/search" 
+            hx-trigger="input, focus" 
             hx-swap="none" 
-            hx-include="{{ select_hx_include }}"
+            hx-include="{{ search_hx_include }}"
         {% endif %}
+    />
 
-        x-data="{
-            selectValue(value) {
-                open = false
-                $refs.selectInput.value = value
-                $refs.selectInput.dispatchEvent(new Event('selectByClick', { bubbles: true }))
-                $refs.selectInput.blur()
-            }
-        }"
-        @click.outside="open = false"
-    >
-    
-        <input 
-            id="{{ id }}--selected" 
-            
-            type="text" 
-            value="{{ selected }}" 
-            name="{{ id }}--selected"
-            autocomplete="off"
-
-            {% if has_input_trigger %} 
-                hx-post="/{{ name }}/{{ id }}/input" 
-                hx-trigger="input" 
-                hx-swap="none" 
-                hx-include="{{ input_hx_include }}"
-            {% endif %}
-
-            x-ref="selectInput"
-            @focus="open = true"
-        >
-
-        <div class="select-list-container" >
-            <ul class="select-list" x-show="open" x-collapse>
-                <template x-for="option in filteredOptions">
-                    <li 
-                        class="select-list-item"
-                        x-text="option"
-                        @click="selectValue(option)"
-                    >
-                    </li>
-                </template>
-            </ul>
-        </div>
-        
+    <div id="{{ id }}_options" class="select-list-container">
+        {% if options|length > 0 %}
+        <ul class="select-list">
+            {% for option in options %}
+                <li 
+                    class="select-list-item"
+                    {% if has_select_trigger %} 
+                        hx-post="/{{ name }}/{{ id }}/select" 
+                        hx-trigger="click" 
+                        hx-swap="none" 
+                        hx-include="{{ select_hx_include }}"
+                        hx-vals='{"{{ id }}--value": {{ option }}}'
+                    {% endif %}
+                >{{ option }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
     </div>
 </div>

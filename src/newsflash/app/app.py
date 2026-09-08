@@ -41,7 +41,7 @@ class NewsflashApp(FastAPI):
         self.add_api_route(
             path="/_empty",
             endpoint=empty_request,
-            methods=["GET"],
+            methods=["POST"],
         )
 
     def register_function_endpoints(self) -> None:

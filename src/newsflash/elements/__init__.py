@@ -6,7 +6,6 @@ from .checkbox import Checkbox
 from .select import Select
 from .paragraph import Paragraph
 from .header import Header
-from .registry import ElementRegistry
 from .vertical import Vertical
 from .horizontal import Horizontal
 from .plot import Plot
@@ -25,7 +24,6 @@ __all__ = [
     "Select",
     "Paragraph",
     "Header",
-    "ElementRegistry",
     "Vertical",
     "Horizontal",
     "Plot",

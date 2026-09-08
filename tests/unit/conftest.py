@@ -1,4 +1,5 @@
 import typing
+from unittest.mock import MagicMock
 
 import pytest
 
@@ -7,6 +8,7 @@ from newsflash.models import (
     FunctionDefinition,
     FunctionInputDefinition,
     Element,
+    Trigger,
 )
 from newsflash.elements import Button, Input
 
@@ -32,10 +34,7 @@ def dummy_input() -> typing.Type[Input]:
 
 @pytest.fixture
 def callback_function_a() -> typing.Callable[[DummyButton], typing.Iterable[Element]]:
-    def fn(dummy_button: DummyButton) -> typing.Iterable[Element]:
-        yield dummy_button
-
-    return fn
+    return MagicMock()
 
 
 @pytest.fixture
@@ -53,13 +52,7 @@ def callback_function_a_input_definitions() -> list[FunctionInputDefinition]:
 def callback_function_b() -> typing.Callable[
     [DummyButton, DummyInput], typing.Iterable[Element]
 ]:
-    def fn(
-        dummy_button: DummyButton, dummy_input: DummyInput
-    ) -> typing.Iterable[Element]:
-        yield dummy_button
-        yield dummy_input
-
-    return fn
+    return MagicMock()
 
 
 @pytest.fixture
@@ -74,6 +67,33 @@ def callback_function_b_input_definitions() -> list[FunctionInputDefinition]:
             arg_name="dummy_input",
             element_type=DummyInput,
             element_id=DummyInput().id,
+        ),
+    ]
+
+
+@pytest.fixture
+def callback_function_a_triggers() -> list[Trigger]:
+    return [
+        Trigger(
+            element_id="dummy-button",
+            element_name="button",
+            trigger="click",
+        )
+    ]
+
+
+@pytest.fixture
+def callback_function_b_triggers() -> list[Trigger]:
+    return [
+        Trigger(
+            element_id="dummy-button",
+            element_name="button",
+            trigger="click",
+        ),
+        Trigger(
+            element_id="dummy-input",
+            element_name="input",
+            trigger="input",
         ),
     ]
 
