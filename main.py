@@ -168,24 +168,28 @@ def _build_line_plot(
 ) -> LinePlot:
     fig, ax = line_plot.create_figure()
 
-    ax.plot(
-        [x / 10 for x in range(300)],
-        [sin(x / 10) * sine_wave_amplitude for x in range(300)],
-        linewidth=3,
-        color="#931f1f",
-        label="sine",
-    )
-    ax.plot(
-        [x / 10 for x in range(300)],
-        [cos(x / 10) * cosine_wave_amplitude for x in range(300)],
-        linewidth=3,
-        color="green",
-        label="cosine",
-    )
-    ax.legend()
+    try:
+        ax.plot(
+            [x / 10 for x in range(300)],
+            [sin(x / 10) * sine_wave_amplitude for x in range(300)],
+            linewidth=3,
+            color="#931f1f",
+            label="sine",
+        )
+        ax.plot(
+            [x / 10 for x in range(300)],
+            [cos(x / 10) * cosine_wave_amplitude for x in range(300)],
+            linewidth=3,
+            color="green",
+            label="cosine",
+        )
+        ax.legend()
 
-    line_plot.set_figure(figure=fig)
-    return line_plot
+        line_plot.set_figure(figure=fig)
+        return line_plot
+    
+    finally:
+        line_plot.close_figure(figure=fig)
 
 
 app = SineWavesApp(functions=functions)

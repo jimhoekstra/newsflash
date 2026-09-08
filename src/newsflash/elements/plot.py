@@ -39,6 +39,9 @@ class Plot(BaseElement):
 
         return fig, ax
 
+    def close_figure(self, figure: Figure) -> None:
+        plt.close(fig=figure)
+
     def set_figure(self, figure: Figure) -> None:
         buf = io.StringIO()
         figure.savefig(buf, format="svg", transparent=True)
