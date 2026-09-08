@@ -1,7 +1,7 @@
 [project]
 name = "newsflash"
-version = "0.1.0"
-description = "Add your description here"
+version = "0.3.0"
+description = "An intuitive Python dashboarding library"
 readme = "README.md"
 authors = [
     { name = "Jim Hoekstra" }
