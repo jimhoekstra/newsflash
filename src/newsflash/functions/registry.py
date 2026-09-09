@@ -13,14 +13,10 @@ class FunctionRegistry:
     def __init__(self) -> None:
         self._functions = []
 
-    def _append_function(
-        self, function_definition: FunctionDefinition
-    ):
+    def _append_function(self, function_definition: FunctionDefinition):
         self._functions.append(function_definition)
 
-    def _set_functions(
-        self, function_definitions: list[FunctionDefinition]
-    ) -> None:
+    def _set_functions(self, function_definitions: list[FunctionDefinition]) -> None:
         self._functions = function_definitions
 
     def _get_functions(self) -> list[FunctionDefinition]:

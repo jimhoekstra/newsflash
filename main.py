@@ -177,7 +177,7 @@ def _build_line_plot(
 
         line_plot.set_figure(figure=fig)
         return line_plot
-    
+
     finally:
         line_plot.close_figure(figure=fig)
 

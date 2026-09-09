@@ -2,7 +2,12 @@ import typing
 
 from .base import BaseElement
 
-from newsflash.models import Trigger, FunctionDefinition, FunctionInputDefinition, Element
+from newsflash.models import (
+    Trigger,
+    FunctionDefinition,
+    FunctionInputDefinition,
+    Element,
+)
 
 
 class Select(BaseElement):
@@ -36,7 +41,7 @@ class Select(BaseElement):
     def _get_default_functions(self) -> typing.Iterable[FunctionDefinition]:
         def refresh_after_select(select_element: Select) -> typing.Iterable[Element]:
             yield select_element
-        
+
         return [
             FunctionDefinition(
                 func=refresh_after_select,
@@ -47,6 +52,6 @@ class Select(BaseElement):
                         element_type=self.__class__,
                         element_id=self.id,
                     )
-                ]
+                ],
             )
         ]

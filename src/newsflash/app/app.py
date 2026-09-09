@@ -24,10 +24,8 @@ class NewsflashApp(FastAPI):
         # TODO: allow for registering multiple pages at different
         # paths
         default_function_registry = self._build_default_functions()
-        combined_functions = default_function_registry.combine_with(
-            other=functions
-        )
-        
+        combined_functions = default_function_registry.combine_with(other=functions)
+
         self.function_registry = combined_functions
         self.register_root_page()
         self.register_empty_endpoint()
@@ -36,7 +34,7 @@ class NewsflashApp(FastAPI):
     def _build_default_functions(self) -> FunctionRegistry:
         default_function_registry = FunctionRegistry()
         all_children: list[Element] = []
-        
+
         for child in self.compose():
             all_children.append(child)
             all_children.extend(child._get_all_children())
@@ -152,11 +150,13 @@ def build_function_endpoint(
                 )
                 continue
 
-            function_outputs: Iterable[Element] = function_definition.func(**function_inputs)
+            function_outputs: Iterable[Element] = function_definition.func(
+                **function_inputs
+            )
             for function_output in function_outputs:
                 # If the same element (based on ID) is returned multiple times (
                 # by different functions or even within one function), then we only
-                # keep the last one. #TODO: raise explicit warning to user if this 
+                # keep the last one. #TODO: raise explicit warning to user if this
                 # happens.
                 collected_outputs[function_output.id] = function_output
 
