@@ -2,6 +2,7 @@ import abc
 import typing
 
 from newsflash.models import Element
+from newsflash.models.function_definition import FunctionDefinition
 from newsflash.templates import template_registry
 
 
@@ -66,3 +67,14 @@ class BaseElement(Element, abc.ABC):
         An iterable of Elements.
         """
         yield from self.children
+
+    def _get_all_children(self) -> typing.Iterable["Element"]:
+        all_children: list[Element] = []
+        for child in self.compose():
+            all_children.append(child)
+            all_children.extend(child._get_all_children())
+
+        return all_children
+
+    def _get_default_functions(self) -> typing.Iterable[FunctionDefinition]:
+        return []

@@ -74,16 +74,6 @@ def recreate_sine_plot(
     )
 
 
-# Ideally this update of resetting the select element (empty options, and updating
-# to the selected value) would be handled by a function that is configured
-# automatically.
-@functions.add(on=CosineWaveAplitudeSelect().select())
-def reset_cosine_select(
-    cosine_wave_amplitude: CosineWaveAplitudeSelect,
-) -> Iterable[Element]:
-    yield cosine_wave_amplitude
-
-
 @functions.add(on=ResetInputsButton().click())
 def reset_inputs(
     line_plot: LinePlot,

@@ -13,6 +13,19 @@ class FunctionRegistry:
     def __init__(self) -> None:
         self._functions = []
 
+    def _append_function(
+        self, function_definition: FunctionDefinition
+    ):
+        self._functions.append(function_definition)
+
+    def _set_functions(
+        self, function_definitions: list[FunctionDefinition]
+    ) -> None:
+        self._functions = function_definitions
+
+    def _get_functions(self) -> list[FunctionDefinition]:
+        return self._functions
+
     def _add(
         self, on: Trigger | list[Trigger], function: typing.Callable[..., typing.Any]
     ) -> None:
@@ -24,13 +37,13 @@ class FunctionRegistry:
         else:
             triggers = [on]
 
-        self._functions.append(
-            FunctionDefinition(
-                func=function,
-                triggers=triggers,
-                inputs=function_inputs,
-            )
+        function_definition = FunctionDefinition(
+            func=function,
+            triggers=triggers,
+            inputs=function_inputs,
         )
+
+        self._append_function(function_definition=function_definition)
 
     def add(self, on: Trigger | list[Trigger]):
 
@@ -48,3 +61,10 @@ class FunctionRegistry:
             return wrapper
 
         return decorator
+
+    def combine_with(self, other: "FunctionRegistry") -> "FunctionRegistry":
+        new = FunctionRegistry()
+        new._set_functions(
+            function_definitions=(self._get_functions() + other._get_functions()),
+        )
+        return new

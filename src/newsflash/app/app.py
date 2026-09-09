@@ -21,12 +21,33 @@ class NewsflashApp(FastAPI):
 
     def __init__(self, functions: FunctionRegistry) -> None:
         super().__init__()
-        self.function_registry = functions
         # TODO: allow for registering multiple pages at different
         # paths
+        default_function_registry = self._build_default_functions()
+        combined_functions = default_function_registry.combine_with(
+            other=functions
+        )
+        
+        self.function_registry = combined_functions
         self.register_root_page()
         self.register_empty_endpoint()
         self.register_function_endpoints()
+
+    def _build_default_functions(self) -> FunctionRegistry:
+        default_function_registry = FunctionRegistry()
+        all_children: list[Element] = []
+        
+        for child in self.compose():
+            all_children.append(child)
+            all_children.extend(child._get_all_children())
+
+        for child in all_children:
+            for default_function in child._get_default_functions():
+                default_function_registry._append_function(
+                    function_definition=default_function,
+                )
+
+        return default_function_registry
 
     def register_root_page(self) -> None:
         def root_page(request: Request) -> Response:
@@ -116,7 +137,7 @@ def build_function_endpoint(
     # by the library users in the callback function signatures.
     async def function_endpoint(request: Request) -> HTMLResponse:
         body = await request.form()
-        collected_outputs: Iterable[Element] = []
+        collected_outputs: dict[str, Element] = {}
 
         for function_definition in function_definitions:
             function_inputs = build_function_inputs_from_data(
@@ -131,13 +152,18 @@ def build_function_endpoint(
                 )
                 continue
 
-            fn_outputs: Iterable[Element] = function_definition.func(**function_inputs)
-            collected_outputs.extend(fn_outputs)
+            function_outputs: Iterable[Element] = function_definition.func(**function_inputs)
+            for function_output in function_outputs:
+                # If the same element (based on ID) is returned multiple times (
+                # by different functions or even within one function), then we only
+                # keep the last one. #TODO: raise explicit warning to user if this 
+                # happens.
+                collected_outputs[function_output.id] = function_output
 
         rendered_outputs: list[str] = []
-        for fn_output in collected_outputs:
+        for function_output in collected_outputs.values():
             rendered_outputs.append(
-                fn_output.render(
+                function_output.render(
                     trigger_context_getter=_get_trigger_context,
                     hx_swap_oob="true",
                 )

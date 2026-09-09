@@ -38,7 +38,7 @@
                         hx-trigger="click" 
                         hx-swap="none" 
                         hx-include="{{ select_hx_include }}"
-                        hx-vals='{"{{ id }}--value": {{ option }}}'
+                        hx-vals='{"{{ id }}--value": "{{ option }}"}'
                     {% endif %}
                 >{{ option }}</li>
             {% endfor %}

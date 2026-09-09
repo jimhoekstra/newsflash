@@ -3,6 +3,9 @@ from abc import ABC, abstractmethod
 
 from pydantic import BaseModel
 
+if typing.TYPE_CHECKING:
+    from .function_definition import FunctionDefinition
+
 
 class Element(BaseModel, ABC):
     id: str
@@ -25,3 +28,9 @@ class Element(BaseModel, ABC):
 
     @abstractmethod
     def compose(self) -> typing.Iterable["Element"]: ...
+
+    @abstractmethod
+    def _get_all_children(self) -> typing.Iterable["Element"]: ...
+
+    @abstractmethod
+    def _get_default_functions(self) -> typing.Iterable["FunctionDefinition"]: ...
