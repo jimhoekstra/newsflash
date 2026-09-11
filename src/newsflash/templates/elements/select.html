@@ -7,6 +7,7 @@
     hx-trigger="focusout[!this.contains(event.relatedTarget)] delay:1ms"
     hx-target="#{{ id }}_options"
     hx-swap="innerHTML"
+    hx-indicator="#spinner"
     
     {% if hx_swap_oob %} 
         hx-swap-oob="true"
@@ -24,6 +25,7 @@
             hx-trigger="input, focus" 
             hx-swap="none" 
             hx-include="{{ search_hx_include }}"
+            hx-indicator="#spinner"
         {% endif %}
     />
 
@@ -39,6 +41,7 @@
                         hx-swap="none" 
                         hx-include="{{ select_hx_include }}"
                         hx-vals='{"{{ id }}--value": "{{ option }}"}'
+                        hx-indicator="#spinner"
                     {% endif %}
                 >{{ option }}</li>
             {% endfor %}

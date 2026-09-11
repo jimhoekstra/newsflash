@@ -183,9 +183,38 @@
             transform: translateX(120%);
             transition: transform 0.5s ease-in;
         }
+
+        .spinner {
+            position: fixed;
+            top: 10px;
+            right: 30px;
+            display: none;
+
+            stroke: #931f1f;
+        }
+        
+        .spinner.htmx-request {
+            display: block;
+            animation: rotate 1s linear infinite;
+        }
+
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 <body>
+    <svg id="spinner" width="50" height="50" viewBox="0 0 50 50" class="spinner">
+        <circle
+            cx="25" cy="25" r="20"
+            fill="none"
+            stroke-width="5"
+            stroke-linecap="round"
+            stroke-dasharray="90 100"
+        />
+    </svg>
     <main class="vertical">
         {% for element in elements.values() %}
             {{ element | safe }}
