@@ -178,8 +178,13 @@
             padding: 1em 1.2em;
             background-color: rgb(224, 238, 252);
         }
+    
+        .newsflash-notification.error {
+            border-color: #b82222;
+            background-color: hsl(0, 49%, 88%);
+        }
 
-        .newsflash-notification.htmx-swapping {
+        .newsflash-notification.slide-out {
             transform: translateX(120%);
             transition: transform 0.5s ease-in;
         }
@@ -215,6 +220,7 @@
             stroke-dasharray="90 100"
         />
     </svg>
+
     <main class="vertical">
         {% for element in elements.values() %}
             {{ element | safe }}
@@ -244,12 +250,45 @@
             return dimensions;
         }
 
+        function addErrorNotification(message) {
+            const notificationContainer = document.getElementById("newsflash-notification-container");
+            const notification = document.createElement("li");
+            notification.textContent = message;
+            notification.className = "newsflash-notification error";
+            
+            notificationContainer.appendChild(notification);
+            htmx.process(notification);
+
+            return notification;
+        }
+
+        function setNotificationTimeout(notificationElement) {
+            setTimeout(() => {
+                notificationElement.classList.add("slide-out");
+                notificationElement.addEventListener("transitionend", () => notificationElement.remove());
+            }, 5000);
+        }
+
         document.body.addEventListener("htmx:configRequest", (event) => {
             let chartDimensions = getChartDimensions();
             for (const [key, value] of Object.entries(chartDimensions)) {
                 event.detail.parameters[key] = value;
             }
         });
+
+        document.body.addEventListener("htmx:sendError", (event) => {
+            const notification = addErrorNotification("Error: the server is unavailable");
+            setNotificationTimeout(notification);
+        });
+
+        document.body.addEventListener("htmx:oobAfterSwap", (event) => {
+            const notificationsList = event.detail.target;
+            const newNotification = notificationsList.lastElementChild;
+            
+            if (newNotification && newNotification.classList.contains("newsflash-notification")) {
+                setNotificationTimeout(newNotification);
+            }
+        }); 
     </script>
 </body>
 </html>
