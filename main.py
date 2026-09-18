@@ -129,9 +129,7 @@ class InputsRow(Horizontal):
 
 class HomePage(Page):
     page_title: str = "Sines and Cosines"
-    function_registries: list[FunctionRegistry] = [
-        functions
-    ]
+    function_registries: list[FunctionRegistry] = [functions]
     path: str = "/"
 
     def compose(self) -> Iterable[Element]:
@@ -157,9 +155,7 @@ class HomePage(Page):
         yield NotificationContainer()
 
 
-app = NewsflashApp(
-    pages=[HomePage()]
-)
+app = NewsflashApp(pages=[HomePage()])
 
 
 def _build_line_plot(

@@ -15,7 +15,6 @@ from .page import Page
 
 
 class NewsflashApp(FastAPI):
-
     def __init__(self, pages: list[Page]) -> None:
         super().__init__()
         self.register_empty_endpoint()
@@ -31,10 +30,12 @@ class NewsflashApp(FastAPI):
             endpoint=empty_request,
             methods=["POST"],
         )
-    
-    def register_page_endpoints(self, pages: list[Page]) -> None:        
+
+    def register_page_endpoints(self, pages: list[Page]) -> None:
         for page in pages:
-            self.add_api_route(path=page.path, endpoint=build_page_endpoint(page=page), methods=["GET"])
+            self.add_api_route(
+                path=page.path, endpoint=build_page_endpoint(page=page), methods=["GET"]
+            )
 
     def register_function_endpoints(self, pages: list[Page]) -> None:
         for page in pages:

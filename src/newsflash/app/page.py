@@ -64,7 +64,9 @@ class Page(BaseElement):
     def combined_function_registry(self) -> FunctionRegistry:
         combined_function_registry = self._build_default_functions()
         for function_registry in self.function_registries:
-            combined_function_registry = combined_function_registry.combine_with(other=function_registry)
+            combined_function_registry = combined_function_registry.combine_with(
+                other=function_registry
+            )
 
         return combined_function_registry
 
