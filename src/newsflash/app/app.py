@@ -10,48 +10,17 @@ from newsflash.functions import (
     get_trigger_context,
     build_function_inputs_from_data,
 )
-from newsflash.templates import template_registry
+
+from .page import Page
 
 
 class NewsflashApp(FastAPI):
-    function_registry: FunctionRegistry
-    template_dir_name: str = "newsflash-pages"
-    template_name: str = "main.html"
-    page_title: str = "newsflash"
 
-    def __init__(self, functions: FunctionRegistry) -> None:
+    def __init__(self, pages: list[Page]) -> None:
         super().__init__()
-        # TODO: allow for registering multiple pages at different
-        # paths
-        default_function_registry = self._build_default_functions()
-        combined_functions = default_function_registry.combine_with(other=functions)
-
-        self.function_registry = combined_functions
-        self.register_root_page()
         self.register_empty_endpoint()
-        self.register_function_endpoints()
-
-    def _build_default_functions(self) -> FunctionRegistry:
-        default_function_registry = FunctionRegistry()
-        all_children: list[Element] = []
-
-        for child in self.compose():
-            all_children.append(child)
-            all_children.extend(child._get_all_children())
-
-        for child in all_children:
-            for default_function in child._get_default_functions():
-                default_function_registry._append_function(
-                    function_definition=default_function,
-                )
-
-        return default_function_registry
-
-    def register_root_page(self) -> None:
-        def root_page(request: Request) -> Response:
-            return self.render(request=request)
-
-        self.add_api_route(path="/", endpoint=root_page, methods=["GET"])
+        self.register_page_endpoints(pages=pages)
+        self.register_function_endpoints(pages=pages)
 
     def register_empty_endpoint(self) -> None:
         def empty_request() -> Response:
@@ -62,63 +31,34 @@ class NewsflashApp(FastAPI):
             endpoint=empty_request,
             methods=["POST"],
         )
+    
+    def register_page_endpoints(self, pages: list[Page]) -> None:        
+        for page in pages:
+            self.add_api_route(path=page.path, endpoint=build_page_endpoint(page=page), methods=["GET"])
 
-    def register_function_endpoints(self) -> None:
-        element_to_fn_definitions = _build_element_to_function_definitions_map(
-            function_definitions=self.function_registry._functions
-        )
-
-        for trigger_path, fn_definitions in element_to_fn_definitions.items():
-            self.add_api_route(
-                path=trigger_path,
-                endpoint=build_function_endpoint(
-                    function_definitions=fn_definitions,
-                    function_registry=self.function_registry,
-                ),
-                methods=["POST"],
+    def register_function_endpoints(self, pages: list[Page]) -> None:
+        for page in pages:
+            element_to_fn_definitions = _build_element_to_function_definitions_map(
+                function_definitions=page.combined_function_registry._functions
             )
 
-    def render(self, request: Request) -> Response:
-        """Render the newsflash app.
+            for trigger_path, fn_definitions in element_to_fn_definitions.items():
+                self.add_api_route(
+                    path=trigger_path,
+                    endpoint=build_function_endpoint(
+                        function_definitions=fn_definitions,
+                        function_registry=page.combined_function_registry,
+                    ),
+                    methods=["POST"],
+                )
 
-        Parameters
-        ----------
-        request
-            The FastAPI request object.
 
-        Returns
-        -------
-        A FastAPI response object with an HTML page with the rendered
-        newsflash app.
-        """
-        elements = list(self.compose())
+def build_page_endpoint(page: Page):
 
-        rendered_elements: dict[str, str] = {}
-        for element in elements:
-            _get_trigger_context = partial(
-                get_trigger_context,
-                functions=self.function_registry,
-            )
+    async def page_endpoint(request: Request) -> HTMLResponse:
+        return page.render(request=request)
 
-            rendered_elements[element.id] = element.render(
-                trigger_context_getter=_get_trigger_context,
-                hx_swap_oob=None,
-            )
-
-        return template_registry.get_jinja2_templates(
-            dir_name=self.template_dir_name,
-        ).TemplateResponse(
-            request=request,
-            name=self.template_name,
-            context={
-                "elements": rendered_elements,
-                "title": self.page_title,
-            },
-        )
-
-    def compose(self) -> Iterable["Element"]:
-        """Compose the app, empty until overwritten."""
-        yield from ()
+    return page_endpoint
 
 
 def build_function_endpoint(

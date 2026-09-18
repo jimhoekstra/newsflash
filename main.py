@@ -1,7 +1,7 @@
 from typing import Iterable
 from math import sin, cos
 
-from newsflash import NewsflashApp, FunctionRegistry
+from newsflash import NewsflashApp, FunctionRegistry, Page
 from newsflash.elements import (
     Button,
     InputInteger,
@@ -127,7 +127,13 @@ class InputsRow(Horizontal):
         yield ResetInputsButton()
 
 
-class SineWavesApp(NewsflashApp):
+class HomePage(Page):
+    page_title: str = "Sines and Cosines"
+    function_registries: list[FunctionRegistry] = [
+        functions
+    ]
+    path: str = "/"
+
     def compose(self) -> Iterable[Element]:
         # You can use generic Element types like Header, as long
         # as you pass all the required inputs (like `id`) to the constructor.
@@ -149,6 +155,11 @@ class SineWavesApp(NewsflashApp):
         # allow you to return Notication() element from your functions and have those
         # show in the UI.
         yield NotificationContainer()
+
+
+app = NewsflashApp(
+    pages=[HomePage()]
+)
 
 
 def _build_line_plot(
@@ -180,6 +191,3 @@ def _build_line_plot(
 
     finally:
         line_plot.close_figure(figure=fig)
-
-
-app = SineWavesApp(functions=functions)
