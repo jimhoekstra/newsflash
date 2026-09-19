@@ -15,7 +15,10 @@ def get_trigger_endpoint_url(trigger: Trigger, page_path: str) -> str:
 
 
 def get_trigger_context(
-    element_id: str, element_trigger_names: list[str], functions: "FunctionRegistry", page_path: str,
+    element_id: str,
+    element_trigger_names: list[str],
+    functions: "FunctionRegistry",
+    page_path: str,
 ) -> dict[str, str | bool]:
     function_definitions_per_trigger = get_functions_triggered_by_element(
         function_registry=functions,
@@ -27,7 +30,7 @@ def get_trigger_context(
 
     for trigger_name, function_definitions in function_definitions_per_trigger.items():
         trigger = Trigger(element_id=element_id, trigger=trigger_name)
-        
+
         trigger_context[f"{trigger_name}_endpoint_url"] = get_trigger_endpoint_url(
             trigger=trigger,
             page_path=page_path,

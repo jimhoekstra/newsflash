@@ -37,7 +37,9 @@ class NewsflashApp(FastAPI):
             # TODO: avoid creating instances of pages here
             page_instance = page()
             self.add_api_route(
-                path=page_instance.path, endpoint=build_page_endpoint(page=page), methods=["GET"]
+                path=page_instance.path,
+                endpoint=build_page_endpoint(page=page),
+                methods=["GET"],
             )
 
     def register_function_endpoints(self, pages: list[Type[Page]]) -> None:
@@ -46,7 +48,7 @@ class NewsflashApp(FastAPI):
 
             element_to_fn_definitions = _build_element_to_function_definitions_map(
                 page_path=page_instance.path,
-                function_definitions=page_instance.combined_function_registry._functions
+                function_definitions=page_instance.combined_function_registry._functions,
             )
 
             for trigger_path, fn_definitions in element_to_fn_definitions.items():
@@ -74,8 +76,8 @@ def build_page_endpoint(page: Type[Page]):
 
 def build_function_endpoint(
     page_path: str,
-    function_definitions: list[FunctionDefinition], 
-    function_registry: FunctionRegistry
+    function_definitions: list[FunctionDefinition],
+    function_registry: FunctionRegistry,
 ):
 
     _get_trigger_context = partial(
@@ -136,7 +138,9 @@ def _build_element_to_function_definitions_map(
 
     for fn_definition in function_definitions:
         for trigger in fn_definition.triggers:
-            trigger_path = get_trigger_endpoint_url(trigger=trigger, page_path=page_path)
+            trigger_path = get_trigger_endpoint_url(
+                trigger=trigger, page_path=page_path
+            )
 
             if trigger_path not in element_to_fn_definitions:
                 element_to_fn_definitions[trigger_path] = [fn_definition]
