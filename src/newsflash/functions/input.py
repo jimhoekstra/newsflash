@@ -2,13 +2,14 @@ import typing
 from inspect import Signature
 
 from pydantic import ValidationError
+from fastapi import Request
 
 from newsflash.models import Element, ID, FunctionInputDefinition, FunctionDefinition
 
 
 def build_function_input_definition(
     arg_name: str, annotation: typing.Any
-) -> FunctionInputDefinition:
+) -> FunctionInputDefinition | None:
     """Build a function input definition for a single function argument.
 
     Parameters
@@ -43,7 +44,7 @@ def build_function_input_definition(
 
     if origin == typing.Annotated:
         args = typing.get_args(annotation)
-        element_type = args[0]
+        element_type = args[0] if issubclass(args[0], Element) else None
         element_id: ID | None = next((arg for arg in args if isinstance(arg, ID)), None)
 
     elif issubclass(annotation, Element):
@@ -58,11 +59,10 @@ def build_function_input_definition(
         element_type = None
         element_id = None
 
-    if (
-        element_id is None
-        or element_type is None
-        or not issubclass(element_type, Element)
-    ):
+    if element_type is None:
+        return None
+
+    if element_id is None:
         raise ValueError(f"element: {arg_name} is not sufficiently defined")
 
     return FunctionInputDefinition(
@@ -90,18 +90,26 @@ def get_function_input_definitions(
     """
     function_inputs: list[FunctionInputDefinition] = []
     for arg_name, arg in function_signature.parameters.items():
-        function_inputs.append(
-            build_function_input_definition(
-                arg_name=arg_name, annotation=arg.annotation
-            )
+        function_input_definition = build_function_input_definition(
+            arg_name=arg_name, annotation=arg.annotation
         )
+        if function_input_definition is not None:
+            function_inputs.append(function_input_definition)
 
     return function_inputs
 
 
+def get_function_request_object_param(function_signature: Signature) -> str | None:
+    for arg_name, arg in function_signature.parameters.items():
+        if arg.annotation == Request:
+            return arg_name
+
+    return None
+
+
 def build_function_inputs_from_data(
-    function_definition: FunctionDefinition, values: dict[str, str]
-) -> dict[str, Element | None]:
+    function_definition: FunctionDefinition, values: dict[str, str], request: Request,
+) -> dict[str, Element | Request | None]:
     """Collect all required inputs for a function given a dict of values.
 
     Parameters
@@ -116,7 +124,7 @@ def build_function_inputs_from_data(
     A dictionary mapping function argument names to that input
     argument's value.
     """
-    function_inputs: dict[str, Element | None] = {}
+    function_inputs: dict[str, Element | Request | None] = {}
 
     for function_input in function_definition.inputs:
         input_type = function_input.element_type
@@ -137,5 +145,8 @@ def build_function_inputs_from_data(
             function_inputs[function_input.arg_name] = None
             # TODO: display validation error in the UI at the element's position
             print(f"Failed to parse input values for: {function_input.element_id}")
+
+    if (request_object_param := function_definition.request_object_param) is not None:
+        function_inputs[request_object_param] = request
 
     return function_inputs

@@ -4,7 +4,7 @@ from functools import wraps
 
 from newsflash.models import Trigger, FunctionDefinition
 
-from .input import get_function_input_definitions
+from .input import get_function_input_definitions, get_function_request_object_param
 
 
 class FunctionRegistry:
@@ -26,7 +26,8 @@ class FunctionRegistry:
         self, on: Trigger | list[Trigger], function: typing.Callable[..., typing.Any]
     ) -> None:
         sig = signature(function)
-        function_inputs = get_function_input_definitions(sig)
+        function_inputs = get_function_input_definitions(function_signature=sig)
+        function_request_object_param = get_function_request_object_param(function_signature=sig)
 
         if isinstance(on, list):
             triggers = on
@@ -37,6 +38,7 @@ class FunctionRegistry:
             func=function,
             triggers=triggers,
             inputs=function_inputs,
+            request_object_param=function_request_object_param,
         )
 
         self._append_function(function_definition=function_definition)

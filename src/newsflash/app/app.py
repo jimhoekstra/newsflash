@@ -97,6 +97,7 @@ def build_function_endpoint(
             function_inputs = build_function_inputs_from_data(
                 function_definition=function_definition,
                 values={k: v for k, v in body.items() if isinstance(v, str)},
+                request=request,
             )
 
             if any([fn_input is None for fn_input in function_inputs.values()]):

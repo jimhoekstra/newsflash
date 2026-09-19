@@ -11,3 +11,4 @@ class FunctionDefinition(BaseModel):
     func: typing.Callable[..., typing.Any]
     triggers: list[Trigger]
     inputs: list[FunctionInputDefinition]
+    request_object_param: str | None = None
