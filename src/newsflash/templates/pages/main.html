@@ -282,6 +282,16 @@
             setNotificationTimeout(notification);
         });
 
+        document.body.addEventListener("htmx:responseError", (event) => {
+            const statusCode = event.detail.xhr.status;
+            const responseDetail = JSON.parse(event.detail.xhr.response)["detail"];
+
+            const notification = addErrorNotification(
+                `Response error (${statusCode}): ${responseDetail}`
+            );
+            setNotificationTimeout(notification);
+        });
+
         document.body.addEventListener("htmx:oobAfterSwap", (event) => {
             const notificationsList = event.detail.target;
             const newNotification = notificationsList.lastElementChild;
