@@ -7,7 +7,7 @@
     <textarea 
         id="{{ id }}--value" 
         {% if has_input_trigger %} 
-            hx-post="/{{ name }}/{{ id }}/input" 
+            hx-post="{{ input_endpoint_url }}" 
             hx-trigger="input" 
             hx-swap="none" 
             hx-include="{{ input_hx_include }}"

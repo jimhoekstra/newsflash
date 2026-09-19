@@ -3,7 +3,7 @@
     class="newsflash-plot" 
     style="height: {{ height }}px;"
     {% if has_revealed_trigger and not hx_swap_oob %} 
-        hx-post="/{{ name }}/{{ id }}/revealed" 
+        hx-post="{{ revealed_endpoint_url }}" 
         hx-trigger="revealed" 
         hx-swap="none" 
         hx-include="{{ revealed_hx_include }}"

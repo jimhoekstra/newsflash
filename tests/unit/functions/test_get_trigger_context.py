@@ -4,9 +4,13 @@ from newsflash.functions.trigger import get_trigger_context
 def test_get_trigger_context_simple(function_registry_simple) -> None:
     result = get_trigger_context(
         element_id="dummy-button",
-        element_triggers=["click"],
+        element_trigger_names=["click"],
         functions=function_registry_simple,
+        page_path="/page-url",
     )
+
+    assert "click_endpoint_url" in result
+    assert result["click_endpoint_url"] == "/page-url/_event/dummy-button/click"
 
     assert "has_click_trigger" in result
     assert result["has_click_trigger"] == True
@@ -20,9 +24,13 @@ def test_get_trigger_context_multiple_triggers(
 ) -> None:
     result = get_trigger_context(
         element_id="dummy-button",
-        element_triggers=["click"],
+        element_trigger_names=["click"],
         functions=function_registry_multiple_triggers,
+        page_path="/page-url",
     )
+
+    assert "click_endpoint_url" in result
+    assert result["click_endpoint_url"] == "/page-url/_event/dummy-button/click"
 
     assert "has_click_trigger" in result
     assert result["has_click_trigger"] == True
@@ -32,9 +40,13 @@ def test_get_trigger_context_multiple_triggers(
 
     result = get_trigger_context(
         element_id="dummy-input",
-        element_triggers=["input"],
+        element_trigger_names=["input"],
         functions=function_registry_multiple_triggers,
+        page_path="/page-url",
     )
+
+    assert "input_endpoint_url" in result
+    assert result["input_endpoint_url"] == "/page-url/_event/dummy-input/input"
 
     assert "has_input_trigger" in result
     assert result["has_input_trigger"] == True
@@ -50,9 +62,13 @@ def test_get_trigger_context_single_trigger_multiple_functions(
 ) -> None:
     result = get_trigger_context(
         element_id="dummy-button",
-        element_triggers=["click"],
+        element_trigger_names=["click"],
         functions=function_registry_single_trigger_multiple_functions,
+        page_path="/page-url",
     )
+
+    assert "click_endpoint_url" in result
+    assert result["click_endpoint_url"] == "/page-url/_event/dummy-button/click"
 
     assert "has_click_trigger" in result
     assert result["has_click_trigger"] == True

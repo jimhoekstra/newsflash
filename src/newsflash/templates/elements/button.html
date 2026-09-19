@@ -1,7 +1,7 @@
 <button 
     id="{{ id }}"
     {% if has_click_trigger %} 
-        hx-post="/{{ name }}/{{ id }}/click" 
+        hx-post="{{ click_endpoint_url }}" 
         hx-trigger="click" 
         hx-swap="none" 
         hx-include="{{ click_hx_include }}"

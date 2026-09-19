@@ -155,7 +155,7 @@ class HomePage(Page):
         yield NotificationContainer()
 
 
-app = NewsflashApp(pages=[HomePage()])
+app = NewsflashApp(pages=[HomePage])
 
 
 def _build_line_plot(

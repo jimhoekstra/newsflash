@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Iterable, Type
 from functools import partial
 
 from fastapi import FastAPI, Request, Response
@@ -10,12 +10,13 @@ from newsflash.functions import (
     get_trigger_context,
     build_function_inputs_from_data,
 )
+from newsflash.functions import get_trigger_endpoint_url
 
 from .page import Page
 
 
 class NewsflashApp(FastAPI):
-    def __init__(self, pages: list[Page]) -> None:
+    def __init__(self, pages: list[Type[Page]]) -> None:
         super().__init__()
         self.register_empty_endpoint()
         self.register_page_endpoints(pages=pages)
@@ -31,44 +32,56 @@ class NewsflashApp(FastAPI):
             methods=["POST"],
         )
 
-    def register_page_endpoints(self, pages: list[Page]) -> None:
+    def register_page_endpoints(self, pages: list[Type[Page]]) -> None:
         for page in pages:
+            # TODO: avoid creating instances of pages here
+            page_instance = page()
             self.add_api_route(
-                path=page.path, endpoint=build_page_endpoint(page=page), methods=["GET"]
+                path=page_instance.path, endpoint=build_page_endpoint(page=page), methods=["GET"]
             )
 
-    def register_function_endpoints(self, pages: list[Page]) -> None:
+    def register_function_endpoints(self, pages: list[Type[Page]]) -> None:
         for page in pages:
+            page_instance = page()
+
             element_to_fn_definitions = _build_element_to_function_definitions_map(
-                function_definitions=page.combined_function_registry._functions
+                page_path=page_instance.path,
+                function_definitions=page_instance.combined_function_registry._functions
             )
 
             for trigger_path, fn_definitions in element_to_fn_definitions.items():
+                function_endpoint = build_function_endpoint(
+                    page_path=page_instance.path,
+                    function_definitions=fn_definitions,
+                    function_registry=page_instance.combined_function_registry,
+                )
+
                 self.add_api_route(
                     path=trigger_path,
-                    endpoint=build_function_endpoint(
-                        function_definitions=fn_definitions,
-                        function_registry=page.combined_function_registry,
-                    ),
+                    endpoint=function_endpoint,
                     methods=["POST"],
                 )
 
 
-def build_page_endpoint(page: Page):
+def build_page_endpoint(page: Type[Page]):
 
     async def page_endpoint(request: Request) -> HTMLResponse:
-        return page.render(request=request)
+        page_instance = page()
+        return page_instance.render(request=request)
 
     return page_endpoint
 
 
 def build_function_endpoint(
-    function_definitions: list[FunctionDefinition], function_registry: FunctionRegistry
+    page_path: str,
+    function_definitions: list[FunctionDefinition], 
+    function_registry: FunctionRegistry
 ):
 
     _get_trigger_context = partial(
         get_trigger_context,
         functions=function_registry,
+        page_path=page_path,
     )
 
     # TODO: dynamically set the parameters of this function if there are
@@ -116,13 +129,15 @@ def build_function_endpoint(
 
 
 def _build_element_to_function_definitions_map(
+    page_path: str,
     function_definitions: list[FunctionDefinition],
 ) -> dict[str, list[FunctionDefinition]]:
     element_to_fn_definitions: dict[str, list[FunctionDefinition]] = {}
 
     for fn_definition in function_definitions:
         for trigger in fn_definition.triggers:
-            trigger_path = trigger.to_path()
+            trigger_path = get_trigger_endpoint_url(trigger=trigger, page_path=page_path)
+
             if trigger_path not in element_to_fn_definitions:
                 element_to_fn_definitions[trigger_path] = [fn_definition]
             else:

@@ -11,7 +11,7 @@ from newsflash.models import Element
 
 
 class Page(BaseElement):
-    function_registries: list[FunctionRegistry]
+    function_registries: list[FunctionRegistry] = []
     template_dir_name: str = "newsflash-pages"
     template_name: str = "main.html"
     page_title: str = "newsflash"
@@ -42,6 +42,7 @@ class Page(BaseElement):
             _get_trigger_context = partial(
                 get_trigger_context,
                 functions=self.combined_function_registry,
+                page_path=self.path,
             )
 
             rendered_elements[element.id] = element.render(

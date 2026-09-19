@@ -21,7 +21,7 @@
         name="{{ id }}--value"
 
         {% if has_search_trigger %} 
-            hx-post="/{{ name }}/{{ id }}/search" 
+            hx-post="{{ search_endpoint_url }}" 
             hx-trigger="input, focus" 
             hx-swap="none" 
             hx-include="{{ search_hx_include }}"
@@ -36,7 +36,7 @@
                 <li 
                     class="select-list-item"
                     {% if has_select_trigger %} 
-                        hx-post="/{{ name }}/{{ id }}/select" 
+                        hx-post="{{ select_endpoint_url }}" 
                         hx-trigger="click" 
                         hx-swap="none" 
                         hx-include="{{ select_hx_include }}"
