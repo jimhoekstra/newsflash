@@ -29,6 +29,5 @@ class Checkbox(BaseElement):
     def click(self) -> Trigger:
         return Trigger(
             element_id=self.id,
-            element_name=self.name,
             trigger="click",
         )

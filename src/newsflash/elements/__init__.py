@@ -1,6 +1,6 @@
 from .base import Element
 from .button import Button
-from .input import Input, InputFloat, InputInteger
+from .input import Input, PasswordInput, InputFloat, InputInteger
 from .textarea import Textarea
 from .checkbox import Checkbox
 from .select import Select
@@ -17,6 +17,7 @@ __all__ = [
     "Element",
     "Button",
     "Input",
+    "PasswordInput",
     "InputFloat",
     "InputInteger",
     "Textarea",

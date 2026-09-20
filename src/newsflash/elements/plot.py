@@ -50,6 +50,5 @@ class Plot(BaseElement):
     def revealed(self) -> Trigger:
         return Trigger(
             element_id=self.id,
-            element_name=self.name,
             trigger="revealed",
         )

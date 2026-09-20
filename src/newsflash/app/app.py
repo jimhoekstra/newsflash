@@ -89,7 +89,7 @@ def build_function_endpoint(
     # TODO: dynamically set the parameters of this function if there are
     # "Depends" injections required for the FastAPI endpoint as configured
     # by the library users in the callback function signatures.
-    async def function_endpoint(request: Request) -> HTMLResponse:
+    async def function_endpoint(request: Request, response: Response) -> HTMLResponse:
         body = await request.form()
         collected_outputs: dict[str, Element] = {}
 
@@ -98,6 +98,7 @@ def build_function_endpoint(
                 function_definition=function_definition,
                 values={k: v for k, v in body.items() if isinstance(v, str)},
                 request=request,
+                response=response,
             )
 
             if any([fn_input is None for fn_input in function_inputs.values()]):
@@ -126,7 +127,10 @@ def build_function_endpoint(
                 )
             )
 
-        return HTMLResponse(content="\n".join(rendered_outputs), status_code=200)
+        return HTMLResponse(
+            content="\n".join(rendered_outputs), 
+            status_code=200,
+        )
 
     return function_endpoint
 

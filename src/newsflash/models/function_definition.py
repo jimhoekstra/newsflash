@@ -12,3 +12,4 @@ class FunctionDefinition(BaseModel):
     triggers: list[Trigger]
     inputs: list[FunctionInputDefinition]
     request_object_param: str | None = None
+    response_object_param: str | None = None

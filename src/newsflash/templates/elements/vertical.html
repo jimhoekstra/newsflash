@@ -1,6 +1,6 @@
 <div 
     id="{{ id }}"
-    class="vertical"
+    class="vertical{% if narrow %} narrow{% endif %}"
 >
     {% for element in elements.values() %}
         {{ element | safe }}

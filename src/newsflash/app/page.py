@@ -63,26 +63,17 @@ class Page(BaseElement):
 
     @property
     def combined_function_registry(self) -> FunctionRegistry:
-        combined_function_registry = self._build_default_functions()
-        for function_registry in self.function_registries:
+        if len(self.function_registries) == 0:
+            return FunctionRegistry()
+
+        combined_function_registry = self.function_registries[0]
+
+        if len(self.function_registries) == 1:
+            return combined_function_registry
+
+        for additonal_function_registry in self.function_registries[1:]:
             combined_function_registry = combined_function_registry.combine_with(
-                other=function_registry
+                other=additonal_function_registry,
             )
 
         return combined_function_registry
-
-    def _build_default_functions(self) -> FunctionRegistry:
-        default_function_registry = FunctionRegistry()
-        all_children: list[Element] = []
-
-        for child in self.compose():
-            all_children.append(child)
-            all_children.extend(child._get_all_children())
-
-        for child in all_children:
-            for default_function in child._get_default_functions():
-                default_function_registry._append_function(
-                    function_definition=default_function,
-                )
-
-        return default_function_registry

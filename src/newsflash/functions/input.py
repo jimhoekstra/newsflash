@@ -2,7 +2,7 @@ import typing
 from inspect import Signature
 
 from pydantic import ValidationError
-from fastapi import Request
+from fastapi import Request, Response
 
 from newsflash.models import Element, ID, FunctionInputDefinition, FunctionDefinition
 
@@ -107,9 +107,20 @@ def get_function_request_object_param(function_signature: Signature) -> str | No
     return None
 
 
+def get_function_response_object_param(function_signature: Signature) -> str | None:
+    for arg_name, arg in function_signature.parameters.items():
+        if arg.annotation == Response:
+            return arg_name
+
+    return None
+
+
 def build_function_inputs_from_data(
-    function_definition: FunctionDefinition, values: dict[str, str], request: Request,
-) -> dict[str, Element | Request | None]:
+    function_definition: FunctionDefinition, 
+    values: dict[str, str], 
+    request: Request,
+    response: Response,
+) -> dict[str, Element | Request | Response | None]:
     """Collect all required inputs for a function given a dict of values.
 
     Parameters
@@ -124,7 +135,7 @@ def build_function_inputs_from_data(
     A dictionary mapping function argument names to that input
     argument's value.
     """
-    function_inputs: dict[str, Element | Request | None] = {}
+    function_inputs: dict[str, Element | Request | Response | None] = {}
 
     for function_input in function_definition.inputs:
         input_type = function_input.element_type
@@ -148,5 +159,8 @@ def build_function_inputs_from_data(
 
     if (request_object_param := function_definition.request_object_param) is not None:
         function_inputs[request_object_param] = request
+
+    if (response_object_param := function_definition.response_object_param) is not None:
+        function_inputs[response_object_param] = response
 
     return function_inputs
