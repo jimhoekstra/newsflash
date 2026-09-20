@@ -37,6 +37,9 @@ class Element(BaseModel, ABC):
     ) -> str: ...
 
     @abstractmethod
+    def _build_additional_context(self) -> dict[str, typing.Any]: ...
+
+    @abstractmethod
     def compose(self) -> typing.Iterable["Element"]: ...
 
     @abstractmethod

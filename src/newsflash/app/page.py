@@ -17,6 +17,7 @@ class Page(BaseElement):
     template_name: str = "main.html"
     page_title: str = "newsflash"
     path: str = "/"
+    narrow: bool = False
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -64,6 +65,7 @@ class Page(BaseElement):
             context={
                 "elements": rendered_elements,
                 "title": self.page_title,
+                "narrow": self.narrow,
             },
         )
 

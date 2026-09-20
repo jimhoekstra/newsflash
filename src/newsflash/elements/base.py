@@ -50,6 +50,7 @@ class BaseElement(Element, abc.ABC):
         )
 
         trigger_context = trigger_context_getter(self.id, self.all_triggers)
+        additional_context = self._build_additional_context()
 
         rendered = template.render(
             {
@@ -62,10 +63,14 @@ class BaseElement(Element, abc.ABC):
                     for element in self.compose()
                 },
                 **trigger_context,
+                **additional_context,
             }
         )
 
         return rendered
+
+    def _build_additional_context(self) -> dict[str, typing.Any]:
+        return {}
 
     def compose(self) -> typing.Iterable["Element"]:
         """Compose the children of the element.

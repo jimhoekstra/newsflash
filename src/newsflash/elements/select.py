@@ -23,14 +23,12 @@ class Select(BaseElement):
     def search(self) -> Trigger:
         return Trigger(
             element_id=self.id,
-            element_name=self.name,
             trigger="search",
         )
 
     def select(self) -> Trigger:
         return Trigger(
             element_id=self.id,
-            element_name=self.name,
             trigger="select",
         )
 

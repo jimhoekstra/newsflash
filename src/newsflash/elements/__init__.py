@@ -12,6 +12,7 @@ from .plot import Plot
 from .notification_container import NotificationContainer
 from .notification import Notification
 from .link import Link
+from .table import Table
 
 
 __all__ = [
@@ -32,4 +33,5 @@ __all__ = [
     "NotificationContainer",
     "Notification",
     "Link",
+    "Table",
 ]
