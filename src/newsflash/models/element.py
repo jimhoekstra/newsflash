@@ -2,6 +2,7 @@ import typing
 from abc import ABC, abstractmethod
 
 from pydantic import BaseModel
+from fastapi import Request
 
 if typing.TYPE_CHECKING:
     from .function_definition import FunctionDefinition
@@ -16,6 +17,15 @@ class Element(BaseModel, ABC):
     children: list["Element"] = []
 
     all_triggers: list[str] = []
+
+    _fastapi_request_object: Request | None = None
+
+    @abstractmethod
+    def set_fastapi_request_object(self, request: Request) -> None: ...
+
+    @property
+    @abstractmethod
+    def request(self) -> Request: ...
 
     @abstractmethod
     def render(

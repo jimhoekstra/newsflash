@@ -6,7 +6,7 @@
     {% endif %}
 >
     {% for element in elements.values() %}
-        <div class="horizontal-item">
+        <div class="{% if justify %}horizontal-item{% endif %}">
             {{ element | safe }}
         </div>
     {% endfor %}

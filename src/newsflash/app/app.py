@@ -67,8 +67,9 @@ class NewsflashApp(FastAPI):
 
 def build_page_endpoint(page: Type[Page]):
 
-    async def page_endpoint(request: Request) -> HTMLResponse:
+    async def page_endpoint(request: Request) -> Response:
         page_instance = page()
+        page_instance.set_fastapi_request_object(request=request)
         return page_instance.render(request=request)
 
     return page_endpoint
@@ -89,7 +90,7 @@ def build_function_endpoint(
     # TODO: dynamically set the parameters of this function if there are
     # "Depends" injections required for the FastAPI endpoint as configured
     # by the library users in the callback function signatures.
-    async def function_endpoint(request: Request, response: Response) -> HTMLResponse:
+    async def function_endpoint(request: Request, response: Response) -> Response:
         body = await request.form()
         collected_outputs: dict[str, Element] = {}
 
@@ -108,10 +109,14 @@ def build_function_endpoint(
                 )
                 continue
 
-            function_outputs: Iterable[Element] = function_definition.func(
-                **function_inputs
-            )
-            for function_output in function_outputs:
+            yielded_elements: Iterable[Element] = []
+            for function_output in function_definition.func(**function_inputs):
+                if isinstance(function_output, Page):
+                    return Response(headers={"HX-Redirect": function_output.path})
+
+                yielded_elements.append(function_output)
+            
+            for function_output in yielded_elements:
                 # If the same element (based on ID) is returned multiple times (
                 # by different functions or even within one function), then we only
                 # keep the last one. #TODO: raise explicit warning to user if this

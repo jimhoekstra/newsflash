@@ -1,6 +1,8 @@
 import abc
 import typing
 
+from fastapi import Request
+
 from newsflash.models import Element
 from newsflash.models.function_definition import FunctionDefinition
 from newsflash.templates import template_registry
@@ -8,6 +10,15 @@ from newsflash.templates import template_registry
 
 class BaseElement(Element, abc.ABC):
     """Abstract base class for newsflash Elements."""
+
+    def set_fastapi_request_object(self, request: Request) -> None:
+        self._fastapi_request_object = request
+
+    @property
+    def request(self) -> Request:
+        if self._fastapi_request_object is None:
+            raise ValueError("request object is not set")
+        return self._fastapi_request_object
 
     def render(
         self,

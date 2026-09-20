@@ -1,7 +1,8 @@
 from functools import partial
+from typing import Iterable
 
-from fastapi import Request
-from fastapi.responses import HTMLResponse
+from fastapi import Request, Response
+from fastapi.responses import RedirectResponse
 from pydantic import ConfigDict
 
 from newsflash.elements.base import BaseElement
@@ -22,7 +23,7 @@ class Page(BaseElement):
     id: str = ""
     name: str = ""
 
-    def render(self, request: Request) -> HTMLResponse:
+    def render(self, request: Request) -> Response:
         """Render the newsflash app.
 
         Parameters
@@ -35,10 +36,15 @@ class Page(BaseElement):
         A FastAPI response object with an HTML page with the rendered
         newsflash app.
         """
-        elements = list(self.compose())
+        yielded_elements: Iterable[Element] = []
+        for compose_output in self.compose():
+            if isinstance(compose_output, Page):
+                return RedirectResponse(url=compose_output.path)
+
+            yielded_elements.append(compose_output)
 
         rendered_elements: dict[str, str] = {}
-        for element in elements:
+        for element in yielded_elements:
             _get_trigger_context = partial(
                 get_trigger_context,
                 functions=self.combined_function_registry,

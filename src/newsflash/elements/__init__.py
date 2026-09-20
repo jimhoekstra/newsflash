@@ -11,6 +11,7 @@ from .horizontal import Horizontal
 from .plot import Plot
 from .notification_container import NotificationContainer
 from .notification import Notification
+from .link import Link
 
 
 __all__ = [
@@ -30,4 +31,5 @@ __all__ = [
     "Plot",
     "NotificationContainer",
     "Notification",
+    "Link",
 ]

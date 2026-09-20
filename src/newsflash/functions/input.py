@@ -151,6 +151,7 @@ def build_function_inputs_from_data(
 
         try:
             input_element = input_type.model_validate(input_values)
+            input_element.set_fastapi_request_object(request=request)
             function_inputs[function_input.arg_name] = input_element
         except ValidationError:
             function_inputs[function_input.arg_name] = None
