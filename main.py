@@ -53,6 +53,13 @@ def get_cosine_amplitude_options(
     )
 
 
+@functions.add(on=CosineWaveAplitudeSelect().select())
+def reset_cosine_amplitude_select(
+    cosine_wave_amplitude: CosineWaveAplitudeSelect,
+) -> Iterable[Element]:
+    yield cosine_wave_amplitude
+
+
 @functions.add(
     # A single function can have multiple triggers.
     on=[
@@ -129,7 +136,7 @@ class InputsRow(Horizontal):
 
 class HomePage(Page):
     page_title: str = "Sines and Cosines"
-    function_registries: list[FunctionRegistry] = [functions]
+    function_registry: FunctionRegistry = functions
     path: str = "/"
 
     def compose(self) -> Iterable[Element]:
