@@ -12,7 +12,7 @@ from newsflash.models import Element
 
 
 class Page(BaseElement):
-    function_registries: list[FunctionRegistry] = []
+    function_registry: FunctionRegistry = FunctionRegistry()
     template_dir_name: str = "newsflash-pages"
     template_name: str = "main.html"
     page_title: str = "newsflash"
@@ -48,7 +48,7 @@ class Page(BaseElement):
         for element in yielded_elements:
             _get_trigger_context = partial(
                 get_trigger_context,
-                functions=self.combined_function_registry,
+                functions=self.function_registry,
                 page_path=self.path,
             )
 
@@ -68,20 +68,3 @@ class Page(BaseElement):
                 "narrow": self.narrow,
             },
         )
-
-    @property
-    def combined_function_registry(self) -> FunctionRegistry:
-        if len(self.function_registries) == 0:
-            return FunctionRegistry()
-
-        combined_function_registry = self.function_registries[0]
-
-        if len(self.function_registries) == 1:
-            return combined_function_registry
-
-        for additonal_function_registry in self.function_registries[1:]:
-            combined_function_registry = combined_function_registry.combine_with(
-                other=additonal_function_registry,
-            )
-
-        return combined_function_registry

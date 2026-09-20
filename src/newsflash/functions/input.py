@@ -2,7 +2,7 @@ import typing
 from inspect import Signature
 
 from pydantic import ValidationError
-from fastapi import Request, Response
+from fastapi import Request, Response, HTTPException, status
 
 from newsflash.models import Element, ID, FunctionInputDefinition, FunctionDefinition
 
@@ -156,7 +156,10 @@ def build_function_inputs_from_data(
         except ValidationError:
             function_inputs[function_input.arg_name] = None
             # TODO: display validation error in the UI at the element's position
-            print(f"Failed to parse input values for: {function_input.element_id}")
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Incorrect input given for element: {function_input.element_id}"
+            )
 
     if (request_object_param := function_definition.request_object_param) is not None:
         function_inputs[request_object_param] = request

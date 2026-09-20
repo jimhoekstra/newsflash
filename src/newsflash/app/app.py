@@ -48,14 +48,14 @@ class NewsflashApp(FastAPI):
 
             element_to_fn_definitions = _build_element_to_function_definitions_map(
                 page_path=page_instance.path,
-                function_definitions=page_instance.combined_function_registry._functions,
+                function_definitions=page_instance.function_registry._functions,
             )
 
             for trigger_path, fn_definitions in element_to_fn_definitions.items():
                 function_endpoint = build_function_endpoint(
                     page_path=page_instance.path,
                     function_definitions=fn_definitions,
-                    function_registry=page_instance.combined_function_registry,
+                    function_registry=page_instance.function_registry,
                 )
 
                 self.add_api_route(
