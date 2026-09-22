@@ -1,6 +1,6 @@
 [project]
 name = "newsflash"
-version = "0.3.3"
+version = "0.3.4"
 description = "An intuitive Python dashboarding library"
 readme = "README.md"
 authors = [
