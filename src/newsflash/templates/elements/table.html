@@ -1,24 +1,25 @@
-<table
-    id="{{ id }}"
-    {% if hx_swap_oob %} 
+<div class="newsflash-table">
+    <table
+        id="{{ id }}"
+        {% if hx_swap_oob %} 
         hx-swap-oob="true"
-    {% endif %}
-    class="newsflash-table"
->
-    <thead>
-        <tr>
-            {% for header in headers %}
-                <th>{{ header }}</th>
-            {% endfor %}
-        </tr>
-    </thead>
-    <tbody>
-        {% for row in rows %}
+        {% endif %}
+        >
+        <thead>
             <tr>
-                {% for value in row %}
-                    <td>{{ value }}</td>
+                {% for header in headers %}
+                <th>{{ header }}</th>
                 {% endfor %}
             </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+            <tr>
+                {% for value in row %}
+                <td>{{ value }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
