@@ -1,0 +1,10 @@
+<div
+    id="{{ id }}"
+    {% if hx_swap_oob %} 
+        hx-swap-oob="true"
+    {% endif %}
+    class="newsflash-metric"
+>
+    <p class="newsflash-metric-label">{{ label }}</p>
+    <p class="newsflash-metric-value">{{ value }}</p>
+</div>

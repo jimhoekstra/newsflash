@@ -13,6 +13,7 @@ from .notification_container import NotificationContainer
 from .notification import Notification
 from .link import Link
 from .table import Table
+from .metric import Metric
 
 
 __all__ = [
@@ -34,4 +35,5 @@ __all__ = [
     "Notification",
     "Link",
     "Table",
+    "Metric",
 ]

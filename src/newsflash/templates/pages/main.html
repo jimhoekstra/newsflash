@@ -95,13 +95,27 @@
         h1 {
             font-family: 'Lora', sans-serif;
             font-weight: 400;
+            margin-bottom: 0;
         }
-
+        
         h2 {
             font-family: 'Lora', sans-serif;
             font-weight: 400;
             text-decoration: underline;
             text-decoration-thickness: 3px;
+            margin-bottom: 0;
+        }
+        
+        h3 {
+            font-family: 'Lora', sans-serif;
+            font-weight: 400;
+            font-style: italic;
+            font-size: 24px;
+            margin-bottom: 0;
+        }
+
+        h1.margin-bottom, h2.margin-bottom, h3.margin-bottom {
+            margin-bottom: 0.7em;
         }
 
         svg text {
@@ -281,6 +295,24 @@
         
         td {
             padding: 0.25em 0.5em;
+        }
+
+        .newsflash-metric {
+            padding: 1em;
+            margin-right: 1em;
+            border-bottom-style: solid;
+            border-bottom-color: hsl(232, 0%, 56%);
+            border-bottom-width: 0.2em;
+        }
+
+        .newsflash-metric-label {
+            font-size: 15px;
+            color: hsl(232, 0%, 56%);
+        }
+
+        .newsflash-metric-value {
+            font-size: 32px;
+            margin-top: 0.25em;
         }
     </style>
 </head>

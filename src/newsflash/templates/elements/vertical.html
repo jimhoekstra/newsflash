@@ -1,5 +1,8 @@
 <div 
     id="{{ id }}"
+    {% if hx_swap_oob %} 
+        hx-swap-oob="true"
+    {% endif %}
     class="vertical{% if narrow %} narrow{% endif %}"
 >
     {% for element in elements.values() %}

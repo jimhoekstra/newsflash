@@ -7,3 +7,4 @@ class Header(BaseElement):
     template_name: str = "header.html"
     level: int = 1
     text: str = ""
+    margin_bottom: bool = True
