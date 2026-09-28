@@ -6,7 +6,7 @@
     {% endif %}
 >
     {% for element in elements.values() %}
-        <div class="{% if justify %}horizontal-item{% endif %}">
+        <div class="{% if flex_sizes %}horizontal-item-flex-{{ flex_sizes[loop.index0] }}{% endif %}">
             {{ element | safe }}
         </div>
     {% endfor %}

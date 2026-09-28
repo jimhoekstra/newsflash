@@ -7,4 +7,4 @@ class Horizontal(BaseElement):
     template_name: str = "horizontal.html"
 
     wide: bool = False
-    justify: bool = True
+    flex_sizes: list[int] | None = None
