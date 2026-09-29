@@ -1,7 +1,7 @@
 from typing import Iterable, Type
 from functools import partial
 
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, Request, Response, HTTPException, Depends
 from fastapi.responses import HTMLResponse
 
 from newsflash.models import FunctionDefinition, Element
@@ -62,6 +62,7 @@ class NewsflashApp(FastAPI):
                     path=trigger_path,
                     endpoint=function_endpoint,
                     methods=["POST"],
+                    dependencies=[Depends(_require_htmx_header)]
                 )
 
 
@@ -158,3 +159,8 @@ def _build_element_to_function_definitions_map(
                 element_to_fn_definitions[trigger_path].append(fn_definition)
 
     return element_to_fn_definitions
+
+
+def _require_htmx_header(request: Request) -> None:
+    if request.headers.get("HX-Request") != "true":
+        raise HTTPException(status_code=403, detail="only htmx requests are allowed")
