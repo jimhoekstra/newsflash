@@ -19,5 +19,6 @@
         autocomplete="off"
         placeholder="{{ placeholder }}"
         spellcheck="false"
+        {% if autofocus %}autofocus{% endif %}
     >{{ value }}</textarea>
 </div>

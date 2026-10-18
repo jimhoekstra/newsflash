@@ -10,6 +10,7 @@ class Input(BaseElement):
     input_type: str = "text"
     placeholder: str = ""
     value: str = ""
+    autofocus: bool = False
 
     all_triggers: list[str] = ["input"]
 
@@ -30,6 +31,7 @@ class InputFloat(BaseElement):
     input_type: str = "number"
     placeholder: str = ""
     value: float = 0.0
+    autofocus: bool = False
 
     all_triggers: list[str] = ["input"]
 
@@ -47,6 +49,7 @@ class InputInteger(BaseElement):
     input_type: str = "number"
     placeholder: str = ""
     value: int = 0
+    autofocus: bool = False
 
     all_triggers: list[str] = ["input"]
 

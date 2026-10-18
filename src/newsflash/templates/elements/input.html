@@ -9,7 +9,7 @@
         
         {% if has_input_trigger %} 
             hx-post="{{ input_endpoint_url }}" 
-            hx-trigger="input" 
+            hx-trigger="input delay:300ms" 
             hx-swap="none" 
             hx-include="{{ input_hx_include }}"
             hx-indicator="#spinner"
@@ -20,5 +20,6 @@
         name="{{ id }}--value"
         placeholder="{{ placeholder }}"
         autocomplete="off"
+        {% if autofocus %}autofocus{% endif %}
     >
 </div>

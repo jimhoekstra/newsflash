@@ -11,6 +11,7 @@ class Textarea(Input):
     cols: int | None = None
     placeholder: str = ""
     value: str = ""
+    autofocus: bool = False
 
     all_triggers: list[str] = ["input"]
 
