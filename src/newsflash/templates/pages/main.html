@@ -348,7 +348,7 @@
         }
     </style>
 </head>
-<body>
+<body{% if csrf_token %} hx-headers='{"X-CSRF": "{{ csrf_token }}"}'{% endif %}>
     <svg id="spinner" width="50" height="50" viewBox="0 0 50 50" class="spinner">
         <circle
             cx="25" cy="25" r="20"

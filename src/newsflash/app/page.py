@@ -24,7 +24,7 @@ class Page(BaseElement):
     id: str = ""
     name: str = ""
 
-    def render(self, request: Request) -> Response:
+    def render(self, request: Request, csrf_token: str | None, signed_csrf_token: str | None = None) -> Response:
         """Render the newsflash app.
 
         Parameters
@@ -57,7 +57,7 @@ class Page(BaseElement):
                 hx_swap_oob=None,
             )
 
-        return template_registry.get_jinja2_templates(
+        response = template_registry.get_jinja2_templates(
             dir_name=self.template_dir_name,
         ).TemplateResponse(
             request=request,
@@ -66,5 +66,17 @@ class Page(BaseElement):
                 "elements": rendered_elements,
                 "title": self.page_title,
                 "narrow": self.narrow,
+                "csrf_token": csrf_token,
             },
         )
+        if signed_csrf_token is not None:
+            response.set_cookie(
+                key="csrf_token", 
+                value=signed_csrf_token,
+                httponly=True,
+                samesite="strict",
+                # TODO: make max_age configurable
+                max_age=3600,
+            )
+    
+        return response
